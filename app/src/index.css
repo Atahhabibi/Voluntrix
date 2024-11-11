@@ -1,0 +1,16 @@
+h1 {
+  text-align: center;
+  font-size:4rem;
+  color:black;
+  background:grey;
+  padding:0.4rem;
+}
+
+body {
+  padding:2rem;
+  background-image: url("./images/logo.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  object-fit: cover;
+  min-height:100vh;
+}

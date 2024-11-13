@@ -1,17 +1,14 @@
 // HomeLayout.js
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
+import { Header, Navbar } from "../components";
 
 function HomeLayout() {
   return (
     <div>
-      <nav>
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
-        <Link to="/contact">Contact</Link>
-      </nav>
-      <hr />
-      {/* Outlet is where child routes will be rendered */}
+      <Header/>
+      <Navbar/>
+      <hr /> 
       <Outlet />
     </div>
   );

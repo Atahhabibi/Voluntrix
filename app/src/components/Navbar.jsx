@@ -1,56 +1,123 @@
-import { BsCart3, BsMoonFill, BsSunFill } from "react-icons/bs";
+import { BsMoonFill, BsSunFill } from "react-icons/bs";
 import { FaBarsStaggered } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
-import NavLinks from "./Navlinks";
 
 const Navbar = () => {
-
   const handleTheme = () => {
     dispatch(toggleTheme());
   };
 
-
+  // Function to close sidebar when a link is clicked
+  const handleLinkClick = () => {
+    const sidebarToggle = document.getElementById("sidebar-toggle");
+    if (sidebarToggle) sidebarToggle.checked = false;
+  };
 
   return (
-    <nav className="bg-base-200">
-      <div className="navbar align-element">
-        <div className="navbar-start">
-          <NavLink
-            to="/"
-            className="hidden lg:flex btn btn-primary text-3xl items-center capitalize"
-          >
-            V
-          </NavLink>
+    <div className="drawer drawer-mobile">
+      {/* Sidebar Toggle */}
+      <input id="sidebar-toggle" type="checkbox" className="drawer-toggle" />
+      <div className="drawer-content flex flex-col">
+        {/* Navbar */}
+        <nav className="bg-base-200 navbar align-element">
+          <div className="navbar-start">
+            {/* Brand Logo */}
+            <NavLink
+              to="/"
+              className="hidden lg:flex btn btn-primary text-3xl items-center capitalize"
+            >
+              V
+            </NavLink>
 
-          <div className="dropdown">
-            <label tabIndex={0} className="btn btn-ghost lg:hidden">
+            {/* Sidebar Toggle Button for Mobile */}
+            <label htmlFor="sidebar-toggle" className="btn btn-ghost lg:hidden">
               <FaBarsStaggered className="h-6 w-6" />
             </label>
+          </div>
 
-            <ul className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box w-52">
-              <NavLinks />
+          {/* Center Navbar Links for Larger Screens */}
+          <div className="navbar-center hidden lg:flex">
+            <ul className="menu menu-horizontal">
+              <li>
+                <NavLink to="/" onClick={handleLinkClick}>
+                  Home
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/about" onClick={handleLinkClick}>
+                  About
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/tasks" onClick={handleLinkClick}>
+                  Tasks
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/events" onClick={handleLinkClick}>
+                  Events
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/contact" onClick={handleLinkClick}>
+                  Contact
+                </NavLink>
+              </li>
             </ul>
           </div>
-        </div>
-        <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal">
-            <NavLinks />
-          </ul>
-        </div>
 
-        <div className="navbar-end">
-          <label className="swap swap-rotate">
-            <input type="checkbox" onChange={handleTheme} />
-            <BsMoonFill className="swap-on h-6 w-6" />
-            <BsSunFill className="swap-off h-6 w-6" />
-          </label>
+          {/* Right Navbar Items */}
+          <div className="navbar-end">
+            <label className="swap swap-rotate">
+              <input type="checkbox" onChange={handleTheme} />
+              <BsMoonFill className="swap-on h-6 w-6" />
+              <BsSunFill className="swap-off h-6 w-6" />
+            </label>
 
             <div className="indicator ml-4">
-             <NavLink className="btn btn-secondary capitalize btn-sm" to="/login">I am Admin</NavLink>
+              <NavLink
+                to="/login"
+                className="btn btn-secondary capitalize btn-sm"
+              >
+                I am Admin
+              </NavLink>
             </div>
-        </div>
+          </div>
+        </nav>
       </div>
-    </nav>
+
+      {/* Sidebar Menu */}
+      <div className="drawer-side">
+        <label htmlFor="sidebar-toggle" className="drawer-overlay"></label>
+        <ul className="menu p-4 w-64 bg-base-200 text-base-content">
+          <li>
+            <NavLink to="/" onClick={handleLinkClick}>
+              Home
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/about" onClick={handleLinkClick}>
+              About
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/tasks" onClick={handleLinkClick}>
+              Tasks
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/events" onClick={handleLinkClick}>
+              Events
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/contact" onClick={handleLinkClick}>
+              Contact
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+    </div>
   );
 };
 

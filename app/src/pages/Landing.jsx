@@ -20,22 +20,22 @@ const Landing = () => {
     <div className="min-h-screen bg-base-300 text-base-content">
       {/* Hero Section */}
       <section className="bg-base-200 text-white text-center py-20">
-        <h1 className="text-4xl font-bold mb-4">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-4">
           Welcome to Our Mosque Volunteer Platform
         </h1>
-        <p className="text-lg mb-8">
+        <p className="text-sm md:text-lg mb-8 sm:max-w-[40rem] m-auto max-w-[20rem]">
           An app dedicated to organizing volunteer tasks and helping the mosque
           community flourish through service.
         </p>
         <div className="space-x-4">
           <button
-            className="btn btn-accent btn-lg"
+            className="btn btn-accent btn-sm md:btn-lg"
             onClick={() => navigate("/register")}
           >
             Get Started
           </button>
           <button
-            className="btn btn-outline btn-lg text-white border-white hover:bg-white hover:text-gray-800"
+            className="btn btn-outline btn-sm md:btn-lg text-white border-white hover:bg-white hover:text-gray-800"
             onClick={() => navigate("/about")}
           >
             Learn More
@@ -147,7 +147,7 @@ const Landing = () => {
           ))}
         </div>
         <button
-          className="btn bg-blue-500 text-white mt-12 px-8 py-1 text-lg font-semibold rounded-full hover:bg-primary-focus hover:bg-green-100 hover:text-black transition duration-300"
+          className="btn btn-sm md:btn-lg bg-blue-500 text-white mt-12 px-8 py-1 text-sm sm:text-lg font-semibold rounded-full hover:bg-primary-focus hover:bg-green-100 hover:text-black transition duration-300"
           onClick={() => navigate("/tasks")}
         >
           View All Tasks
@@ -164,7 +164,7 @@ const Landing = () => {
           counts!
         </p>
         <button
-          className="btn btn-accent btn-lg"
+          className="btn btn-accent btn-sm md:btn-lg"
           onClick={() => navigate("/register")}
         >
           Become a Volunteer

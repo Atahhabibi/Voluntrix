@@ -1,19 +1,22 @@
 import {
   Contact,
   Error,
+  EventManagementPage,
   Events,
   HomeLayout,
   Landing,
   Login,
   Register,
+  TaskManagementPage,
   Tasks,
-  UserDashbaord
+  UserDashbaord,
+  VolunteerManagementPage,
+  AdminDashboard
 } from "./pages";
 import About from "./pages/About";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { action as loginAction } from "./pages/Login";
 import { action as registerAction } from "./pages/Register";
-import AdminDasboard from './pages/AdminDasboard';
 import { ClockInOut } from "./components";
 
 const router = createBrowserRouter([
@@ -27,8 +30,16 @@ const router = createBrowserRouter([
       { path: "contact", element: <Contact /> },
       { path: "tasks", element: <Tasks /> },
       { path: "events", element: <Events /> },
-      { path: "userDashboard", element: <UserDashbaord /> },
-      { path: "adminDashboard", element: <AdminDasboard /> },
+      { path: "userDashboard", element: <UserDashbaord /> }, // Corrected naming here
+      {
+        path: "adminDashboard",
+        element: <AdminDashboard />, // Corrected naming here
+        children: [
+          { path: "task-management", element: <TaskManagementPage /> },
+          { path: "event-management", element: <EventManagementPage /> },
+          { path: "volunteer-management", element: <VolunteerManagementPage /> }
+        ]
+      },
       { path: "clockInOut", element: <ClockInOut /> }
     ]
   },

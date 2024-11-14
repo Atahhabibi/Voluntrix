@@ -9,7 +9,10 @@ import Landing from "./Landing";
 import About from "./About";
 import Events from './Events';
 import UserDashbaord from './UserDashbaord';
-import AdminDasboard from './AdminDasboard';
+import AdminDashboard from './AdminDasboard';
+import TaskManagementPage from './TaskManagementPage';
+import EventManagementPage from './EventManagementPage';
+import VolunteerManagementPage from './VolunteerManagementPage';
 
 export {
   HomeLayout,
@@ -23,5 +26,8 @@ export {
   About,
   Events,
   UserDashbaord,
-  AdminDasboard
+  AdminDashboard,
+  TaskManagementPage,
+  EventManagementPage,
+  VolunteerManagementPage
 };

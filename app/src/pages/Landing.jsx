@@ -4,27 +4,22 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import img1 from '../images/mosque-1.jpg'
-import img2 from '../images/mosque-2.jpg'
-import img3 from '../images/mosque-3.jpg'
-import img4 from '../images/mosque-4.jpg'
-import img5 from '../images/mosque-5.jpg'
+import img1 from "../images/mosque-1.jpg";
+import img2 from "../images/mosque-2.jpg";
+import img3 from "../images/mosque-3.jpg";
+import img4 from "../images/mosque-4.jpg";
+import img5 from "../images/mosque-5.jpg";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
-// Import modules directly from 'swiper'
-import { Navigation, Pagination, Autoplay } from "swiper/modules"; // Updated import path for modules
-
-const mosqueImages = [
-  img1,img2,img3,img4,img5
-  // Add more image paths as needed
-];
+const mosqueImages = [img1, img2, img3, img4, img5];
 
 const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-base-300 text-base-content">
       {/* Hero Section */}
-      <section className="bg-primary text-white text-center py-20">
+      <section className="bg-base-200 text-white text-center py-20">
         <h1 className="text-4xl font-bold mb-4">
           Welcome to Our Mosque Volunteer Platform
         </h1>
@@ -40,7 +35,7 @@ const Landing = () => {
             Get Started
           </button>
           <button
-            className="btn btn-outline btn-lg text-white border-white hover:bg-white hover:text-primary"
+            className="btn btn-outline btn-lg text-white border-white hover:bg-white hover:text-gray-800"
             onClick={() => navigate("/about")}
           >
             Learn More
@@ -71,7 +66,6 @@ const Landing = () => {
             </SwiperSlide>
           ))}
         </Swiper>
-        {/* Overlay Text/Button (optional) */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-30">
           <h2 className="text-4xl font-bold mb-4">Our Mosque Gallery</h2>
           <p className="text-lg mb-8">
@@ -81,17 +75,22 @@ const Landing = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 bg-white text-center">
-        <h2 className="text-3xl font-bold mb-8">How It Works</h2>
-        <div className="flex flex-col md:flex-row justify-center items-center space-y-8 md:space-y-0 md:space-x-8">
+      <section className="py-16 bg-base-200 text-center">
+        <h2 className="text-3xl font-bold mb-8 text-white">How It Works</h2>
+        <div className="max-w-5xl mx-auto grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-8">
           {["Sign Up", "Find a Task", "Clock In/Out", "Earn Points"].map(
             (step, index) => (
-              <div key={index} className="flex flex-col items-center">
-                <div className="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mb-4">
+              <div
+                key={index}
+                className="flex flex-col items-center h-24 bg-base-300 p-4 md:p-6 rounded-xl shadow-lg md:h-40 lg:h-56"
+              >
+                <div className="bg-blue-400 text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mb-4 text-lg font-bold">
                   {index + 1}
                 </div>
-                <h3 className="font-semibold">{step}</h3>
-                <p className="text-gray-600">
+                <h3 className="font-semibold text-base md:text-lg text-gray-200 mb-2">
+                  {step}
+                </h3>
+                <p className="text-gray-400 text-xs md:text-sm text-center hidden md:block pb-2">
                   {
                     [
                       "Create an account to get started.",
@@ -108,8 +107,10 @@ const Landing = () => {
       </section>
 
       {/* Upcoming Events/Tasks Section */}
-      <section className="py-16 bg-gray-100 text-center max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold mb-8">Upcoming Events & Tasks</h2>
+      <section className="py-16 bg-base-300 text-center max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold mb-8 text-gray-100">
+          Upcoming Events & Tasks
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
           {[
             {
@@ -130,16 +131,23 @@ const Landing = () => {
           ].map((task, index) => (
             <div
               key={index}
-              className="card bg-base-100 shadow-md p-6 rounded-lg"
+              className="card bg-base-200 shadow-lg p-8 rounded-xl transition duration-300 hover:shadow-2xl"
             >
-              <h3 className="text-xl font-semibold">{task.title}</h3>
-              <p className="text-gray-600">Date: {task.date}</p>
-              <p className="text-gray-600">Points: {task.points}</p>
+              <h3 className="text-2xl font-semibold text-gray-100 mb-2">
+                {task.title}
+              </h3>
+              <p className="text-gray-400 mb-1">
+                Date: <span className="font-medium">{task.date}</span>
+              </p>
+              <p className="text-gray-400">
+                Points:{" "}
+                <span className="font-medium text-primary">{task.points}</span>
+              </p>
             </div>
           ))}
         </div>
         <button
-          className="btn btn-primary mt-8"
+          className="btn bg-blue-500 text-white mt-12 px-8 py-1 text-lg font-semibold rounded-full hover:bg-primary-focus hover:bg-green-100 hover:text-black transition duration-300"
           onClick={() => navigate("/tasks")}
         >
           View All Tasks
@@ -147,7 +155,7 @@ const Landing = () => {
       </section>
 
       {/* Call to Action Section */}
-      <section className="bg-primary text-white text-center py-16">
+      <section className="bg-base-200 text-white text-center py-16">
         <h2 className="text-3xl font-bold mb-4">
           Join our community of dedicated volunteers!
         </h2>

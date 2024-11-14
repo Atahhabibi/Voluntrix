@@ -39,6 +39,16 @@ const Navbar = () => {
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal">
               <li>
+                <NavLink to="/userDashboard" onClick={handleLinkClick}>
+                  User Dashboard
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/adminDashboard" onClick={handleLinkClick}>
+                  Admin Dashboard
+                </NavLink>
+              </li>
+              <li>
                 <NavLink to="/" onClick={handleLinkClick}>
                   Home
                 </NavLink>
@@ -90,6 +100,16 @@ const Navbar = () => {
       <div className="drawer-side">
         <label htmlFor="sidebar-toggle" className="drawer-overlay"></label>
         <ul className="menu p-4 w-64 bg-base-200 text-base-content">
+          <li>
+            <NavLink to="/userDashboard" onClick={handleLinkClick}>
+              User Dashboard
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/adminDashboard" onClick={handleLinkClick}>
+              Admin Dashboard
+            </NavLink>
+          </li>
           <li>
             <NavLink to="/" onClick={handleLinkClick}>
               Home

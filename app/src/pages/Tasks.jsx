@@ -1,13 +1,22 @@
-import React, { useState } from "react";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
-import "./calenderStyles.css";
+import React, { useState, useEffect } from "react";
+import {
+  FaCalendarAlt,
+  FaFilter,
+  FaClock,
+  FaUserFriends,
+  FaCheck,
+  FaTasks
+} from "react-icons/fa";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
 
+// Sample tasks data
 const tasks = [
   {
     id: 1,
     name: "Parking Assistance",
-    date: "2023-12-01",
+    date: "2024-11-05",
     time: "10:00 AM",
     volunteersNeeded: 5,
     points: 10,
@@ -16,7 +25,7 @@ const tasks = [
   {
     id: 2,
     name: "Prayer Hall Setup",
-    date: "2023-12-01",
+    date: "2024-11-07",
     time: "9:00 AM",
     volunteersNeeded: 3,
     points: 15,
@@ -24,87 +33,133 @@ const tasks = [
   },
   {
     id: 3,
-    name: "Clean-Up",
-    date: "2023-12-02",
-    time: "4:00 PM",
-    volunteersNeeded: 4,
-    points: 8,
+    name: "Community Clean-Up",
+    date: "2024-11-09",
+    time: "2:00 PM",
+    volunteersNeeded: 6,
+    points: 12,
     type: "clean-up"
   },
   {
-    id: 3,
-    name: "Clean-Up",
-    date: "2023-12-02",
-    time: "4:00 PM",
+    id: 4,
+    name: "Eid Decoration Setup",
+    date: "2024-11-11",
+    time: "6:00 PM",
     volunteersNeeded: 4,
-    points: 8,
-    type: "clean-up"
+    points: 18,
+    type: "setup"
   },
   {
-    id: 3,
-    name: "Clean-Up",
-    date: "2023-12-02",
-    time: "4:00 PM",
-    volunteersNeeded: 4,
-    points: 8,
-    type: "clean-up"
+    id: 5,
+    name: "Fundraising Event Coordination",
+    date: "2024-11-13",
+    time: "3:00 PM",
+    volunteersNeeded: 8,
+    points: 20,
+    type: "event coordination"
   },
   {
-    id: 3,
-    name: "Clean-Up",
-    date: "2023-12-02",
-    time: "4:00 PM",
+    id: 6,
+    name: "Iftar Meal Preparation",
+    date: "2024-11-15",
+    time: "5:00 PM",
     volunteersNeeded: 4,
-    points: 8,
-    type: "clean-up"
+    points: 15,
+    type: "meal prep"
   },
+  {
+    id: 7,
+    name: "Islamic Book Fair Setup",
+    date: "2024-11-18",
+    time: "11:00 AM",
+    volunteersNeeded: 7,
+    points: 25,
+    type: "setup"
+  },
+  {
+    id: 8,
+    name: "Car Parking Assistance",
+    date: "2024-11-20",
+    time: "8:00 AM",
+    volunteersNeeded: 6,
+    points: 12,
+    type: "crowd control"
+  },
+  {
+    id: 9,
+    name: "Children's Quran Recitation",
+    date: "2024-11-22",
+    time: "4:00 PM",
+    volunteersNeeded: 5,
+    points: 10,
+    type: "event"
+  },
+  {
+    id: 10,
+    name: "Annual Mosque Cleanup",
+    date: "2024-11-25",
+    time: "10:00 AM",
+    volunteersNeeded: 12,
+    points: 30,
+    type: "clean-up"
+  }
 ];
 
 const TasksPage = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [filter, setFilter] = useState({
     date: "",
     type: "",
     minPoints: 0
   });
+  const [filteredTasks, setFilteredTasks] = useState(tasks);
+
+  // Apply filters to tasks and only show tasks for the selected date
+  const applyFilters = () => {
+    const filtered = tasks.filter((task) => {
+      return (
+        (!filter.date || task.date === filter.date) &&
+        (!filter.type || task.type === filter.type) &&
+        task.points >= filter.minPoints
+      );
+    });
+    setFilteredTasks(filtered);
+  };
+
+
+
+  useEffect(() => {
+    applyFilters();
+  }, [filter]);
 
   const handleDateChange = (date) => {
-    setSelectedDate(date);
-    setFilter({ ...filter, date: date.toISOString().split("T")[0] });
+    const selectedDate = date.toISOString().split("T")[0]; // Format to 'yyyy-mm-dd'
+    setFilter({ ...filter, date: selectedDate });
   };
 
-  const filteredTasks = tasks.filter((task) => {
-    return (
-      (!filter.date || task.date === filter.date) &&
-      (!filter.type || task.type === filter.type) &&
-      task.points >= filter.minPoints
-    );
-  });
-
-  const tileContent = ({ date, view }) => {
-    if (view === "month") {
-      const tasksForDate = tasks.filter(
-        (task) => new Date(task.date).toDateString() === date.toDateString()
-      );
-      return tasksForDate.length ? (
-        <ul className="text-xs mt-2 text-yellow-400 space-y-1">
-          {tasksForDate.map((task) => (
-            <li key={task.id}>{task.name}</li>
-          ))}
-        </ul>
-      ) : null;
-    }
+  const handleTaskTypeChange = (e) => {
+    setFilter({ ...filter, type: e.target.value });
   };
+
+  const handleMinPointsChange = (e) => {
+    setFilter({ ...filter, minPoints: Number(e.target.value) });
+  };
+
+  const calendarEvents = filteredTasks.map((task) => ({
+    title: task.name,
+    date: task.date,
+    description: ` ${task.time}`,
+    extendedProps: { type: task.type, volunteersNeeded: task.volunteersNeeded }
+  }));
 
   return (
     <div className="min-h-screen bg-base-200 text-base-content p-6 md:p-12 flex justify-center">
       <div className="w-full max-w-5xl">
         {/* Header Section */}
         <section className="text-center mb-8">
-          <h1 className="text-4xl font-bold uppercase text-gray-300">
-            Available Volunteer Tasks
+          <h1 className="text-4xl font-bold text-gray-300 flex justify-center items-center gap-2">
+            <FaTasks /> Available Volunteer Tasks
           </h1>
-          <p className="text-xl mt-4 text-gray-300">
+          <p className="text-lg mt-4 text-gray-300">
             Browse all tasks that need support and sign up for those that fit
             your interests and schedule.
           </p>
@@ -114,7 +169,9 @@ const TasksPage = () => {
         <section className="mb-8 bg-base-300 p-4 rounded-lg shadow-lg">
           <div className="flex flex-col md:flex-row w-full gap-4">
             <div className="flex-1">
-              <label className="block text-primary mb-2 font-bold">Date</label>
+              <label className="block text-primary mb-2 font-bold flex items-center gap-2">
+                <FaCalendarAlt /> Date
+              </label>
               <input
                 type="date"
                 className="input input-bordered w-full bg-base-100"
@@ -123,13 +180,13 @@ const TasksPage = () => {
               />
             </div>
             <div className="flex-1">
-              <label className="block text-primary mb-2 font-bold">
-                Task Type
+              <label className="block text-primary mb-2 font-bold flex items-center gap-2">
+                <FaFilter /> Task Type
               </label>
               <select
                 className="select select-bordered w-full bg-base-100"
                 value={filter.type}
-                onChange={(e) => setFilter({ ...filter, type: e.target.value })}
+                onChange={handleTaskTypeChange}
               >
                 <option value="">Select Type</option>
                 <option value="setup">Setup</option>
@@ -138,63 +195,87 @@ const TasksPage = () => {
               </select>
             </div>
             <div className="flex-1">
-              <label className="block text-primary mb-2 font-bold">
-                Min Points
+              <label className="block text-primary mb-2 font-bold flex items-center gap-2">
+                <FaCheck /> Min Points
               </label>
               <input
                 type="number"
                 className="input input-bordered w-full bg-base-100"
                 placeholder="Min Points"
                 value={filter.minPoints}
-                onChange={(e) =>
-                  setFilter({ ...filter, minPoints: Number(e.target.value) })
-                }
+                onChange={handleMinPointsChange}
               />
             </div>
           </div>
         </section>
 
-        {/* Calendar Section */}
-        <section className="mb-12 bg-base-300 p-4 rounded-lg shadow-lg">
-          <Calendar
-            onChange={handleDateChange}
-            value={selectedDate}
-            tileContent={tileContent}
-            tileClassName={({ date, view }) =>
-              view === "month" &&
-              date.toDateString() === selectedDate.toDateString()
-                ? "bg-primary text-white rounded-lg"
-                : "hover:bg-base-200 hover:text-white rounded-lg transition duration-300"
-            }
-            className="w-full bg-base-100 text-white rounded-lg shadow"
+        {/* FullCalendar Section */}
+        <section className="mb-12 bg-base-300 p-4 rounded-lg shadow-lg hidden sm:block">
+          <FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            events={calendarEvents}
+            dateClick={(info) => {
+              handleDateChange(info.date);
+            }}
+            eventClick={(info) => alert(info.event.title)}
+            eventContent={(eventInfo) => (
+              <div className="text-xs text-white ">
+                <p>
+                  {eventInfo.event.title.length > 10
+                    ? eventInfo.event.title.slice(0, 10)
+                    : eventInfo.event.extendedProps.description}
+                </p>
+                <p>{eventInfo.event.extendedProps.description}</p>
+              </div>
+            )}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,dayGridWeek,dayGridDay"
+            }}
+            contentHeight="auto"
+            eventTextColor="#000000" // Ensure text is visible
           />
         </section>
 
         {/* Task Cards for Selected Date */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4 text-white">
-            Tasks for {selectedDate.toDateString()}
+          <h2 className="text-2xl font-semibold mb-4 text-white flex items-center gap-2">
+            <FaCalendarAlt /> Tasks for {filter.date || "Select a date"}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredTasks.map((task) => (
               <div
                 key={task.id}
-                className="bg-base-300 p-6 rounded-lg shadow-lg"
+                className="card bg-base-300 shadow-lg p-6 border border-base-100 transition transform  hover:shadow-2xl"
               >
-                <h3 className="text-lg font-bold text-white  mb-2">
-                  {task.name}
+                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                  <FaTasks /> {task.name}
                 </h3>
-                <p className="text-gray-300">Date: {task.date}</p>
-                <p className="text-gray-300">Time: {task.time}</p>
-                <p className="text-gray-300">
-                  Volunteers Needed: {task.volunteersNeeded}
-                </p>
-                <p className="text-gray-300">Points: {task.points}</p>
+                <div className="text-gray-300 space-y-2">
+                  <p className="flex items-center gap-2">
+                    <FaCalendarAlt className="text-yellow-400" />
+                    <span>Date: {task.date}</span>
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <FaClock className="text-blue-400" />
+                    <span>Time: {task.time}</span>
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <FaUserFriends className="text-green-400" />
+                    <span>Volunteers Needed: {task.volunteersNeeded}</span>
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <FaCheck className="text-purple-400" />
+                    <span>Points: {task.points}</span>
+                  </p>
+                </div>
                 <button
-                  className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-primary-focus transition duration-300"
+                  className="mt-6 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center gap-2"
                   onClick={() => alert(`Signed up for ${task.name}`)}
                 >
-                  Sign Up
+                  <FaCheck /> Sign Up
                 </button>
               </div>
             ))}

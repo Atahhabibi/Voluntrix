@@ -10,6 +10,15 @@ import img3 from "../images/mosque-3.jpg";
 import img4 from "../images/mosque-4.jpg";
 import img5 from "../images/mosque-5.jpg";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import {
+  FaUserPlus,
+  FaTasks,
+  FaClock,
+  FaMedal,
+  FaMosque,
+  FaCalendarAlt,
+  FaHandHoldingHeart
+} from "react-icons/fa";
 
 const mosqueImages = [img1, img2, img3, img4, img5];
 
@@ -78,31 +87,41 @@ const Landing = () => {
       <section className="py-16 bg-base-200 text-center">
         <h2 className="text-3xl font-bold mb-8 text-white">How It Works</h2>
         <div className="max-w-5xl mx-auto grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-8">
-          {["Sign Up", "Find a Task", "Clock In/Out", "Earn Points"].map(
-            (step, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center h-24 bg-base-300 p-4 md:p-6 rounded-xl shadow-lg md:h-40 lg:h-56"
-              >
-                <div className="bg-blue-400 text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mb-4 text-lg font-bold">
-                  {index + 1}
-                </div>
-                <h3 className="font-semibold text-base md:text-lg text-gray-200 mb-2">
-                  {step}
-                </h3>
-                <p className="text-gray-400 text-xs md:text-sm text-center hidden md:block pb-2">
-                  {
-                    [
-                      "Create an account to get started.",
-                      "Browse tasks that fit your interests.",
-                      "Log your hours to keep track of contributions.",
-                      "Gain points for every hour of service."
-                    ][index]
-                  }
-                </p>
-              </div>
-            )
-          )}
+          {[
+            {
+              step: "Sign Up",
+              icon: <FaUserPlus />,
+              description: "Create an account to get started."
+            },
+            {
+              step: "Find a Task",
+              icon: <FaTasks />,
+              description: "Browse tasks that fit your interests."
+            },
+            {
+              step: "Clock In/Out",
+              icon: <FaClock />,
+              description: "Log your hours to keep track of contributions."
+            },
+            {
+              step: "Earn Points",
+              icon: <FaMedal />,
+              description: "Gain points for every hour of service."
+            }
+          ].map((item, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center h-24 bg-base-300 p-4 md:p-6 rounded-xl shadow-lg md:h-40 lg:h-56"
+            >
+              <div className="text-3xl text-blue-400 mb-4">{item.icon}</div>
+              <h3 className="font-semibold text-base md:text-lg text-gray-200 mb-2">
+                {item.step}
+              </h3>
+              <p className="text-gray-400 text-xs md:text-sm text-center hidden md:block pb-2">
+                {item.description}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -116,26 +135,30 @@ const Landing = () => {
             {
               title: "Friday Prayer Setup",
               date: "Next Friday, 3:00 PM",
-              points: 10
+              points: 10,
+              icon: <FaCalendarAlt />
             },
             {
               title: "Eid Parking Management",
               date: "Eid Morning, 8:00 AM",
-              points: 20
+              points: 20,
+              icon: <FaMosque />
             },
             {
               title: "Community Iftar Preparation",
               date: "Tomorrow, 5:30 PM",
-              points: 15
+              points: 15,
+              icon: <FaHandHoldingHeart />
             }
           ].map((task, index) => (
             <div
               key={index}
               className="card bg-base-200 shadow-lg p-8 rounded-xl transition duration-300 hover:shadow-2xl"
             >
-              <h3 className="text-2xl font-semibold text-gray-100 mb-2">
-                {task.title}
-              </h3>
+              <div className="flex items-center mb-2 text-gray-100 m-auto">
+                <span className="text-2xl mr-2">{task.icon}</span>
+                <h3 className="text-xl font-semibold ">{task.title}</h3>
+              </div>
               <p className="text-gray-400 mb-1">
                 Date: <span className="font-medium">{task.date}</span>
               </p>

@@ -1,4 +1,5 @@
 import React from "react";
+import { FaCalendarAlt, FaMapMarkerAlt, FaInfoCircle } from "react-icons/fa";
 
 // Sample data for events
 const events = [
@@ -55,48 +56,56 @@ const events = [
 const EventsPage = () => {
   return (
     <div className="min-h-screen bg-base-200 text-base-content p-6 md:p-12">
-      {/* Header Section */}
-      <section className="text-center mb-12">
-        <h1 className="text-4xl font-bold  mb-2 uppercase text-white tracking-widest">
-          Upcoming  Events
-        </h1>
-        <p className="text-lg text-gray-300">
-          Participate in upcoming events to support our community and connect
-          with fellow volunteers.
-        </p>
-      </section>
+      {/* Wrapper container */}
+      <div className="container mx-auto max-w-7xl">
+        {/* Header Section */}
+        <section className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-2 text-white tracking-widest">
+            Upcoming Events
+          </h1>
+          <p className="text-lg text-gray-300">
+            Participate in upcoming events to support our community and connect
+            with fellow volunteers.
+          </p>
+        </section>
 
-      {/* Events Grid Section */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {events.map((event) => (
-          <div
-            key={event.id}
-            className="bg-base-300 shadow-lg rounded-lg p-6 border border-base-100 flex flex-col justify-between h-[22rem]"
-          >
-            <div>
-              <h2 className="text-2xl font-semibold  mb-2 text-blue-100">
-                {event.name}
-              </h2>
-              <div className="text-sm text-gray-400 mb-1">
-                <span className="font-semibold">Date:</span> {event.date}
-              </div>
-              <div className="text-sm text-gray-400 mb-4">
-                <span className="font-semibold">Location:</span>{" "}
-                {event.location}
-              </div>
-              <p className="text-gray-300 mb-6 h-20 overflow-hidden leading-relaxed">
-                {event.description}
-              </p>
-            </div>
-            <button
-              className="btn btn-primary w-full py-2 rounded-full text-lg font-medium hover:bg-primary-focus transition-colors bg-blue-500 text-white"
-              onClick={() => alert(`Details for ${event.name}`)}
+        {/* Events Grid Section */}
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {events.map((event) => (
+            <div
+              key={event.id}
+              className="bg-base-300 shadow-lg rounded-lg p-6 border border-base-100 flex flex-col justify-between h-[22rem]"
             >
-              View Details
-            </button>
-          </div>
-        ))}
-      </section>
+              <div>
+                <h2 className="text-2xl font-semibold mb-4 text-blue-100 flex items-center gap-2">
+                  <FaInfoCircle className="text-yellow-400" /> {event.name}
+                </h2>
+                <div className="text-sm text-gray-400 mb-2 flex items-center gap-2">
+                  <FaCalendarAlt className="text-blue-400" />
+                  <span>
+                    <strong>Date:</strong> {event.date}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-400 mb-4 flex items-center gap-2">
+                  <FaMapMarkerAlt className="text-green-400" />
+                  <span>
+                    <strong>Location:</strong> {event.location}
+                  </span>
+                </div>
+                <p className="text-gray-300 mb-6 h-20 overflow-hidden leading-relaxed">
+                  {event.description}
+                </p>
+              </div>
+              <button
+                className="btn btn-primary w-full py-2 rounded-full text-lg font-medium hover:bg-primary-focus transition-colors bg-blue-500 text-white flex items-center justify-center gap-2"
+                onClick={() => alert(`Details for ${event.name}`)}
+              >
+                <FaInfoCircle /> View Details
+              </button>
+            </div>
+          ))}
+        </section>
+      </div>
     </div>
   );
 };

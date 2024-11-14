@@ -6,12 +6,15 @@ import {
   Landing,
   Login,
   Register,
-  Tasks
+  Tasks,
+  UserDashbaord
 } from "./pages";
 import About from "./pages/About";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { action as loginAction } from "./pages/Login";
 import { action as registerAction } from "./pages/Register";
+import AdminDasboard from './pages/AdminDasboard';
+import { ClockInOut } from "./components";
 
 const router = createBrowserRouter([
   {
@@ -24,10 +27,14 @@ const router = createBrowserRouter([
       { path: "contact", element: <Contact /> },
       { path: "tasks", element: <Tasks /> },
       { path: "events", element: <Events /> },
+      { path: "userDashboard", element: <UserDashbaord /> },
+      { path: "adminDashboard", element: <AdminDasboard /> },
+      { path: "clockInOut", element: <ClockInOut /> }
     ]
   },
   { path: "/login", element: <Login />, action: loginAction },
   { path: "/register", element: <Register />, action: registerAction },
+
   { path: "*", element: <Error /> } // Catch-all for undefined routes
 ]);
 

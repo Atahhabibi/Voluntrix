@@ -8,6 +8,8 @@ import Login from "./Login";
 import Landing from "./Landing";
 import About from "./About";
 import Events from './Events';
+import UserDashbaord from './UserDashbaord';
+import AdminDasboard from './AdminDasboard';
 
 export {
   HomeLayout,
@@ -19,5 +21,7 @@ export {
   Login,
   Landing,
   About,
-  Events
+  Events,
+  UserDashbaord,
+  AdminDasboard
 };

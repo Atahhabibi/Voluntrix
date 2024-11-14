@@ -1,40 +1,70 @@
 import React from "react";
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaUser } from "react-icons/fa";
 
 const ContactPage = () => {
   return (
-    <div
-      className="bg-base-200 flex items-center justify-center p-6"
-      style={{ minHeight: "calc(100vh - 120px)" }}
-    >
-      <div className="w-full max-w-4xl bg-base-100 rounded-lg shadow-xl p-8 md:flex">
-        {/* Contact Information Section */}
-        <div className="md:w-1/2 p-4 md:border-r md:border-base-300">
-          <h2 className="text-3xl font-bold text-primary mb-4">Contact Us</h2>
-          <p className="text-base-content mb-6">
-            If you have any questions or need assistance, feel free to reach out
-            to us!
-          </p>
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-semibold">Address</h4>
-              <p>1234 Mosque Street, Your City, State, Zip</p>
+    <div className="min-h-screen bg-base-200 flex items-center justify-center p-6">
+      <div className="w-full max-w-6xl bg-base-100 rounded-xl shadow-lg p-8 md:flex md:gap-8">
+        {/* Contact Details Section without Card */}
+        <div className="md:w-1/2 p-6">
+          <div className="space-y-8">
+            <h2 className="text-3xl font-semibold text-primary text-center mb-6 uppercase">
+              Contact Details
+            </h2>
+            <div className="space-y-6">
+              {/* Visit Us */}
+              <div className="flex items-center gap-4 bg-gradient-to-r from-yellow-500 to-yellow-400 p-3 rounded-lg shadow-md">
+                <FaMapMarkerAlt className="text-white text-3xl" />
+                <div>
+                  <p className="text-lg font-semibold text-white">Visit Us</p>
+                  <p className="text-white">
+                    1234 Mosque Street, Your City, State, Zip
+                  </p>
+                </div>
+              </div>
+
+              {/* Call Us */}
+              <div className="flex items-center gap-4 bg-gradient-to-r from-green-400 to-green-500 p-3 rounded-lg shadow-md">
+                <FaPhoneAlt className="text-white text-3xl" />
+                <div>
+                  <p className="text-lg font-semibold text-white">Call Us</p>
+                  <p className="text-white">(123) 456-7890</p>
+                </div>
+              </div>
+
+              {/* Email Us */}
+              <div className="flex items-center gap-4 bg-gradient-to-r from-blue-400 to-blue-500 p-3 rounded-lg shadow-md">
+                <FaEnvelope className="text-white text-3xl" />
+                <div>
+                  <p className="text-lg font-semibold text-white">Email Us</p>
+                  <p className="text-white">support@mosquevolunteers.com</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <h4 className="font-semibold">Phone</h4>
-              <p>(123) 456-7890</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Email</h4>
-              <p>support@mosquevolunteers.com</p>
+
+            {/* Additional Description Inside the Section */}
+            <div className="mt-8 text-white">
+              <p className="text-sm lg:text-lg">
+                We are always happy to assist you! Whether you have questions
+                about our events, need information on how to get involved, or
+                have any other inquiries, don't hesitate to reach out. Our team
+                is dedicated to making sure your experience with us is smooth
+                and rewarding. We encourage you to visit us at the mosque or
+                contact us via phone or email for any assistance. We value your
+                contributions and look forward to connecting with you.
+              </p>
             </div>
           </div>
         </div>
 
         {/* Contact Form Section */}
-        <div className="md:w-1/2 p-4">
-          <form className="space-y-4">
+        <div className="md:w-1/2 p-6 border-l border-base-300">
+          <h2 className="text-3xl font-semibold text-primary mb-4 text-center uppercase">
+            Get In Touch
+          </h2>
+          <form className="space-y-6">
             <div>
-              <label className="block text-base-content font-bold mb-2">
+              <label className="block text-base-content font-semibold mb-2">
                 Name
               </label>
               <input
@@ -44,7 +74,7 @@ const ContactPage = () => {
               />
             </div>
             <div>
-              <label className="block text-base-content font-bold mb-2">
+              <label className="block text-base-content font-semibold mb-2">
                 Email
               </label>
               <input
@@ -54,15 +84,18 @@ const ContactPage = () => {
               />
             </div>
             <div>
-              <label className="block text-base-content font-bold mb-2">
+              <label className="block text-base-content font-semibold mb-2">
                 Message
               </label>
               <textarea
-                className="textarea textarea-bordered w-full"
+                className="textarea textarea-bordered w-full h-56"
                 placeholder="Your Message"
               ></textarea>
             </div>
-            <button type="submit" className="btn btn-primary w-full">
+            <button
+              type="submit"
+              className="btn btn-primary w-full py-2 text-lg rounded-full hover:bg-primary-focus"
+            >
               Send Message
             </button>
           </form>

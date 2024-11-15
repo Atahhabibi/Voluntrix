@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { PointsBreakdownByTask, TaskCompletionHistory } from "../charts";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import userImg from '../images/atah.jpg';
 import {
   FaMedal,
   FaTasks,
@@ -42,24 +43,30 @@ const UserDashboard = () => {
     );
   }, []);
 
+  // Placeholder for the profile image URL
+  const userProfileImage = userImg; // Replace with actual user profile picture URL
+  const userName = "Atah habibi"; // Replace with actual user name
+
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
       <div className="w-full max-w-screen-xl">
         {/* Toast Container */}
         <ToastContainer />
 
-        {/* Welcome Message */}
+        {/* Welcome Message with Profile Picture */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700">
-          <div className="card-body flex items-center">
-            <FaUser className="text-2xl text-blue-400 mr-3" />
-            <div>
-              <h2 className="card-title text-xl font-bold text-white">
-                Welcome back, [User's Name]!
-              </h2>
-              <p className="text-gray-400">
-                Thank you for contributing to our community!
-              </p>
-            </div>
+          <div className="card-body flex items-center flex-col">
+            <img
+              src={userProfileImage}
+              alt={`${userName}'s profile`}
+              className="w-24 h-24 rounded-full mb-4 object-cover shadow-lg"
+            />
+            <h2 className="card-title text-2xl font-bold text-white mb-1">
+              Welcome back, {userName}!
+            </h2>
+            <p className="text-gray-400 text-center">
+              Thank you for contributing to our community!
+            </p>
           </div>
         </div>
 

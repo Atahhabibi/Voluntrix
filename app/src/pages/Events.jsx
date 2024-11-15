@@ -1,5 +1,6 @@
 import React from "react";
 import { FaCalendarAlt, FaMapMarkerAlt, FaInfoCircle } from "react-icons/fa";
+import userImg from '../images/atah.png';
 
 // Sample data for events
 const events = [

@@ -35,9 +35,9 @@ const router = createBrowserRouter([
         path: "adminDashboard",
         element: <AdminDashboard />, // Corrected naming here
         children: [
+          { index:true, element: <VolunteerManagementPage /> },
           { path: "task-management", element: <TaskManagementPage /> },
           { path: "event-management", element: <EventManagementPage /> },
-          { path: "volunteer-management", element: <VolunteerManagementPage /> }
         ]
       },
       { path: "clockInOut", element: <ClockInOut /> }

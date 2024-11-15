@@ -1,25 +1,28 @@
 import React from "react";
 import { PointsEarnedByVolunteers, VolunteerHoursOverTime } from "../charts";
-import { FaClock, FaStar, FaUserFriends } from "react-icons/fa"; // Import Font Awesome icons
-import { FaTasks, FaUsers, FaCalendarAlt, FaUser } from "react-icons/fa";
+import { FaClock, FaStar, FaUserFriends, FaTasks, FaUsers, FaCalendarAlt, FaUser } from "react-icons/fa";
 import { Link, Outlet } from "react-router-dom";
+import imamImg from '../images/imam.png';
 
 const AdminDashboard = () => {
-  const adminName = "Admin"; // Replace with actual admin name if available
+  const adminName = "Sheikh Hamzah khalid"; // Replace with actual admin name if available
+  const adminProfileImage = imamImg;// Replace with actual admin profile picture URL
 
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
       <div className="w-full max-w-screen-xl">
-        {/* Welcome Message */}
+        {/* Welcome Message with Profile Picture */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700">
-          <div className="card-body flex items-center">
-            <FaUser className="text-2xl text-blue-400 mr-3" />
-            <div>
-              <h2 className="card-title text-xl font-bold text-white">
-                Welcome back, [{adminName}]!
-              </h2>
-              <p className="text-gray-400 text-center">here is your overview matrics</p>
-            </div>
+          <div className="card-body flex items-center flex-col">
+            <img
+              src={adminProfileImage}
+              alt={`${adminName}'s profile`}
+              className="w-24 h-24 rounded-full mb-4 object-cover shadow-lg"
+            />
+            <h2 className="card-title text-2xl font-bold text-white mb-1">
+              Welcome back, {adminName}!
+            </h2>
+            <p className="text-gray-400 text-center">Here is your overview metrics</p>
           </div>
         </div>
 
@@ -60,19 +63,8 @@ const AdminDashboard = () => {
 
         {/* Navigation Links to Each Management Section */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-          <Link to="/adminDashboard/task-management">
-            <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
-              <FaTasks className="text-4xl text-blue-400 mr-4" />
-              <div>
-                <p className="text-3xl font-semibold text-white">
-                  Task Management
-                </p>
-                <p className="text-gray-400">Manage tasks efficiently</p>
-              </div>
-            </div>
-          </Link>
 
-          <Link to="/adminDashboard/volunteer-management">
+        <Link to="/adminDashboard">
             <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
               <FaUsers className="text-4xl text-green-400 mr-4" />
               <div>
@@ -85,6 +77,19 @@ const AdminDashboard = () => {
               </div>
             </div>
           </Link>
+
+          <Link to="/adminDashboard/task-management">
+            <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
+              <FaTasks className="text-4xl text-blue-400 mr-4" />
+              <div>
+                <p className="text-3xl font-semibold text-white">
+                  Task Management
+                </p>
+                <p className="text-gray-400">Manage tasks efficiently</p>
+              </div>
+            </div>
+          </Link>
+
 
           <Link to="/adminDashboard/event-management">
             <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">

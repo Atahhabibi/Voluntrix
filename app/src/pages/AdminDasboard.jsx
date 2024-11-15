@@ -1,12 +1,12 @@
 import React from "react";
 import { PointsEarnedByVolunteers, VolunteerHoursOverTime } from "../charts";
-import { FaClock, FaStar, FaUserFriends, FaTasks, FaUsers, FaCalendarAlt, FaUser } from "react-icons/fa";
+import { FaClock, FaStar, FaUserFriends, FaTasks, FaUsers, FaCalendarAlt } from "react-icons/fa";
 import { Link, Outlet } from "react-router-dom";
 import imamImg from '../images/imam.png';
 
 const AdminDashboard = () => {
-  const adminName = "Sheikh Hamzah khalid"; // Replace with actual admin name if available
-  const adminProfileImage = imamImg;// Replace with actual admin profile picture URL
+  const adminName = "Sheikh Hamzah Khalid";
+  const adminProfileImage = imamImg;
 
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
@@ -63,23 +63,20 @@ const AdminDashboard = () => {
 
         {/* Navigation Links to Each Management Section */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-
-        <Link to="/adminDashboard">
-            <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
+          <Link to="/adminDashboard">
+            <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-green-700 transition duration-200">
               <FaUsers className="text-4xl text-green-400 mr-4" />
               <div>
                 <p className="text-3xl font-semibold text-white">
                   Volunteer Management
                 </p>
-                <p className="text-gray-400">
-                  Manage volunteers and their hours
-                </p>
+                <p className="text-gray-400">Manage volunteers and their hours</p>
               </div>
             </div>
           </Link>
 
           <Link to="/adminDashboard/task-management">
-            <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
+            <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-blue-700 transition duration-200">
               <FaTasks className="text-4xl text-blue-400 mr-4" />
               <div>
                 <p className="text-3xl font-semibold text-white">
@@ -90,9 +87,8 @@ const AdminDashboard = () => {
             </div>
           </Link>
 
-
           <Link to="/adminDashboard/event-management">
-            <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
+            <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-yellow-600 transition duration-200">
               <FaCalendarAlt className="text-4xl text-yellow-400 mr-4" />
               <div>
                 <p className="text-3xl font-semibold text-white">

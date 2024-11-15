@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { FaEdit, FaTrashAlt, FaCalendarAlt, FaClock, FaUsers } from "react-icons/fa";
-
 import { tasks } from "../taskData";
 
 const TaskManagementPage = () => {
@@ -11,7 +10,10 @@ const TaskManagementPage = () => {
   });
   const [showModal, setShowModal] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
+  // Filtered tasks based on filters
   const filteredTasks = tasks.filter((task) => {
     return (
       (filters.type ? task.type === filters.type : true) &&
@@ -19,6 +21,29 @@ const TaskManagementPage = () => {
       (filters.points ? task.points >= parseInt(filters.points, 10) : true)
     );
   });
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+
+  // Get current page tasks
+  const currentTasks = filteredTasks.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Handle previous and next buttons
+  const handlePrevious = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   const handleDeleteClick = (task) => {
     setTaskToDelete(task);
@@ -79,43 +104,88 @@ const TaskManagementPage = () => {
           </form>
         </div>
 
-        {/* Task Cards */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredTasks.map((task) => (
-            <div key={task.id} className="p-4 rounded-lg bg-gray-800 shadow-lg">
-              <div className="flex flex-col space-y-2">
-                <h3 className="text-2xl font-semibold text-white mb-2">{task.name}</h3>
-                <div className="text-gray-400 flex items-center space-x-2">
-                  <FaCalendarAlt />
-                  <p>Date: {task.date}</p>
-                </div>
-                <div className="text-gray-400 flex items-center space-x-2">
-                  <FaClock />
-                  <p>Time: {task.time}</p>
-                </div>
-                <div className="text-gray-400 flex items-center space-x-2">
-                  <FaUsers />
-                  <p>Volunteers Needed: {task.volunteersNeeded}</p>
-                </div>
-                <p className="text-gray-400">Points: {task.points}</p>
+        {/* Tasks Container with Pagination at Bottom */}
+        <div className="flex flex-col justify-between h-[700px]">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-6">
+            {Array.from({ length: itemsPerPage }, (_, index) => {
+              const task = currentTasks[index];
+              return (
+                <div
+                  key={index}
+                  className={`p-4 rounded-lg shadow-lg ${
+                    task ? "bg-gray-800" : "bg-transparent"
+                  }`}
+                >
+                  {task ? (
+                    <div className="flex flex-col space-y-2">
+                      <h3 className="text-2xl font-semibold text-white mb-2">{task.name}</h3>
+                      <div className="text-gray-400 flex items-center space-x-2">
+                        <FaCalendarAlt />
+                        <p>Date: {task.date}</p>
+                      </div>
+                      <div className="text-gray-400 flex items-center space-x-2">
+                        <FaClock />
+                        <p>Time: {task.time}</p>
+                      </div>
+                      <div className="text-gray-400 flex items-center space-x-2">
+                        <FaUsers />
+                        <p>Volunteers Needed: {task.volunteersNeeded}</p>
+                      </div>
+                      <p className="text-gray-400">Points: {task.points}</p>
 
-                <div className="flex justify-end space-x-3 mt-4">
-                  <button
-                    onClick={() => alert("Edit functionality here")}
-                    className="p-2 bg-yellow-500 rounded text-white flex items-center"
-                  >
-                    <FaEdit className="mr-1" /> Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(task)}
-                    className="p-2 bg-red-600 rounded text-white flex items-center"
-                  >
-                    <FaTrashAlt className="mr-1" /> Delete
-                  </button>
+                      <div className="flex justify-end space-x-3 mt-4">
+                        <button
+                          onClick={() => alert("Edit functionality here")}
+                          className="p-2 bg-yellow-500 rounded text-white flex items-center"
+                        >
+                          <FaEdit className="mr-1" /> Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(task)}
+                          className="p-2 bg-red-600 rounded text-white flex items-center"
+                        >
+                          <FaTrashAlt className="mr-1" /> Delete
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="invisible">Placeholder</div>
+                  )}
                 </div>
-              </div>
-            </div>
-          ))}
+              );
+            })}
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-center items-center space-x-4 mt-6">
+            <button
+              onClick={handlePrevious}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded bg-gray-700 text-gray-400 hover:bg-gray-600 disabled:opacity-50"
+            >
+              Previous
+            </button>
+
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => handlePageChange(index + 1)}
+                className={`px-4 py-2 rounded ${
+                  currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-700 text-gray-400"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+
+            <button
+              onClick={handleNext}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded bg-gray-700 text-gray-400 hover:bg-gray-600 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
         </div>
 
         {/* Delete Confirmation Modal */}
@@ -149,4 +219,3 @@ const TaskManagementPage = () => {
 };
 
 export default TaskManagementPage;
-

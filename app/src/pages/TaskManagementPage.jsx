@@ -105,19 +105,19 @@ const TaskManagementPage = () => {
         </div>
 
         {/* Tasks Container with Pagination at Bottom */}
-        <div className="flex flex-col justify-between h-[700px]">
+        <div className="flex flex-col justify-between h-[750px]"> {/* Reduced height */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-6">
             {Array.from({ length: itemsPerPage }, (_, index) => {
               const task = currentTasks[index];
               return (
                 <div
                   key={index}
-                  className={`p-4 rounded-lg shadow-lg ${
+                  className={`p-6 rounded-lg shadow-lg ${
                     task ? "bg-gray-800" : "bg-transparent"
                   }`}
                 >
                   {task ? (
-                    <div className="flex flex-col space-y-2">
+                    <div className="flex flex-col space-y-3">
                       <h3 className="text-2xl font-semibold text-white mb-2">{task.name}</h3>
                       <div className="text-gray-400 flex items-center space-x-2">
                         <FaCalendarAlt />

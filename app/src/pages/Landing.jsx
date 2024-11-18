@@ -26,25 +26,25 @@ const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-base-300 text-base-content">
+    <div className="min-h-screen bg-gray-900 text-gray-200">
       {/* Hero Section */}
-      <section className="bg-base-200 text-white text-center py-20">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-4">
+      <section className="bg-gray-800 text-white text-center py-20">
+        <h1 className="text-4xl font-extrabold mb-4 tracking-wide">
           Welcome to Our Mosque Volunteer Platform
         </h1>
-        <p className="text-sm md:text-lg mb-8 sm:max-w-[40rem] m-auto max-w-[20rem]">
-          An app dedicated to organizing volunteer tasks and helping the mosque
-          community flourish through service.
+        <p className="text-lg max-w-2xl mx-auto mb-8 text-gray-300">
+          Join hands in organizing tasks and building a stronger mosque
+          community through meaningful service.
         </p>
-        <div className="space-x-4">
+        <div className="flex justify-center space-x-4">
           <button
-            className="btn btn-accent btn-sm md:btn-lg"
+            className="btn btn-primary btn-md md:btn-lg px-6 py-2"
             onClick={() => navigate("/register")}
           >
             Get Started
           </button>
           <button
-            className="btn btn-outline btn-sm md:btn-lg text-white border-white hover:bg-white hover:text-gray-800"
+            className="btn btn-outline btn-md md:btn-lg px-6 py-2 text-white border-white hover:bg-gray-300 hover:text-gray-800"
             onClick={() => navigate("/about")}
           >
             Learn More
@@ -59,14 +59,11 @@ const Landing = () => {
           navigation
           pagination={{ clickable: true }}
           autoplay={{ delay: 3000 }}
-          loop={true}
+          loop
           className="w-full h-full"
         >
           {mosqueImages.map((src, index) => (
-            <SwiperSlide
-              key={index}
-              className="flex items-center justify-center w-96 h-96"
-            >
+            <SwiperSlide key={index}>
               <img
                 src={src}
                 alt={`Mosque Image ${index + 1}`}
@@ -75,18 +72,16 @@ const Landing = () => {
             </SwiperSlide>
           ))}
         </Swiper>
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-30">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-40">
           <h2 className="text-4xl font-bold mb-4">Our Mosque Gallery</h2>
-          <p className="text-lg mb-8">
-            Experience the beauty of our community.
-          </p>
+          <p className="text-lg">Experience the beauty of our community.</p>
         </div>
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 bg-base-200 text-center">
+      <section className="py-16 bg-gray-800 text-center">
         <h2 className="text-3xl font-bold mb-8 text-white">How It Works</h2>
-        <div className="max-w-5xl mx-auto grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-8">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 gap-6 sm:grid-cols-4">
           {[
             {
               step: "Sign Up",
@@ -101,7 +96,7 @@ const Landing = () => {
             {
               step: "Clock In/Out",
               icon: <FaClock />,
-              description: "Log your hours to keep track of contributions."
+              description: "Log your hours to track contributions."
             },
             {
               step: "Earn Points",
@@ -111,23 +106,21 @@ const Landing = () => {
           ].map((item, index) => (
             <div
               key={index}
-              className="flex flex-col items-center h-24 bg-base-300 p-4 md:p-6 rounded-xl shadow-lg md:h-40 lg:h-56"
+              className="flex flex-col items-center bg-gray-700 p-6 rounded-xl shadow-md hover:shadow-lg transition"
             >
-              <div className="text-3xl text-blue-400 mb-4">{item.icon}</div>
-              <h3 className="font-semibold text-base md:text-lg text-gray-200 mb-2">
+              <div className="text-4xl text-blue-400 mb-4">{item.icon}</div>
+              <h3 className="font-semibold text-lg text-white mb-2">
                 {item.step}
               </h3>
-              <p className="text-gray-400 text-xs md:text-sm text-center hidden md:block pb-2">
-                {item.description}
-              </p>
+              <p className="text-gray-300 text-sm">{item.description}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Upcoming Events/Tasks Section */}
-      <section className="py-16 bg-base-300 text-center max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold mb-8 text-gray-100">
+      <section className="py-16 bg-gray-900 text-center max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold mb-8 text-white">
           Upcoming Events & Tasks
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
@@ -153,24 +146,24 @@ const Landing = () => {
           ].map((task, index) => (
             <div
               key={index}
-              className="card bg-base-200 shadow-lg p-8 rounded-xl transition duration-300 hover:shadow-2xl"
+              className="card bg-gray-800 shadow-lg p-6 rounded-lg hover:shadow-xl transition"
             >
-              <div className="flex items-center mb-2 text-gray-100 m-auto">
-                <span className="text-2xl mr-2">{task.icon}</span>
-                <h3 className="text-xl font-semibold ">{task.title}</h3>
+              <div className="flex items-center justify-center mb-4 text-gray-200  ">
+                <span className="text-2xl mr-2 text-center">{task.icon}</span>
+                <h3 className="text-xl font-bold text-center">{task.title}</h3>
               </div>
-              <p className="text-gray-400 mb-1">
-                Date: <span className="font-medium">{task.date}</span>
+              <p className="text-gray-300 mb-2">
+                <strong>Date:</strong> {task.date}
               </p>
-              <p className="text-gray-400">
-                Points:{" "}
-                <span className="font-medium text-primary">{task.points}</span>
+              <p className="text-gray-300">
+                <strong>Points:</strong>{" "}
+                <span className="text-blue-400">{task.points}</span>
               </p>
             </div>
           ))}
         </div>
         <button
-          className="btn btn-sm md:btn-lg bg-blue-500 text-white mt-12 px-8 py-1 text-sm sm:text-lg font-semibold rounded-full hover:bg-primary-focus hover:bg-green-100 hover:text-black transition duration-300"
+          className="btn btn-primary btn-md mt-8"
           onClick={() => navigate("/tasks")}
         >
           View All Tasks
@@ -178,7 +171,7 @@ const Landing = () => {
       </section>
 
       {/* Call to Action Section */}
-      <section className="bg-base-200 text-white text-center py-16">
+      <section className="bg-gray-800 text-white text-center py-16">
         <h2 className="text-3xl font-bold mb-4">
           Join our community of dedicated volunteers!
         </h2>
@@ -187,7 +180,7 @@ const Landing = () => {
           counts!
         </p>
         <button
-          className="btn btn-accent btn-sm md:btn-lg"
+          className="btn btn-primary btn-md"
           onClick={() => navigate("/register")}
         >
           Become a Volunteer

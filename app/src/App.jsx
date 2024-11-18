@@ -11,7 +11,8 @@ import {
   Tasks,
   UserDashbaord,
   VolunteerManagementPage,
-  AdminDashboard
+  AdminDashboard,
+  Profile
 } from "./pages";
 import About from "./pages/About";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -31,13 +32,14 @@ const router = createBrowserRouter([
       { path: "tasks", element: <Tasks /> },
       { path: "events", element: <Events /> },
       { path: "userDashboard", element: <UserDashbaord /> }, // Corrected naming here
+      { path: "/profile", element: <Profile /> },
       {
         path: "adminDashboard",
         element: <AdminDashboard />, // Corrected naming here
         children: [
-          { index:true, element: <VolunteerManagementPage /> },
+          { index: true, element: <VolunteerManagementPage /> },
           { path: "task-management", element: <TaskManagementPage /> },
-          { path: "event-management", element: <EventManagementPage /> },
+          { path: "event-management", element: <EventManagementPage /> }
         ]
       },
       { path: "clockInOut", element: <ClockInOut /> }

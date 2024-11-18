@@ -13,6 +13,7 @@ import AdminDashboard from './AdminDasboard';
 import TaskManagementPage from './TaskManagementPage';
 import EventManagementPage from './EventManagementPage';
 import VolunteerManagementPage from './VolunteerManagementPage';
+import Profile from './Profile';
 
 export {
   HomeLayout,
@@ -29,5 +30,6 @@ export {
   AdminDashboard,
   TaskManagementPage,
   EventManagementPage,
-  VolunteerManagementPage
+  VolunteerManagementPage,
+  Profile
 };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaClock, FaStar, FaUser, FaSearch } from "react-icons/fa";
 import { volunteers } from "../personsData";
+import { Link } from "react-router-dom";
 
 const VolunteerManagementPage = () => {
   const [minPoints, setMinPoints] = useState("");
@@ -117,9 +118,9 @@ const VolunteerManagementPage = () => {
                         <p>Points: {volunteer.points}</p>
                       </div>
 
-                      <button className="mt-4 p-2 bg-blue-500 rounded text-white flex items-center">
+                      <Link className="mt-4 p-2 bg-blue-500 rounded text-white flex items-center" to="/profile">
                         <FaUser className="mr-1" /> View Profile
-                      </button>
+                      </Link>
                     </div>
                   ) : (
                     <div className="invisible">Placeholder</div>

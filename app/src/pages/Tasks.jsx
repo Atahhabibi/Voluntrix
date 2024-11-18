@@ -241,41 +241,56 @@ const TasksPage = () => {
 
         {/* Task Cards for Selected Date */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4 text-white flex items-center gap-2">
-            <FaCalendarAlt /> Tasks for {filter.date || "Select a date"}
+          <h2 className="text-2xl font-semibold mb-4 text-gray-200 flex items-center gap-2">
+            <FaCalendarAlt className="text-yellow-400" /> Tasks for{" "}
+            {filter.date || "Select a date"}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredTasks.map((task) => (
               <div
                 key={task.id}
-                className="card bg-base-300 shadow-lg p-6 border border-base-100 transition transform  hover:shadow-2xl"
+                className="card bg-slate-800 shadow-md p-6 border border-gray-600 rounded-lg transition transform hover:shadow-xl hover:scale-105"
+                style={{ maxHeight: "380px", minHeight: "320px" }} // Fixed max height and consistent min height
               >
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <FaTasks /> {task.name}
+                {/* Card Title */}
+                <h3 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2 truncate">
+                  <FaTasks className="text-blue-400" /> {task.name}
                 </h3>
-                <div className="text-gray-300 space-y-2">
+
+                {/* Card Content */}
+                <div className="text-gray-300 space-y-3">
                   <p className="flex items-center gap-2">
                     <FaCalendarAlt className="text-yellow-400" />
-                    <span>Date: {task.date}</span>
+                    <span className="font-medium truncate">
+                      Date: {task.date}
+                    </span>
                   </p>
                   <p className="flex items-center gap-2">
                     <FaClock className="text-blue-400" />
-                    <span>Time: {task.time}</span>
+                    <span className="font-medium truncate">
+                      Time: {task.time}
+                    </span>
                   </p>
                   <p className="flex items-center gap-2">
                     <FaUserFriends className="text-green-400" />
-                    <span>Volunteers Needed: {task.volunteersNeeded}</span>
+                    <span className="font-medium truncate">
+                      Volunteers Needed: {task.volunteersNeeded}
+                    </span>
                   </p>
                   <p className="flex items-center gap-2">
                     <FaCheck className="text-purple-400" />
-                    <span>Points: {task.points}</span>
+                    <span className="font-medium text-purple-300 truncate">
+                      Points: {task.points}
+                    </span>
                   </p>
                 </div>
+
+                {/* Sign Up Button */}
                 <button
-                  className="mt-6 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center gap-2"
+                  className="mt-6 w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-300 flex items-center justify-center gap-2"
                   onClick={() => alert(`Signed up for ${task.name}`)}
                 >
-                  <FaCheck /> Sign Up
+                  <FaCheck className="text-white" /> Sign Up
                 </button>
               </div>
             ))}

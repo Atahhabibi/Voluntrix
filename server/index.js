@@ -7,6 +7,8 @@ const bcrypt = require("bcryptjs");
 const generateToken = require("./util/createJsonWebToken");
 const authMiddleware = require("./middleware/authMiddleware");
 const Task = require("./monogdb/modals/TaskSchema");
+const validateEvent = require("./middleware/validateEvent");
+const Event = require("./monogdb/modals/EventSchema");
 
 require("dotenv").config(); // Load environment variables from .env
 
@@ -108,8 +110,8 @@ app.post("/api/v1/tasks", async (req, res) => {
       name,
       date,
       time,
-      volunteers:Number(volunteers),
-      points:Number(points)
+      volunteers: Number(volunteers),
+      points: Number(points)
     });
 
     const savedTask = await task.save();
@@ -127,26 +129,45 @@ app.post("/api/v1/tasks", async (req, res) => {
 });
 
 app.get("/api/v1/tasks", async (req, res) => {
-
   try {
-    const tasks=await Task.find(); 
-    res.status(200).json({success:true,message:"Tasks fetched succesfully",tasks})
-
-    
-  } catch (error) {
-
-    console.log("Error in fetching tasks");
+    const tasks = await Task.find();
     res
-      .status(500)
-      .json({
-        success: false,
-        error: "Internal server error. Unable to fetch tasks."
-      });
-    
+      .status(200)
+      .json({ success: true, message: "Tasks fetched succesfully", tasks });
+  } catch (error) {
+    console.log("Error in fetching tasks");
+    res.status(500).json({
+      success: false,
+      error: "Internal server error. Unable to fetch tasks."
+    });
   }
 });
 
+app.post("/api/v1/events", validateEvent, async (req, res) => {
+  try {
+    const { name, type, location, time, date, description } = req.body;
 
+    const event = new Event({
+      name,
+      type,
+      location,
+      time,
+      description,
+      date
+    });
+
+    const savedEvent = event.save();
+    res.status(200).json({ success: true, event: savedEvent });
+  } catch (error) {
+    res.status(200).json({ success: false });
+  }
+});
+
+app.get("/api/v1/events", async (req, res) => {
+  const events = await Event.find();
+
+  res.status(200).json({ success: true, events });
+});
 
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");

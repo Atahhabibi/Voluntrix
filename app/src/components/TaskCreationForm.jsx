@@ -1,40 +1,46 @@
-import React from "react";
-import { Form, redirect } from "react-router-dom";
+import React, { useRef ,useEffect } from "react";
+import { Form, redirect, useActionData} from "react-router-dom";
 import { customFetch } from "../util/customFetch";
 import { toast } from "react-toastify";
 
 export const action = async ({ request }) => {
-
   try {
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
-    console.log("Form data from action:", data);
 
     const response = await customFetch.post("/tasks", data);
-    console.log("Server response:", response);
 
-    // Show success notification
-    toast.success("Task created successfully!");
-    return redirect("/adminDashboard/task-management"); 
+    console.log(response);
 
+    return { success: true, data: response };
   } catch (error) {
-    // Handle and log the error
     const errorMessage =
       error?.response?.data?.message || "An error occurred. Please try again.";
     console.error("Error while creating task:", error);
 
-    // Show error notification
-    toast.error(errorMessage);
-
-    return null; // Return null to indicate failure (no redirection)
+    return { success: false, error: errorMessage };
   }
-
 };
 
 const TaskCreationForm = () => {
+  const actionData = useActionData();
+
+  const formRef = useRef();
+
+  useEffect(() => {
+    if (actionData?.success) {
+      formRef.current.reset();
+      toast.success("Created task successfully");
+    } else if (actionData?.error) {
+       formRef.current.reset();
+      toast.error(actionData?.error);
+    }
+  }, [actionData]);
+
   return (
     <Form
       method="post"
+      ref={formRef}
       className="card bg-gray-800 p-8 shadow-md border border-gray-700 mb-[2rem]"
     >
       <h2 className="text-2xl text-white font-semibold mb-4">Create Task</h2>

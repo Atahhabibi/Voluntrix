@@ -23,6 +23,8 @@ import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/PrivateRoute"; // Import PrivateRoute
 import { action as TaskCreationAction } from "./components/TaskCreationForm";
 import { loader as taskLoader } from "./pages/TaskManagementPage";
+import { action as EventCreatinAction } from "./components/EventCreationForm";
+import { loader  as eventLoader} from "./pages/EventManagementPage";
 
 const router = createBrowserRouter([
   {
@@ -59,9 +61,14 @@ const router = createBrowserRouter([
             path: "task-management",
             element: <TaskManagementPage />,
             action: TaskCreationAction,
-            loader:taskLoader
+            loader: taskLoader
           },
-          { path: "event-management", element: <EventManagementPage /> }
+          {
+            path: "event-management",
+            element: <EventManagementPage />,
+            action: EventCreatinAction,
+            loader: eventLoader
+          }
         ]
       },
       { path: "clockInOut", element: <ClockInOut /> }

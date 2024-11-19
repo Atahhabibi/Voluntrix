@@ -1,9 +1,43 @@
 import React, { useState } from "react";
-import { FaEdit, FaTrashAlt, FaCalendarAlt, FaClock, FaSearch, FaTag } from "react-icons/fa";
-import { events } from "../eventData";
+import {
+  FaEdit,
+  FaTrashAlt,
+  FaCalendarAlt,
+  FaClock,
+  FaSearch,
+  FaTag,
+  FaMapMarkerAlt
+} from "react-icons/fa";
+
 import EventCreationForm from "../components/EventCreationForm";
+import { customFetch } from "../util/customFetch";
+import { useQuery } from "@tanstack/react-query";
+import { eventsData as events } from "./../eventData";
+import { useLoaderData } from "react-router-dom";
+
+export const loader = async () => {
+  try {
+    const response = await customFetch.get("/events");
+    return response.data.events;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
 
 const EventManagementPage = () => {
+
+    const [tasks, setTasks] = useState(useLoaderData());
+
+    const handleTaskCreated = (newTask) => {
+      setTasks((prevTasks) => [...prevTasks, newTask]); // Update state immediately
+    };
+
+
+  const events = useLoaderData();
+
+
+
   const [nameFilter, setNameFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
@@ -15,8 +49,12 @@ const EventManagementPage = () => {
   // Filtered events based on the selected filters
   const filteredEvents = events.filter((event) => {
     return (
-      (nameFilter ? event.name.toLowerCase().includes(nameFilter.toLowerCase()) : true) &&
-      (typeFilter ? event.type.toLowerCase().includes(typeFilter.toLowerCase()) : true) &&
+      (nameFilter
+        ? event.name.toLowerCase().includes(nameFilter.toLowerCase())
+        : true) &&
+      (typeFilter
+        ? event.type.toLowerCase().includes(typeFilter.toLowerCase())
+        : true) &&
       (dateFilter ? event.date === dateFilter : true)
     );
   });
@@ -138,17 +176,21 @@ const EventManagementPage = () => {
                         <FaClock />
                         <p>Time: {event.time}</p>
                       </div>
+                      <div className="text-gray-400 flex items-center space-x-2">
+                        <FaMapMarkerAlt />
+                        <p>Location: {event.location}</p>
+                      </div>
 
-                      <div className="flex justify-end space-x-3 mt-4">
+                      <div className="flex justify-end space-x-3 ">
                         <button
                           onClick={() => alert("Edit functionality here")}
-                          className="p-2 bg-yellow-500 rounded text-white flex items-center"
+                          className="p-2 bg-yellow-500 rounded text-white flex items-center mt-4"
                         >
                           <FaEdit className="mr-1" /> Edit
                         </button>
                         <button
                           onClick={() => handleDeleteClick(event)}
-                          className="p-2 bg-red-600 rounded text-white flex items-center"
+                          className="p-2 bg-red-600 rounded text-white flex items-center mt-4"
                         >
                           <FaTrashAlt className="mr-1" /> Delete
                         </button>

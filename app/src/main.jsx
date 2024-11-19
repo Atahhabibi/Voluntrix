@@ -1,7 +1,9 @@
 import { createRoot } from "react-dom/client";
+import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import App from "./App.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import store from "../store.js";
 
 import {
   Chart as ChartJS,
@@ -14,7 +16,7 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
-
+import { Provider } from "react-redux";
 
 ChartJS.register(
   CategoryScale,
@@ -30,7 +32,9 @@ ChartJS.register(
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
-  <QueryClientProvider client={queryClient}>
-    <App />
-  </QueryClientProvider>
+  <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  </Provider>
 );

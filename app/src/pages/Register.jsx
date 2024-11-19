@@ -1,13 +1,25 @@
 import { FormInput, SubmitBtn } from "../components";
 import { Form, Link, redirect, useNavigate } from "react-router-dom";
+import { customFetch } from "../util/customFetch";
+import { toast } from "react-toastify";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
-  console.log(data);
+
+  try {
+    await customFetch.post("/register", data);
+    toast.success("Account Created Succesfully");
+    return redirect("/login");
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "please double check your credentials";
+    toast.error(errorMessage);
+    return null;
+  }
 };
 
-const Login = () => {
+const Register = () => {
   return (
     <section className="h-screen grid place-items-center">
       <Form
@@ -44,7 +56,7 @@ const Login = () => {
             to="/login"
             className="ml-2 link link-hover link-primary capitalize"
           >
-           login
+            login
           </Link>
         </p>
       </Form>
@@ -52,4 +64,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

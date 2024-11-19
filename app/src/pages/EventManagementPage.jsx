@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaEdit, FaTrashAlt, FaCalendarAlt, FaClock, FaSearch, FaTag } from "react-icons/fa";
 import { events } from "../eventData";
+import EventCreationForm from "../components/EventCreationForm";
 
 const EventManagementPage = () => {
   const [nameFilter, setNameFilter] = useState("");
@@ -59,9 +60,13 @@ const EventManagementPage = () => {
       <div className="w-full max-w-screen-xl mx-auto">
         <h2 className="text-3xl font-bold text-white mb-6">Event Management</h2>
 
+        <EventCreationForm />
+
         {/* Filter Section */}
         <div className="mb-6 p-4 rounded-lg bg-gray-800 shadow-lg">
-          <h3 className="text-xl font-semibold text-white mb-4">Filter Events</h3>
+          <h3 className="text-xl font-semibold text-white mb-4">
+            Filter Events
+          </h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
               <label className="block text-white mb-1">Search by Name</label>
@@ -118,7 +123,9 @@ const EventManagementPage = () => {
                 >
                   {event ? (
                     <div className="flex flex-col space-y-2">
-                      <h3 className="text-2xl font-semibold text-white mb-2">{event.name}</h3>
+                      <h3 className="text-2xl font-semibold text-white mb-2">
+                        {event.name}
+                      </h3>
                       <div className="text-gray-400 flex items-center space-x-2">
                         <FaTag />
                         <p>Type: {event.type}</p>
@@ -170,7 +177,9 @@ const EventManagementPage = () => {
                 key={index + 1}
                 onClick={() => handlePageChange(index + 1)}
                 className={`px-4 py-2 rounded ${
-                  currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-700 text-gray-400"
+                  currentPage === index + 1
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-700 text-gray-400"
                 }`}
               >
                 {index + 1}

@@ -1,8 +1,33 @@
 import React, { useState } from "react";
-import { FaEdit, FaTrashAlt, FaCalendarAlt, FaClock, FaUsers } from "react-icons/fa";
-import { tasks } from "../taskData";
+import {
+  FaEdit,
+  FaTrashAlt,
+  FaCalendarAlt,
+  FaClock,
+  FaUsers,
+  FaStar
+} from "react-icons/fa";
+
+import TaskCreationForm from "../components/TaskCreationForm";
+import { customFetch } from "../util/customFetch";
+import { useLoaderData } from "react-router-dom";
+;
+
+export const loader = async () => {
+  try {
+    const response = await customFetch.get("/tasks");
+    return response.data.tasks;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
 
 const TaskManagementPage = () => {
+
+  const tasks=useLoaderData(); 
+
+
   const [filters, setFilters] = useState({
     type: "",
     date: "",
@@ -66,9 +91,13 @@ const TaskManagementPage = () => {
       <div className="w-full max-w-screen-xl mx-auto">
         <h2 className="text-3xl font-bold text-white mb-6">Task Management</h2>
 
+        <TaskCreationForm />
+
         {/* Filter Form */}
         <div className="mb-6 p-4 rounded-lg bg-gray-800 shadow-lg">
-          <h3 className="text-xl font-semibold text-white mb-4">Filter Tasks</h3>
+          <h3 className="text-xl font-semibold text-white mb-4">
+            Filter Tasks
+          </h3>
           <form className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
               <label className="block text-white mb-1">Type</label>
@@ -105,7 +134,9 @@ const TaskManagementPage = () => {
         </div>
 
         {/* Tasks Container with Pagination at Bottom */}
-        <div className="flex flex-col justify-between h-[750px]"> {/* Reduced height */}
+        <div className="flex flex-col justify-between h-[750px]">
+          {" "}
+          {/* Reduced height */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-6">
             {Array.from({ length: itemsPerPage }, (_, index) => {
               const task = currentTasks[index];
@@ -118,7 +149,9 @@ const TaskManagementPage = () => {
                 >
                   {task ? (
                     <div className="flex flex-col space-y-3">
-                      <h3 className="text-2xl font-semibold text-white mb-2">{task.name}</h3>
+                      <h3 className="text-2xl font-semibold text-white mb-2">
+                        {task.name}
+                      </h3>
                       <div className="text-gray-400 flex items-center space-x-2">
                         <FaCalendarAlt />
                         <p>Date: {task.date}</p>
@@ -129,10 +162,12 @@ const TaskManagementPage = () => {
                       </div>
                       <div className="text-gray-400 flex items-center space-x-2">
                         <FaUsers />
-                        <p>Volunteers Needed: {task.volunteersNeeded}</p>
+                        <p>Volunteers Needed: {task.volunteers}</p>
                       </div>
-                      <p className="text-gray-400">Points: {task.points}</p>
-
+                      <div className="text-gray-400 flex items-center space-x-2">
+                        <FaStar className="text-yellow-500" />
+                        <p>Points: {task.points}</p>
+                      </div>
                       <div className="flex justify-end space-x-3 mt-4">
                         <button
                           onClick={() => alert("Edit functionality here")}
@@ -155,7 +190,6 @@ const TaskManagementPage = () => {
               );
             })}
           </div>
-
           {/* Pagination Controls */}
           <div className="flex justify-center items-center space-x-4 mt-6">
             <button
@@ -171,7 +205,9 @@ const TaskManagementPage = () => {
                 key={index + 1}
                 onClick={() => handlePageChange(index + 1)}
                 className={`px-4 py-2 rounded ${
-                  currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-700 text-gray-400"
+                  currentPage === index + 1
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-700 text-gray-400"
                 }`}
               >
                 {index + 1}

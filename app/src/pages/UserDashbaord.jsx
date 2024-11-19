@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { PointsBreakdownByTask, TaskCompletionHistory } from "../charts";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import userImg from '../images/atah.jpg';
+import userImg from "../images/atah.jpg";
+import { useDispatch } from "react-redux";
 import {
   FaMedal,
   FaTasks,
@@ -11,41 +12,95 @@ import {
   FaUser
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { customFetch } from "../util/customFetch";
+import { useQuery } from "@tanstack/react-query";
+import { setUserData } from "../features/user/userSlice";
+
+const fetchUserData = async () => {
+  const token = localStorage.getItem("authToken");
+
+  if (!token) {
+    throw new Error("No Token found, Please log in");
+  }
+
+  const response = await customFetch("/user", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return response.data.user; // Make sure the response contains user data
+};
 
 const UserDashboard = () => {
+  const dispatch = useDispatch();
+  const [profileImage, setProfileImage] = useState(null);
+  const [isHovered, setIsHovered] = useState(false); // Track hover effect
+  
+  const { isLoading, data, error } = useQuery({
+    queryKey: ["user"],
+    queryFn: fetchUserData
+  });
+
+  useEffect(() => {
+    if (data) {
+      dispatch(setUserData(data)); // Dispatch only when data is available
+    }
+  }, [data, dispatch]);
+
+  const userName = data?.username || "User"; // Dynamically set the username from the fetched data
+  const userProfileImage = profileImage || data?.profileImage || userImg; // Use dynamic profile image
+
+
   // Sample points data for history (replace with dynamic data if available)
-  const pointsHistory = [
+  const pointsHistory = data?.pointsHistory || [
     { task: "Friday Prayer Setup", date: "March 5", points: 10 },
     { task: "Eid Parking Management", date: "March 10", points: 20 },
     { task: "Community Clean-Up", date: "March 15", points: 15 }
   ];
 
-  // Calculate the total points earned from the history
+  // Calculate the total points earned from the history dynamically
   const totalPoints = pointsHistory.reduce(
     (sum, entry) => sum + entry.points,
     0
   );
 
-  // Show reminder notification when the component loads
-  useEffect(() => {
-    toast.info(
-      "Reminder: You are scheduled for Friday Prayer Setup tomorrow at 3 PM.",
-      {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        style: { backgroundColor: "#cbe633", color: "#000" }
-      }
-    );
-  }, []);
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("profileImage", file);
 
-  // Placeholder for the profile image URL
-  const userProfileImage = userImg; // Replace with actual user profile picture URL
-  const userName = "Atah habibi"; // Replace with actual user name
+
+      const token = localStorage.getItem("authToken");
+      const response = await customFetch.post("/upload-profile-pic",formData);
+
+      console.log(response);
+
+      if (response.success) {
+        setProfileImage(URL.createObjectURL(file)); // Update local state with the uploaded image
+        toast.success("Profile picture updated successfully!");
+      } else {
+        toast.error("Failed to upload profile picture.");
+      }
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="spinner">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen text-red-500">
+        <div>Error: {error.message}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
@@ -56,11 +111,38 @@ const UserDashboard = () => {
         {/* Welcome Message with Profile Picture */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700">
           <div className="card-body flex items-center flex-col">
-            <img
-              src={userProfileImage}
-              alt={`${userName}'s profile`}
-              className="w-24 h-24 rounded-full mb-4 object-cover shadow-lg"
-            />
+            {/* Make the image clickable and track hover state */}
+            <div
+              className="relative"
+              onMouseEnter={() => setIsHovered(true)} // Show hover message on mouse enter
+              onMouseLeave={() => setIsHovered(false)} // Hide hover message on mouse leave
+            >
+              <img
+                src={userProfileImage}
+                alt={`${userName}'s profile`}
+                className="w-24 h-24 rounded-full mb-4 object-cover shadow-lg cursor-pointer"
+                onClick={() => document.getElementById("image-upload").click()}
+              />
+              {/* Hover message */}
+              {isHovered && (
+                <div
+                  className="absolute inset-0 bg-black bg-opacity-50 text-white flex items-center justify-center rounded-full cursor-pointer"
+                  onClick={() =>
+                    document.getElementById("image-upload").click()
+                  }
+                >
+                  Upload New
+                </div>
+              )}
+              {/* Hidden file input */}
+              <input
+                id="image-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+            </div>
             <h2 className="card-title text-2xl font-bold text-white mb-1">
               Welcome back, {userName}!
             </h2>
@@ -127,7 +209,9 @@ const UserDashboard = () => {
                   <p className="text-gray-400">Date: Friday, 3 PM</p>
                   <p className="text-gray-400">Points: 10</p>
                 </div>
-                <Link to="/clockInOut" className="btn btn-success">Clock In</Link>
+                <Link to="/clockInOut" className="btn btn-success">
+                  Clock In
+                </Link>
               </div>
             </div>
           </div>

@@ -7,11 +7,7 @@ export const action = async ({ request }) => {
   try {
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
-
     const response = await customFetch.post("/tasks", data);
-
-    console.log(response);
-
     return { success: true, data: response };
   } catch (error) {
     const errorMessage =
@@ -27,15 +23,16 @@ const TaskCreationForm = () => {
 
   const formRef = useRef();
 
-  useEffect(() => {
-    if (actionData?.success) {
-      formRef.current.reset();
-      toast.success("Created task successfully");
-    } else if (actionData?.error) {
-       formRef.current.reset();
-      toast.error(actionData?.error);
-    }
-  }, [actionData]);
+useEffect(() => {
+  if (actionData?.success) {
+    formRef.current.reset();
+    toast.success("Created task successfully");
+  } else if (actionData?.error) {
+    formRef.current.reset();
+    toast.error(actionData?.error);
+  }
+}, [actionData]);
+
 
   return (
     <Form

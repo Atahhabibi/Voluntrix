@@ -169,6 +169,22 @@ app.get("/api/v1/events", async (req, res) => {
   res.status(200).json({ success: true, events });
 });
 
+app.get("/api/v1/events/:id", async (req, res) => {
+  try {
+    const event = await Event.findOne({ _id: req.params.id });
+
+    if (!event) {
+      res.status(404).json({ success: false, message: "Event not found" });
+    }
+
+    res.status(200).json({ success: true, event });
+  } catch (error) {
+    // Handle potential errors (e.g., invalid ID format)
+    console.error("Error fetching event:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");
 });

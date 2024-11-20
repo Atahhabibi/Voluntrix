@@ -14,6 +14,7 @@ import TaskManagementPage from './TaskManagementPage';
 import EventManagementPage from './EventManagementPage';
 import VolunteerManagementPage from './VolunteerManagementPage';
 import Profile from './Profile';
+import EventDetailsPage from "./EventDetailsPage";
 
 export {
   HomeLayout,
@@ -31,5 +32,6 @@ export {
   TaskManagementPage,
   EventManagementPage,
   VolunteerManagementPage,
-  Profile
+  Profile,
+  EventDetailsPage
 };

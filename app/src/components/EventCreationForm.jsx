@@ -1,48 +1,44 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { toast } from "react-toastify";
-import { Form, useActionData } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { customFetch } from "../util/customFetch";
 
-export const action = async ({ request }) => {
-  try {
-    const formData = await request.formData();
+const EventCreationForm = () => {
+  const formRef = useRef();
+  const queryClient = useQueryClient();
+
+  // React Query mutation to handle event creation
+  const mutation = useMutation({
+    mutationFn: async (newEvent) => {
+      await customFetch.post("/events", newEvent);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["events"]); // Refetch events on success
+      formRef.current.reset(); // Reset form
+      toast.success("Created event successfully!");
+    },
+    onError: (error) => {
+      const errorMessage =
+        error?.response?.data?.message ||
+        "An error occurred. Please try again.";
+      toast.error(errorMessage);
+    }
+  });
+
+  // Form submission handler
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(formRef.current);
     const data = Object.fromEntries(formData);
 
-    const response = await customFetch.post("/events", data);
-
-    console.log(response);
-
-    return { success: true, data: response };
-  } catch (error) {
-    const errorMessage =
-      error?.response?.data?.message || "An error occurred. Please try again.";
-    console.error("Error while creating events:", error);
-
-    return { success: false, error: errorMessage };
-  }
-};
-
-const EventCreationForm = () => {
-  
-
-  const actionData = useActionData();
-
-  const formRef = useRef();
-
-  useEffect(() => {
-    if (actionData?.success) {
-      formRef.current.reset();
-      toast.success("Created event successfully");
-    } else if (actionData?.error) {
-      formRef.current.reset();
-      toast.error(actionData?.error);
-    }
-  }, [actionData]);
+    // Trigger the mutation
+    mutation.mutate(data);
+  };
 
   return (
-    <Form
-      method="post"
+    <form
       ref={formRef} // Attach ref to the form
+      onSubmit={handleSubmit}
       className="card bg-gray-800 p-8 shadow-md border border-gray-700 mb-[2rem]"
     >
       <h2 className="text-2xl text-white font-semibold mb-4">Create Event</h2>
@@ -99,10 +95,14 @@ const EventCreationForm = () => {
           required
         />
       </div>
-      <button type="submit" className="btn btn-primary w-full">
-        Create Event
+      <button
+        type="submit"
+        className="btn btn-primary w-full"
+        disabled={mutation.isLoading}
+      >
+        {mutation.isLoading ? "Creating..." : "Create Event"}
       </button>
-    </Form>
+    </form>
   );
 };
 

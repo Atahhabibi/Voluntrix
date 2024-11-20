@@ -12,6 +12,7 @@ export const action = async ({ request }) => {
     // Store token and user data in localStorage
     localStorage.setItem("authToken", response.data.token); // Store token
     localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user data (e.g., role, name)
+    toast.success("login succesfully");
 
     return redirect("/userDashboard");
   } catch (error) {
@@ -21,7 +22,6 @@ export const action = async ({ request }) => {
     return null;
   }
 };
-
 
 const Login = () => {
   return (

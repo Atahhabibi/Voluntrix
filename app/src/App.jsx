@@ -12,19 +12,23 @@ import {
   UserDashbaord,
   VolunteerManagementPage,
   AdminDashboard,
-  Profile
+  Profile,
+  EventDetailsPage
 } from "./pages";
 import About from "./pages/About";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { action as loginAction } from "./pages/Login";
 import { action as registerAction } from "./pages/Register";
 import { ClockInOut } from "./components";
+import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/PrivateRoute"; // Import PrivateRoute
 import { action as TaskCreationAction } from "./components/TaskCreationForm";
 import { loader as taskLoader } from "./pages/TaskManagementPage";
-import { action as EventCreatinAction } from "./components/EventCreationForm";
-import { loader  as eventLoader} from "./pages/EventManagementPage";
+// import { loader  as eventLoader} from "./pages/EventManagementPage";
+import { loader as mainEventLoader } from "./pages/Events";
+import { loader as EventDetailLoader } from "./pages/EventDetailsPage";
+import { action as EventCreationAction } from "./components/EventCreationForm";
 
 const router = createBrowserRouter([
   {
@@ -36,7 +40,8 @@ const router = createBrowserRouter([
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
       { path: "tasks", element: <Tasks /> },
-      { path: "events", element: <Events /> },
+      { path: "events", element: <Events />, loader:mainEventLoader},
+      {path:"events/:id",element:<EventDetailsPage/>,loader:EventDetailLoader},
       {
         path: "userDashboard",
         element: (
@@ -66,8 +71,8 @@ const router = createBrowserRouter([
           {
             path: "event-management",
             element: <EventManagementPage />,
-            action: EventCreatinAction,
-            loader: eventLoader
+            // loader: eventLoader,
+            action:EventCreationAction
           }
         ]
       },

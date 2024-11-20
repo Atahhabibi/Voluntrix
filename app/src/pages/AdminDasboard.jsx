@@ -9,6 +9,10 @@ import {
 } from "react-icons/fa";
 import { Link, Outlet } from "react-router-dom";
 import imamImg from "../images/imam.png";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS
+
+;
 
 const AdminDashboard = () => {
   const adminName = "Sheikh Hamzah Khalid";

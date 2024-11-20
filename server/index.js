@@ -185,6 +185,58 @@ app.get("/api/v1/events/:id", async (req, res) => {
   }
 });
 
+app.delete("/api/v1/events/:id", async (req, res) => {
+  try {
+    const event = await Event.deleteOne({ _id: req.params.id });
+
+    if (event.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Event not found" });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Event deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+app.put("/api/v1/events/:id", async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body; // The updated event data
+
+  try {
+    // Find the event by ID and update it with the provided data
+    const updatedEvent = await Event.findByIdAndUpdate(id, updatedData, {
+      new: true, // Return the updated document
+      runValidators: true // Ensure validation rules are applied
+    });
+
+    // If no event is found with the given ID, return a 404
+    if (!updatedEvent) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Event updated successfully",
+      event: updatedEvent
+    });
+  } catch (error) {
+    console.error("Error updating event:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error"
+    });
+  }
+});
+
+
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");
 });

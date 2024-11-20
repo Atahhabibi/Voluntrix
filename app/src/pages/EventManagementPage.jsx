@@ -6,11 +6,12 @@ import {
   FaClock,
   FaSearch,
   FaTag,
-  FaMapMarkerAlt
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import EventCreationForm from "../components/EventCreationForm";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { customFetch } from "../util/customFetch";
+import { toast } from "react-toastify";
 
 const EventManagementPage = () => {
   const [nameFilter, setNameFilter] = useState("");
@@ -18,6 +19,7 @@ const EventManagementPage = () => {
   const [dateFilter, setDateFilter] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
+  const [eventToEdit, setEventToEdit] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
@@ -29,7 +31,7 @@ const EventManagementPage = () => {
     queryFn: async () => {
       const response = await customFetch.get("/events");
       return response.data.events;
-    }
+    },
   });
 
   // Mutation for creating an event
@@ -39,7 +41,7 @@ const EventManagementPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["events"]); // Refetch events
-    }
+    },
   });
 
   // Filter events based on the selected filters
@@ -69,20 +71,31 @@ const EventManagementPage = () => {
     setShowModal(true);
   };
 
+  const handleEditClick=(event)=>{
+    setEventToEdit(event); 
+  }
+
+
+
+
   const confirmDelete = async () => {
-    try {
-      await customFetch.delete(`/events/${eventToDelete.id}`);
-      queryClient.invalidateQueries(["events"]); // Refetch events
-      setShowModal(false);
-      setEventToDelete(null);
-    } catch (error) {
-      console.error("Error deleting event:", error);
-    }
+   try {
+
+    await customFetch.delete(`/events/${eventToDelete._id}`); 
+    queryClient.invalidateQueries(["events"]); 
+    toast.success("Event deleted successfully")
+    setShowModal(false); 
+    setEventToDelete(null); 
+   } catch (error) {
+    toast.error("There is some error in deleting event");
+    console.error("Error in deleting event: " ,error);
+   }
   };
 
   if (isLoading) {
     return <div className="text-center text-white">Loading events...</div>;
   }
+
 
   return (
     <div className="p-6 bg-gray-900 text-gray-200 min-h-screen">
@@ -92,6 +105,7 @@ const EventManagementPage = () => {
         {/* Event Creation Form */}
         <EventCreationForm
           onSubmit={(newEvent) => createEventMutation.mutate(newEvent)}
+          eventToEdit={eventToEdit}
         />
 
         {/* Filter Section */}
@@ -144,6 +158,7 @@ const EventManagementPage = () => {
         {/* Events Display */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-6">
           {currentEvents.map((event) => (
+          
             <div
               key={event.id}
               className="p-4 rounded-lg shadow-lg bg-gray-800"
@@ -169,7 +184,7 @@ const EventManagementPage = () => {
               </div>
               <div className="flex justify-end space-x-3 mt-4">
                 <button
-                  onClick={() => alert("Edit functionality here")}
+                  onClick={() => handleEditClick(event)}
                   className="p-2 bg-yellow-500 rounded text-white flex items-center"
                 >
                   <FaEdit className="mr-1" /> Edit

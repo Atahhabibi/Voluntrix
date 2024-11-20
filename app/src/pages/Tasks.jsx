@@ -10,111 +10,30 @@ import {
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-
-// Sample tasks data
-const tasks = [
-  {
-    id: 1,
-    name: "Parking Assistance",
-    date: "2024-11-05",
-    time: "10:00 AM",
-    volunteersNeeded: 5,
-    points: 10,
-    type: "crowd control"
-  },
-  {
-    id: 2,
-    name: "Prayer Hall Setup",
-    date: "2024-11-07",
-    time: "9:00 AM",
-    volunteersNeeded: 3,
-    points: 15,
-    type: "setup"
-  },
-  {
-    id: 3,
-    name: "Community Clean-Up",
-    date: "2024-11-09",
-    time: "2:00 PM",
-    volunteersNeeded: 6,
-    points: 12,
-    type: "clean-up"
-  },
-  {
-    id: 4,
-    name: "Eid Decoration Setup",
-    date: "2024-11-11",
-    time: "6:00 PM",
-    volunteersNeeded: 4,
-    points: 18,
-    type: "setup"
-  },
-  {
-    id: 5,
-    name: "Fundraising Event Coordination",
-    date: "2024-11-13",
-    time: "3:00 PM",
-    volunteersNeeded: 8,
-    points: 20,
-    type: "event coordination"
-  },
-  {
-    id: 6,
-    name: "Iftar Meal Preparation",
-    date: "2024-11-15",
-    time: "5:00 PM",
-    volunteersNeeded: 4,
-    points: 15,
-    type: "meal prep"
-  },
-  {
-    id: 7,
-    name: "Islamic Book Fair Setup",
-    date: "2024-11-18",
-    time: "11:00 AM",
-    volunteersNeeded: 7,
-    points: 25,
-    type: "setup"
-  },
-  {
-    id: 8,
-    name: "Car Parking Assistance",
-    date: "2024-11-20",
-    time: "8:00 AM",
-    volunteersNeeded: 6,
-    points: 12,
-    type: "crowd control"
-  },
-  {
-    id: 9,
-    name: "Children's Quran Recitation",
-    date: "2024-11-22",
-    time: "4:00 PM",
-    volunteersNeeded: 5,
-    points: 10,
-    type: "event"
-  },
-  {
-    id: 10,
-    name: "Annual Mosque Cleanup",
-    date: "2024-11-25",
-    time: "10:00 AM",
-    volunteersNeeded: 12,
-    points: 30,
-    type: "clean-up"
-  }
-];
+import { useQuery } from "@tanstack/react-query";
+import { customFetch } from "../util/customFetch";
 
 const TasksPage = () => {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: async () => {
+      const response = await customFetch("/tasks");
+      return response.data;
+    }
+  });
+
+  const tasks = data?.tasks;
+
   const [filter, setFilter] = useState({
     date: "",
     type: "",
     minPoints: 0
   });
-  const [filteredTasks, setFilteredTasks] = useState(tasks);
+  const [filteredTasks, setFilteredTasks] = useState([]);
 
   // Apply filters to tasks and only show tasks for the selected date
   const applyFilters = () => {
+    if (!tasks) return;
     const filtered = tasks.filter((task) => {
       return (
         (!filter.date || task.date === filter.date) &&
@@ -125,11 +44,9 @@ const TasksPage = () => {
     setFilteredTasks(filtered);
   };
 
-
-
   useEffect(() => {
     applyFilters();
-  }, [filter]);
+  }, [filter, tasks]);
 
   const handleDateChange = (date) => {
     const selectedDate = date.toISOString().split("T")[0]; // Format to 'yyyy-mm-dd'
@@ -144,12 +61,24 @@ const TasksPage = () => {
     setFilter({ ...filter, minPoints: Number(e.target.value) });
   };
 
-  const calendarEvents = filteredTasks.map((task) => ({
+  const calendarEvents = (filteredTasks || []).map((task) => ({
     title: task.name,
     date: task.date,
     description: ` ${task.time}`,
     extendedProps: { type: task.type, volunteersNeeded: task.volunteersNeeded }
   }));
+
+  if (isLoading) {
+    return <div>Loading tasks...</div>;
+  }
+
+  if (isError) {
+    return <div>Failed to load tasks. Please try again later.</div>;
+  }
+
+  if (tasks.length < 0) {
+    return <div>no task available</div>;
+  }
 
   return (
     <div className="min-h-screen bg-base-200 text-base-content p-6 md:p-12 flex justify-center">
@@ -240,6 +169,7 @@ const TasksPage = () => {
         </section>
 
         {/* Task Cards for Selected Date */}
+
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 text-gray-200 flex items-center gap-2">
             <FaCalendarAlt className="text-yellow-400" /> Tasks for{" "}
@@ -249,7 +179,7 @@ const TasksPage = () => {
             {filteredTasks.map((task) => (
               <div
                 key={task.id}
-                className="card bg-slate-800 shadow-md p-6 border border-gray-600 rounded-lg transition transform hover:shadow-xl hover:scale-105"
+                className="card bg-base-300 shadow-md p-6 border border-gray-600 rounded-lg transition transform hover:shadow-xl "
                 style={{ maxHeight: "380px", minHeight: "320px" }} // Fixed max height and consistent min height
               >
                 {/* Card Title */}
@@ -287,10 +217,10 @@ const TasksPage = () => {
 
                 {/* Sign Up Button */}
                 <button
-                  className="mt-6 w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-300 flex items-center justify-center gap-2"
+                  className="mt-6 w-full bg-primary  text-black font-semibold py-3 rounded-lg transition duration-300 flex items-center justify-center gap-2 hover:bg-gray-300"
                   onClick={() => alert(`Signed up for ${task.name}`)}
                 >
-                  <FaCheck className="text-white" /> Sign Up
+                  <FaCheck className="text-whjte" /> Sign Up
                 </button>
               </div>
             ))}

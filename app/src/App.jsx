@@ -28,7 +28,6 @@ import { loader as taskLoader } from "./pages/TaskManagementPage";
 // import { loader  as eventLoader} from "./pages/EventManagementPage";
 import { loader as mainEventLoader } from "./pages/Events";
 import { loader as EventDetailLoader } from "./pages/EventDetailsPage";
-import { action as EventCreationAction } from "./components/EventCreationForm";
 
 const router = createBrowserRouter([
   {
@@ -71,8 +70,7 @@ const router = createBrowserRouter([
           {
             path: "event-management",
             element: <EventManagementPage />,
-            // loader: eventLoader,
-            action:EventCreationAction
+           
           }
         ]
       },

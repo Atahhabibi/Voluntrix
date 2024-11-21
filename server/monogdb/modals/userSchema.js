@@ -10,6 +10,17 @@ const userSchema = new mongoose.Schema(
       trim: true // removes any leading/trailing spaces
     },
 
+    hoursWorked:{
+      type:Number,
+      required:true,
+      default:0
+    },
+    points:{
+      type:Number,
+      required:true,
+      default:0
+    },
+
     //Email for authentication (e.g login)
     email: {
       type: String,
@@ -37,6 +48,12 @@ const userSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Task" // Reference to Task model (if you have a Task collection)
+      }
+    ],
+    events: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Event" 
       }
     ],
 

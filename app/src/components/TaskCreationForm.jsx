@@ -1,46 +1,83 @@
-import React, { useRef ,useEffect } from "react";
-import { Form, redirect, useActionData} from "react-router-dom";
+import React, { useRef, useEffect } from "react";
 import { customFetch } from "../util/customFetch";
 import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const action = async ({ request }) => {
-  try {
-    const formData = await request.formData();
-    const data = Object.fromEntries(formData);
-    const response = await customFetch.post("/tasks", data);
-    return { success: true, data: response };
-  } catch (error) {
-    const errorMessage =
-      error?.response?.data?.message || "An error occurred. Please try again.";
-    console.error("Error while creating task:", error);
+const TaskCreationForm = ({ taskToEdit, clearEditTask }) => {
+  const queryClient = useQueryClient();
 
-    return { success: false, error: errorMessage };
-  }
-};
+  const createMutation = useMutation({
+    mutationFn: async (data) => {
+      const response = await customFetch.post("/tasks", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Task created successfully ");
+      queryClient.invalidateQueries(["Tasks"]);
+      
+    },
+    onError: () => {
+      toast.error("There is some error in Creating ");
+    }
+  });
 
-const TaskCreationForm = () => {
-  const actionData = useActionData();
+
+  const updateMutation = useMutation({
+    mutationFn: async (data) => {
+      const response = await customFetch.put(`/tasks/${data.id}`, data);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["Tasks"]);
+      toast.success("Task udpated successfully ");
+      clearEditTask(); 
+    },
+    onError: () => {
+      toast.error("There is some error in Updating ");
+    }
+  });
 
   const formRef = useRef();
 
-useEffect(() => {
-  if (actionData?.success) {
-    formRef.current.reset();
-    toast.success("Created task successfully");
-  } else if (actionData?.error) {
-    formRef.current.reset();
-    toast.error(actionData?.error);
-  }
-}, [actionData]);
+  useEffect(() => {
+    const form = formRef.current;
 
+    if (taskToEdit && form) {
+      form.name.value = taskToEdit.name || "";
+      form.date.value = taskToEdit.date || "";
+      form.time.value = taskToEdit.time || "";
+      form.volunteers.value = taskToEdit.volunteers || 0;
+      form.points.value = taskToEdit.points || 0;
+      form.id.value = taskToEdit._id || ""; // Hidden field for the task ID
+    }
+  }, [taskToEdit]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    let formData = new FormData(form);
+    formData = Object.fromEntries(formData);
+
+    if (taskToEdit) {
+      updateMutation.mutate(formData);
+      formRef.current.reset();
+    } else {
+      createMutation.mutate(formData);
+      formRef.current.reset();
+    }
+  };
 
   return (
-    <Form
-      method="post"
+    <form
+      onSubmit={handleSubmit}
       ref={formRef}
       className="card bg-gray-800 p-8 shadow-md border border-gray-700 mb-[2rem]"
     >
-      <h2 className="text-2xl text-white font-semibold mb-4">Create Task</h2>
+      <h2 className="text-2xl text-white font-semibold mb-4">
+        {taskToEdit ? "Edit Task" : "Create Task"}
+      </h2>
+      <input type="hidden" name="id" />
       <div className="mb-4">
         <label className="text-white">Task Title</label>
         <input
@@ -87,9 +124,15 @@ useEffect(() => {
         />
       </div>
       <button type="submit" className="btn btn-primary w-full">
-        Create Task
+        {createMutation.isLoading
+          ? "Creating..."
+          : updateMutation.isLoading
+          ? "Updating..."
+          : taskToEdit
+          ? "Update Task"
+          : "Create Task"}
       </button>
-    </Form>
+    </form>
   );
 };
 

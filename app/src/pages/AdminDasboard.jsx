@@ -24,11 +24,18 @@ const AdminDashboard = () => {
         {/* Welcome Message with Profile Picture */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700 max-w-[77rem] m-auto">
           <div className="card-body flex items-center flex-col">
-            <img
-              src={adminProfileImage}
-              alt={`${adminName}'s profile`}
-              className="w-24 h-24 rounded-full mb-4 object-cover shadow-lg"
-            />
+            {/* Profile Picture */}
+            <div className="flex flex-col items-center">
+              <img
+                src={imamImg}
+                alt="Profile"
+                className="w-32 h-32 rounded-full mb-4 object-cover shadow-md"
+              />
+              <label className="btn btn-outline btn-primary flex items-center cursor-pointer">
+                Upload New Photo
+                <input type="file" accept="image/*" className="hidden" />
+              </label>
+            </div>
             <h2 className="card-title text-2xl font-bold text-white mb-1">
               Welcome back, {adminName}!
             </h2>

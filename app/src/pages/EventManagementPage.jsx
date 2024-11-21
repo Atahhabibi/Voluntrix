@@ -74,6 +74,9 @@ const EventManagementPage = () => {
   const handleEditClick=(event)=>{
     setEventToEdit(event); 
   }
+  const clearEdit=()=>{
+    setEventToEdit(null); 
+  }
 
 
 
@@ -106,6 +109,7 @@ const EventManagementPage = () => {
         <EventCreationForm
           onSubmit={(newEvent) => createEventMutation.mutate(newEvent)}
           eventToEdit={eventToEdit}
+          clearEdit={clearEdit}
         />
 
         {/* Filter Section */}

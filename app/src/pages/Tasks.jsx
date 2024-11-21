@@ -12,6 +12,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useQuery } from "@tanstack/react-query";
 import { customFetch } from "../util/customFetch";
+import { Link } from "react-router-dom";
 
 const TasksPage = () => {
   const { data, isLoading, isError } = useQuery({
@@ -178,7 +179,7 @@ const TasksPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredTasks.map((task) => (
               <div
-                key={task.id}
+                key={task._id}
                 className="card bg-base-300 shadow-md p-6 border border-gray-600 rounded-lg transition transform hover:shadow-xl "
                 style={{ maxHeight: "380px", minHeight: "320px" }} // Fixed max height and consistent min height
               >
@@ -216,12 +217,12 @@ const TasksPage = () => {
                 </div>
 
                 {/* Sign Up Button */}
-                <button
+                <Link
+                  to={`/tasks/${task._id}`}
                   className="mt-6 w-full bg-primary  text-black font-semibold py-3 rounded-lg transition duration-300 flex items-center justify-center gap-2 hover:bg-gray-300"
-                  onClick={() => alert(`Signed up for ${task.name}`)}
                 >
                   <FaCheck className="text-whjte" /> Sign Up
-                </button>
+                </Link>
               </div>
             ))}
           </div>

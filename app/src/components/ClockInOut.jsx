@@ -8,7 +8,7 @@ import {
   FaSignOutAlt,
   FaHourglassHalf
 } from "react-icons/fa";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const tasks = [
@@ -135,7 +135,6 @@ const TaskTrackingPage = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 py-6 flex justify-center px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-4xl">
-        <ToastContainer />
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex justify-center items-center gap-2">
             <FaClock /> Clock In and Out

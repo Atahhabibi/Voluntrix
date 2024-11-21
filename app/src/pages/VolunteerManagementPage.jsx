@@ -1,9 +1,31 @@
 import React, { useState } from "react";
 import { FaClock, FaStar, FaUser, FaSearch } from "react-icons/fa";
-import { volunteers } from "../personsData";
-import { Link } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
+import { customFetch } from "../util/customFetch";
+
+
+export const loader = async () => {
+  try {
+    const response = await customFetch("/users");
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
 
 const VolunteerManagementPage = () => {
+
+  const data=useLoaderData(); 
+
+  const volunteers=data.volunteers; 
+
+
+
+
+
+
+
   const [minPoints, setMinPoints] = useState("");
   const [minHours, setMinHours] = useState("");
   const [nameFilter, setNameFilter] = useState("");
@@ -14,7 +36,9 @@ const VolunteerManagementPage = () => {
     return (
       (minPoints ? volunteer.points >= parseInt(minPoints, 10) : true) &&
       (minHours ? volunteer.hoursWorked >= parseInt(minHours, 10) : true) &&
-      (nameFilter ? volunteer.name.toLowerCase().includes(nameFilter.toLowerCase()) : true)
+      (nameFilter
+        ? volunteer.name.toLowerCase().includes(nameFilter.toLowerCase())
+        : true)
     );
   });
 
@@ -44,11 +68,15 @@ const VolunteerManagementPage = () => {
   return (
     <div className="p-6 bg-gray-900 text-gray-200 min-h-screen">
       <div className="w-full max-w-screen-xl mx-auto">
-        <h2 className="text-3xl font-bold text-white mb-6">Volunteer Management</h2>
+        <h2 className="text-3xl font-bold text-white mb-6">
+          Volunteer Management
+        </h2>
 
         {/* Filter Section */}
         <div className="mb-6 p-4 rounded-lg bg-gray-800 shadow-lg">
-          <h3 className="text-xl font-semibold text-white mb-4">Filter Volunteers</h3>
+          <h3 className="text-xl font-semibold text-white mb-4">
+            Filter Volunteers
+          </h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
               <label className="block text-white mb-1">Search by Name</label>
@@ -74,7 +102,9 @@ const VolunteerManagementPage = () => {
               />
             </div>
             <div>
-              <label className="block text-white mb-1">Minimum Hours Worked</label>
+              <label className="block text-white mb-1">
+                Minimum Hours Worked
+              </label>
               <input
                 type="number"
                 value={minHours}
@@ -118,7 +148,10 @@ const VolunteerManagementPage = () => {
                         <p>Points: {volunteer.points}</p>
                       </div>
 
-                      <Link className="mt-4 p-2 bg-blue-500 rounded text-white flex items-center" to="/profile">
+                      <Link
+                        className="mt-4 p-2 bg-blue-500 rounded text-white flex items-center"
+                        to={`/profile/${volunteer._id}`}
+                      >
                         <FaUser className="mr-1" /> View Profile
                       </Link>
                     </div>
@@ -145,7 +178,9 @@ const VolunteerManagementPage = () => {
                 key={index + 1}
                 onClick={() => handlePageChange(index + 1)}
                 className={`px-4 py-2 rounded ${
-                  currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-700 text-gray-400"
+                  currentPage === index + 1
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-700 text-gray-400"
                 }`}
               >
                 {index + 1}
@@ -167,6 +202,3 @@ const VolunteerManagementPage = () => {
 };
 
 export default VolunteerManagementPage;
-
-
-

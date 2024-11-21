@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { customFetch } from "../util/customFetch";
 
-const EventCreationForm = ({ eventToEdit = null, onComplete }) => {
+const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
   const formRef = useRef();
   const queryClient = useQueryClient();
 
@@ -35,6 +35,7 @@ const EventCreationForm = ({ eventToEdit = null, onComplete }) => {
       formRef.current.reset(); // Reset form
       toast.success("Event updated successfully!");
       onComplete?.(); // Optional callback
+      clearEdit();
     },
     onError: (error) => {
       const errorMessage =
@@ -137,8 +138,10 @@ const EventCreationForm = ({ eventToEdit = null, onComplete }) => {
         className="btn btn-primary w-full"
         disabled={createMutation.isLoading || updateMutation.isLoading}
       >
-        {createMutation.isLoading || updateMutation.isLoading
-          ? "Saving..."
+        {createMutation.isLoading
+          ? "Creating..."
+          : updateMutation.isLoading
+          ? "Updating..."
           : eventToEdit
           ? "Update Event"
           : "Create Event"}

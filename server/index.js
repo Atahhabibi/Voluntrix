@@ -236,6 +236,227 @@ app.put("/api/v1/events/:id", async (req, res) => {
   }
 });
 
+app.delete("/api/v1/tasks/:id", async (req, res) => {
+  try {
+    // Attempt to delete the task
+    const result = await Task.deleteOne({ _id: req.params.id });
+
+    // Check if the task was found and deleted
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No task found to delete"
+      });
+    }
+
+    // Task deleted successfully
+    res.status(200).json({
+      success: true,
+      message: "Task deleted successfully"
+    });
+  } catch (error) {
+    // Log the error for debugging
+    console.error("Error deleting task:", error);
+
+    // Send a 500 Internal Server Error response
+    res.status(500).json({
+      success: false,
+      message: "Error in deleting task"
+    });
+  }
+});
+
+app.put("/api/v1/tasks/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find and update the task
+    const updatedTask = await Task.findOneAndUpdate(
+      { _id: id }, // Find the task by ID
+      req.body, // Update fields from the request body
+      { new: true, runValidators: true } // Options to return updated document and validate inputs
+    );
+
+    // If the task does not exist
+    if (!updatedTask) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Task not found" });
+    }
+
+    // Success response
+    res.status(200).json({
+      success: true,
+      message: "Task updated successfully",
+      task: updatedTask
+    });
+  } catch (error) {
+    console.error("Error updating task:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
+
+app.get("/api/v1/users", async (req, res) => {
+  try {
+    // Fetch all users except those with the role of "admin"
+    const users = await User.find({ role: { $ne: "admin" } });
+
+    if (users.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No volunteers available to show.",
+        volunteers: []
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      volunteers: users
+    });
+  } catch (error) {
+    console.error("Error fetching volunteers:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error while fetching volunteers."
+    });
+  }
+});
+
+app.get("/api/v1/users/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Fetch the user by ID
+    const volunteer = await User.findOne({ _id: id });
+
+    // Check if user exists
+    if (!volunteer) {
+      return res.status(404).json({
+        success: false,
+        message: "Volunteer not found"
+      });
+    }
+
+    // Return success response with the user
+    res.status(200).json({
+      success: true,
+      volunteer
+    });
+  } catch (error) {
+    console.error("Error fetching volunteer:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error while fetching volunteer"
+    });
+  }
+});
+
+app.get("/api/v1/tasks/:id", async (req, res) => {
+  try {
+    const task = await Task.findOne({ _id: req.params.id });
+
+    res
+      .status(200)
+      .json({ success: true, message: "Fetched succesfullly", task });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "error" });
+  }
+});
+
+app.post("/api/v1/tasks/:id/signup", authMiddleware, async (req, res) => {
+  const userId = req.userId; // Extracted from the decoded token
+  const taskId = req.params.id;
+
+  try {
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Task not found" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if (user.tasks.includes(taskId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Already signed up" });
+    }
+
+    user.tasks.push(taskId);
+    await user.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Task assigned successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.post("/api/v1/events/:id/signup", authMiddleware, async (req, res) => {
+  const userId = req.userId;
+  const eventId = req.params.id;
+
+  try {
+    // Find the event and user
+    const event = await Event.findOne({ _id: eventId });
+    if (!event) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Event not found" });
+    }
+
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Check if the user is already signed up
+    if (user.events.includes(eventId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Already signed up" });
+    }
+
+    // Add the event to the user's list and save
+    user.events.push(eventId);
+    await user.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Event assigned successfully" });
+  } catch (error) {
+    console.error("Error assigning event:", error); // Log the error for debugging
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.post("/api/v1/tasks/IdList", async (req, res) => {
+  const { taskids, eventIds } = req.body;
+
+  try {
+    const tasks = await Task.find({ _id: { $in: taskids } });
+    const events = await Event.find({ _id: { $in: eventIds } });
+
+    res.status(200).json({ success: true, data: { tasks, events } });
+  } catch (error) {
+    // Handle errors
+    console.error("Error fetching tasks or events:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch tasks or events",
+      error: error.message
+    });
+  }
+});
 
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");

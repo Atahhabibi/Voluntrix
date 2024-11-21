@@ -10,23 +10,38 @@ import {
 
 import TaskCreationForm from "../components/TaskCreationForm";
 import { customFetch } from "../util/customFetch";
-import { useLoaderData } from "react-router-dom";
-;
-
-export const loader = async () => {
-  try {
-    const response = await customFetch.get("/tasks");
-    return response.data.tasks;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-};
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
 
 const TaskManagementPage = () => {
+  const queryClient = useQueryClient();
 
-  const tasks=useLoaderData(); 
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: async () => {
+      const resposne = await customFetch("/tasks");
+      return resposne;
+    }
+  });
 
+  const tasks = data?.data?.tasks || [];
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      const response = await customFetch.delete(`/tasks/${taskToDelete._id}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["tasks"]);
+      setTaskToDelete(null);
+      toast.success("Task deleted successfully");
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Error deleting item", error);
+    }
+  });
 
   const [filters, setFilters] = useState({
     type: "",
@@ -35,6 +50,7 @@ const TaskManagementPage = () => {
   });
   const [showModal, setShowModal] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
+  const [taskToEdit, setTaskToEdit] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
@@ -75,10 +91,16 @@ const TaskManagementPage = () => {
     setShowModal(true);
   };
 
-  const confirmDelete = () => {
-    // Add delete logic here
+  const handleEditClick = (task) => {
+    setTaskToEdit(task);
+  };
+  const clearEditTask = () => {
+    setTaskToEdit(null);
+  };
+
+  const confirmDelete = (task) => {
     setShowModal(false);
-    setTaskToDelete(null);
+    deleteMutation.mutate(task._id);
   };
 
   const handleFilterChange = (e) => {
@@ -86,12 +108,27 @@ const TaskManagementPage = () => {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
+  if (isLoading) {
+    return (
+      <div className="p-6 bg-gray-900 text-gray-200 min-h-screen">
+        LOADING....
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <div className="p-6 bg-gray-900 text-gray-200 min-h-screen">
+        ERROR....
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 bg-gray-900 text-gray-200 min-h-screen">
       <div className="w-full max-w-screen-xl mx-auto">
         <h2 className="text-3xl font-bold text-white mb-6">Task Management</h2>
 
-        <TaskCreationForm />
+        <TaskCreationForm taskToEdit={taskToEdit} clearEditTask={clearEditTask} />
 
         {/* Filter Form */}
         <div className="mb-6 p-4 rounded-lg bg-gray-800 shadow-lg">
@@ -170,7 +207,7 @@ const TaskManagementPage = () => {
                       </div>
                       <div className="flex justify-end space-x-3 mt-4">
                         <button
-                          onClick={() => alert("Edit functionality here")}
+                          onClick={() => handleEditClick(task)}
                           className="p-2 bg-yellow-500 rounded text-white flex items-center"
                         >
                           <FaEdit className="mr-1" /> Edit
@@ -234,7 +271,7 @@ const TaskManagementPage = () => {
               </p>
               <div className="flex justify-center space-x-4">
                 <button
-                  onClick={confirmDelete}
+                  onClick={() => confirmDelete(taskToDelete)}
                   className="px-4 py-2 bg-red-600 rounded text-white"
                 >
                   Delete

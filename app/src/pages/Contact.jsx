@@ -1,7 +1,34 @@
+import axios from "axios";
 import React from "react";
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaUser } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const ContactPage = () => {
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+
+    const name = form.name.value;
+    const email = form.email.value;
+    const message = form.message.value;
+
+    const data = { name, email, message };
+
+    try {
+      if (!name || !email || !message) {
+        toast.warn("All input field required");
+        return;
+      }
+      const response = await axios.post("https://formspree.io/f/manybdpr", data);
+      toast.success("Message send successfully");
+      form.reset(); 
+    } catch (error) {
+      console.log(error);
+      toast.error("something went wrong try again!");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-base-200 flex items-center justify-center p-6">
       <div className="w-full max-w-6xl bg-base-100 rounded-xl shadow-lg p-8 md:flex md:gap-8">
@@ -62,7 +89,7 @@ const ContactPage = () => {
           <h2 className="text-3xl font-semibold text-primary mb-4 text-center uppercase">
             Get In Touch
           </h2>
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-base-content font-semibold mb-2">
                 Name
@@ -71,6 +98,8 @@ const ContactPage = () => {
                 type="text"
                 className="input input-bordered w-full"
                 placeholder="Your Name"
+                name="name"
+                required
               />
             </div>
             <div>
@@ -81,6 +110,8 @@ const ContactPage = () => {
                 type="email"
                 className="input input-bordered w-full"
                 placeholder="Your Email"
+                name="email"
+                required
               />
             </div>
             <div>
@@ -90,6 +121,8 @@ const ContactPage = () => {
               <textarea
                 className="textarea textarea-bordered w-full h-56"
                 placeholder="Your Message"
+                name="message"
+                required
               ></textarea>
             </div>
             <button

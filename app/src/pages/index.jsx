@@ -15,6 +15,8 @@ import EventManagementPage from './EventManagementPage';
 import VolunteerManagementPage from './VolunteerManagementPage';
 import Profile from './Profile';
 import EventDetailsPage from "./EventDetailsPage";
+import EditProfilePage from "./EditProfilePage";
+import SignupForTaskPage from "./SignupForTaskPage";
 
 export {
   HomeLayout,
@@ -33,5 +35,8 @@ export {
   EventManagementPage,
   VolunteerManagementPage,
   Profile,
-  EventDetailsPage
+  EventDetailsPage,
+  EditProfilePage,
+  SignupForTaskPage
+
 };

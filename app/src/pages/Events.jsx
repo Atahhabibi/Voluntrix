@@ -42,7 +42,7 @@ const EventsPage = () => {
             <div
               key={event.id}
               className="bg-base-300 shadow-lg rounded-lg p-4 border border-gray-700 flex flex-col justify-between"
-              style={{ height: "12rem" }} // Reduced height
+              style={{ minHeight: "13rem" }} // Reduced height
             >
               <div>
                 <h2 className="text-xl font-semibold mb-2 text-blue-100 flex items-center gap-2">

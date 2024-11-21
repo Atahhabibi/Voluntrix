@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { PointsBreakdownByTask, TaskCompletionHistory } from "../charts";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import userImg from "../images/atah.jpg";
 import { useDispatch } from "react-redux";
@@ -36,7 +36,7 @@ const UserDashboard = () => {
   const dispatch = useDispatch();
   const [profileImage, setProfileImage] = useState(null);
   const [isHovered, setIsHovered] = useState(false); // Track hover effect
-  
+
   const { isLoading, data, error } = useQuery({
     queryKey: ["user"],
     queryFn: fetchUserData
@@ -50,7 +50,6 @@ const UserDashboard = () => {
 
   const userName = data?.username || "User"; // Dynamically set the username from the fetched data
   const userProfileImage = profileImage || data?.profileImage || userImg; // Use dynamic profile image
-
 
   // Sample points data for history (replace with dynamic data if available)
   const pointsHistory = data?.pointsHistory || [
@@ -71,9 +70,8 @@ const UserDashboard = () => {
       const formData = new FormData();
       formData.append("profileImage", file);
 
-
       const token = localStorage.getItem("authToken");
-      const response = await customFetch.post("/upload-profile-pic",formData);
+      const response = await customFetch.post("/upload-profile-pic", formData);
 
       console.log(response);
 
@@ -105,43 +103,23 @@ const UserDashboard = () => {
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
       <div className="w-full max-w-screen-xl">
-        {/* Toast Container */}
-        <ToastContainer />
+      
 
         {/* Welcome Message with Profile Picture */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700">
           <div className="card-body flex items-center flex-col">
             {/* Make the image clickable and track hover state */}
-            <div
-              className="relative"
-              onMouseEnter={() => setIsHovered(true)} // Show hover message on mouse enter
-              onMouseLeave={() => setIsHovered(false)} // Hide hover message on mouse leave
-            >
+            {/* Profile Picture */}
+            <div className="flex flex-col items-center">
               <img
                 src={userProfileImage}
-                alt={`${userName}'s profile`}
-                className="w-24 h-24 rounded-full mb-4 object-cover shadow-lg cursor-pointer"
-                onClick={() => document.getElementById("image-upload").click()}
+                alt="Profile"
+                className="w-32 h-32 rounded-full mb-4 object-cover shadow-md"
               />
-              {/* Hover message */}
-              {isHovered && (
-                <div
-                  className="absolute inset-0 bg-black bg-opacity-50 text-white flex items-center justify-center rounded-full cursor-pointer"
-                  onClick={() =>
-                    document.getElementById("image-upload").click()
-                  }
-                >
-                  Upload New
-                </div>
-              )}
-              {/* Hidden file input */}
-              <input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
-              />
+              <label className="btn btn-outline btn-primary flex items-center cursor-pointer">
+                Upload New Photo
+                <input type="file" accept="image/*" className="hidden" />
+              </label>
             </div>
             <h2 className="card-title text-2xl font-bold text-white mb-1">
               Welcome back, {userName}!

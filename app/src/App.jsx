@@ -13,7 +13,9 @@ import {
   VolunteerManagementPage,
   AdminDashboard,
   Profile,
-  EventDetailsPage
+  EventDetailsPage,
+  EditProfilePage,
+  SignupForTaskPage
 } from "./pages";
 import About from "./pages/About";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -23,11 +25,12 @@ import { ClockInOut } from "./components";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/PrivateRoute"; // Import PrivateRoute
-import { action as TaskCreationAction } from "./components/TaskCreationForm";
-import { loader as taskLoader } from "./pages/TaskManagementPage";
-// import { loader  as eventLoader} from "./pages/EventManagementPage";
 import { loader as mainEventLoader } from "./pages/Events";
 import { loader as EventDetailLoader } from "./pages/EventDetailsPage";
+import { loader as volunteersLoader } from "./pages/VolunteerManagementPage";
+import { loader as profileLoader } from "./pages/Profile";
+import { loader as EditProfileLoader } from "./pages/EditProfilePage";
+import { loader as signupTaskLoader } from "./pages/SignupForTaskPage";
 
 const router = createBrowserRouter([
   {
@@ -39,8 +42,12 @@ const router = createBrowserRouter([
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
       { path: "tasks", element: <Tasks /> },
-      { path: "events", element: <Events />, loader:mainEventLoader},
-      {path:"events/:id",element:<EventDetailsPage/>,loader:EventDetailLoader},
+      { path: "events", element: <Events />, loader: mainEventLoader },
+      {
+        path: "events/:id",
+        element: <EventDetailsPage />,
+        loader: EventDetailLoader
+      },
       {
         path: "userDashboard",
         element: (
@@ -50,7 +57,9 @@ const router = createBrowserRouter([
           />
         )
       },
-      { path: "/profile", element: <Profile /> },
+      {path:"/tasks/:id",element:<SignupForTaskPage/>,loader:signupTaskLoader},
+      { path: "/profile/:id", element: <Profile />, loader: profileLoader },
+      { path: "/editProfile/:id", element: <EditProfilePage />,loader:EditProfileLoader },
       {
         path: "adminDashboard",
         element: (
@@ -60,17 +69,18 @@ const router = createBrowserRouter([
           />
         ),
         children: [
-          { index: true, element: <VolunteerManagementPage /> },
+          {
+            index: true,
+            element: <VolunteerManagementPage />,
+            loader: volunteersLoader
+          },
           {
             path: "task-management",
-            element: <TaskManagementPage />,
-            action: TaskCreationAction,
-            loader: taskLoader
+            element: <TaskManagementPage />
           },
           {
             path: "event-management",
-            element: <EventManagementPage />,
-           
+            element: <EventManagementPage />
           }
         ]
       },

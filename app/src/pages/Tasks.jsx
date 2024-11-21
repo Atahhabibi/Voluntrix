@@ -77,7 +77,7 @@ const TasksPage = () => {
     return <div>Failed to load tasks. Please try again later.</div>;
   }
 
-  if (tasks.length < 0) {
+  if (tasks?.length < 0) {
     return <div>no task available</div>;
   }
 
@@ -152,7 +152,7 @@ const TasksPage = () => {
             eventContent={(eventInfo) => (
               <div className="text-xs text-white ">
                 <p>
-                  {eventInfo.event.title.length > 10
+                  {eventInfo.event.title?.length > 10
                     ? eventInfo.event.title.slice(0, 10)
                     : eventInfo.event.extendedProps.description}
                 </p>

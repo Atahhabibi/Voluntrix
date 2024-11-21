@@ -31,6 +31,7 @@ import { loader as volunteersLoader } from "./pages/VolunteerManagementPage";
 import { loader as profileLoader } from "./pages/Profile";
 import { loader as EditProfileLoader } from "./pages/EditProfilePage";
 import { loader as signupTaskLoader } from "./pages/SignupForTaskPage";
+import { loader as landingLoader } from "./pages/Landing";
 
 const router = createBrowserRouter([
   {
@@ -38,7 +39,7 @@ const router = createBrowserRouter([
     element: <HomeLayout />,
     errorElement: <Error />,
     children: [
-      { index: true, element: <Landing /> },
+      { index: true, element: <Landing />, loader: landingLoader },
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
       { path: "tasks", element: <Tasks /> },
@@ -57,9 +58,17 @@ const router = createBrowserRouter([
           />
         )
       },
-      {path:"/tasks/:id",element:<SignupForTaskPage/>,loader:signupTaskLoader},
+      {
+        path: "/tasks/:id",
+        element: <SignupForTaskPage />,
+        loader: signupTaskLoader
+      },
       { path: "/profile/:id", element: <Profile />, loader: profileLoader },
-      { path: "/editProfile/:id", element: <EditProfilePage />,loader:EditProfileLoader },
+      {
+        path: "/editProfile/:id",
+        element: <EditProfilePage />,
+        loader: EditProfileLoader
+      },
       {
         path: "adminDashboard",
         element: (
@@ -67,23 +76,23 @@ const router = createBrowserRouter([
             element={<AdminDashboard />}
             allowedRoles={["volunteer", "admin"]} // Only allow "admin" role
           />
-        ),
-        children: [
-          {
-            index: true,
-            element: <VolunteerManagementPage />,
-            loader: volunteersLoader
-          },
-          {
-            path: "task-management",
-            element: <TaskManagementPage />
-          },
-          {
-            path: "event-management",
-            element: <EventManagementPage />
-          }
-        ]
+        )
       },
+
+      {
+        path: "/volunteer-management",
+        element: <VolunteerManagementPage />,
+        loader: volunteersLoader
+      },
+      {
+        path: "/task-management",
+        element: <TaskManagementPage />
+      },
+      {
+        path: "/event-management",
+        element: <EventManagementPage />
+      },
+
       { path: "clockInOut", element: <ClockInOut /> }
     ]
   },

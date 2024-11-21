@@ -11,16 +11,57 @@ import { Link, Outlet } from "react-router-dom";
 import imamImg from "../images/imam.png";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS
+import { PointsEarnedByVolunteers, VolunteerHoursOverTime } from "../charts";
 
-;
+
 
 const AdminDashboard = () => {
   const adminName = "Sheikh Hamzah Khalid";
-  const adminProfileImage = imamImg;
+
 
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
       <div className="w-full max-w-screen-xl">
+        {/* Navigation Links to Each Management Section */}
+        <div className="grid grid-cols-1 gap-6 mb-6 max-w-[77rem] m-auto sm:grid-cols-2 md:grid-cols-3">
+          <Link to="/volunteer-management">
+            <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-green-700 transition duration-200">
+              <FaUsers className="text-4xl text-green-400 mb-2 sm:mb-0 sm:mr-4" />
+              <div className="text-center sm:text-left">
+                <p className="text-lg font-semibold text-white sm:text-lg  md:text-xl">
+                  Volunteer Management
+                </p>
+                <p className="text-gray-400">
+                  Manage volunteers and their hours
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <Link to="/task-management">
+            <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-blue-700 transition duration-200">
+              <FaTasks className="text-4xl text-blue-400 mb-2 sm:mb-0 sm:mr-4" />
+              <div className="text-center sm:text-left">
+                <p className="text-lg font-semibold text-white sm:text-lg md:text-xl">
+                  Task Management
+                </p>
+                <p className="text-gray-400">Create and manage tasks</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link to="/event-management">
+            <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-yellow-600 transition duration-200">
+              <FaCalendarAlt className="text-4xl text-yellow-400 mb-2 sm:mb-0 sm:mr-4" />
+              <div className="text-center sm:text-left">
+                <p className="text-lg font-semibold text-white sm:text-lg md:text-xl">
+                  Event Management
+                </p>
+                <p className="text-gray-400">Create and manage events</p>
+              </div>
+            </div>
+          </Link>
+        </div>
         {/* Welcome Message with Profile Picture */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700 max-w-[77rem] m-auto">
           <div className="card-body flex items-center flex-col">
@@ -71,45 +112,14 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Navigation Links to Each Management Section */}
-        <div className="grid grid-cols-1 gap-6 mb-6 max-w-[77rem] m-auto sm:grid-cols-2 md:grid-cols-3">
-          <Link to="/adminDashboard">
-            <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-green-700 transition duration-200">
-              <FaUsers className="text-4xl text-green-400 mb-2 sm:mb-0 sm:mr-4" />
-              <div className="text-center sm:text-left">
-                <p className="text-lg font-semibold text-white sm:text-lg  md:text-xl">
-                  Volunteer Management
-                </p>
-                <p className="text-gray-400">
-                  Manage volunteers and their hours
-                </p>
-              </div>
-            </div>
-          </Link>
-
-          <Link to="/adminDashboard/task-management">
-            <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-blue-700 transition duration-200">
-              <FaTasks className="text-4xl text-blue-400 mb-2 sm:mb-0 sm:mr-4" />
-              <div className="text-center sm:text-left">
-                <p className="text-lg font-semibold text-white sm:text-lg md:text-xl">
-                  Task Management
-                </p>
-                <p className="text-gray-400">Create and manage tasks</p>
-              </div>
-            </div>
-          </Link>
-
-          <Link to="/adminDashboard/event-management">
-            <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-yellow-600 transition duration-200">
-              <FaCalendarAlt className="text-4xl text-yellow-400 mb-2 sm:mb-0 sm:mr-4" />
-              <div className="text-center sm:text-left">
-                <p className="text-lg font-semibold text-white sm:text-lg md:text-xl">
-                  Event Management
-                </p>
-                <p className="text-gray-400">Create and manage events</p>
-              </div>
-            </div>
-          </Link>
+        {/* Chart Container */}
+        <div className="flex flex-col lg:flex-row lg:space-x-4 mb-6">
+          <div className="flex-1">
+            <VolunteerHoursOverTime />
+          </div>
+          <div className="flex-1">
+            <PointsEarnedByVolunteers />
+          </div>
         </div>
 
         {/* Outlet for nested routes */}

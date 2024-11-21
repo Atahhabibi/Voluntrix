@@ -16,9 +16,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 const TaskManagementPage = () => {
   const queryClient = useQueryClient();
+
+  const dispatach=useDispatch(); 
+  const store=useSelector((store)=>store); 
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["tasks"],

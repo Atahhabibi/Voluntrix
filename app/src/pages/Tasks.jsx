@@ -12,18 +12,17 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useQuery } from "@tanstack/react-query";
 import { customFetch } from "../util/customFetch";
-import { Link } from "react-router-dom";
+import { Link, useNavigation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const TasksPage = () => {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["tasks"],
-    queryFn: async () => {
-      const response = await customFetch("/tasks");
-      return response.data;
-    }
-  });
 
-  const tasks = data?.tasks;
+  const tasks=useSelector((store)=>store.tasks.tasks)
+
+  const navigation=useNavigation(); 
+  const isLoading=navigation.state==="loading"; 
+  const isError=navigation.state==="error"; 
+
 
   const [filter, setFilter] = useState({
     date: "",

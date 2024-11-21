@@ -10,6 +10,7 @@ import img3 from "../images/mosque-3.jpg";
 import img4 from "../images/mosque-4.jpg";
 import img5 from "../images/mosque-5.jpg";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import store from "../../store";
 import {
   FaUserPlus,
   FaTasks,
@@ -19,27 +20,19 @@ import {
   FaCalendarAlt,
   FaHandHoldingHeart
 } from "react-icons/fa";
-import { customFetch } from "../util/customFetch";
 
-export const loader = async () => {
-  try {
-    const response = await customFetch("/tasks");
+import { useSelector } from "react-redux";
 
-    return { tasks: response.data.tasks };
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-};
+
 
 const mosqueImages = [img1, img2, img3, img4, img5];
 
 const Landing = () => {
   const navigate = useNavigate();
 
-  const { events, tasks } = useLoaderData();
-
-  console.log(tasks);
+  const store = useSelector((store)=>store); 
+  const tasks = store.tasks.tasks;
+ 
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200">

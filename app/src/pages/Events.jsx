@@ -1,26 +1,12 @@
 import React from "react";
 import { FaCalendarAlt, FaMapMarkerAlt, FaInfoCircle } from "react-icons/fa";
-import { Link, useLoaderData } from "react-router-dom";
-import { customFetch } from "./../util/customFetch";
+import { Link } from "react-router-dom";
 
-export const loader = async () => {
-  try {
-    const response = await customFetch("/events");
-    return {
-      success: true,
-      data: response.data
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: "Something went wrong"
-    };
-  }
-};
+import { useSelector } from "react-redux";
 
 const EventsPage = () => {
-  const data = useLoaderData();
-  const events = data?.data?.events || [];
+
+  const events =useSelector((store)=>store.events.events); 
 
   return (
     <div className="min-h-screen bg-base-200 text-base-content p-6 md:p-12">

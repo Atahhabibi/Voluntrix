@@ -18,6 +18,8 @@ import {
   SignupForTaskPage
 } from "./pages";
 import About from "./pages/About";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { action as loginAction } from "./pages/Login";
 import { action as registerAction } from "./pages/Register";
@@ -31,15 +33,17 @@ import { loader as volunteersLoader } from "./pages/VolunteerManagementPage";
 import { loader as profileLoader } from "./pages/Profile";
 import { loader as EditProfileLoader } from "./pages/EditProfilePage";
 import { loader as signupTaskLoader } from "./pages/SignupForTaskPage";
-import { loader as landingLoader } from "./pages/Landing";
+import { loader as homeLoader } from "./pages/HomeLayout";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout />,
+    loader: homeLoader,
+
     errorElement: <Error />,
     children: [
-      { index: true, element: <Landing />, loader: landingLoader },
+      { index: true, element: <Landing /> },
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
       { path: "tasks", element: <Tasks /> },
@@ -105,6 +109,7 @@ function App() {
   return (
     <>
       <ToastContainer position="top-center" autoClose={1500} />
+      <ReactQueryDevtools initialIsOpen={true} />
       <RouterProvider
         router={router}
         future={{

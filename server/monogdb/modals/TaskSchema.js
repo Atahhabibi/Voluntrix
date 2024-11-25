@@ -18,10 +18,14 @@ const taskSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
-
     points: {
       type: Number,
       required: true
+    },
+    status: {
+      type: String,
+      enum: ["not_signed_up", "pending", "completed"], 
+      default: "not_signed_up"
     }
   },
   { timestamps: true }

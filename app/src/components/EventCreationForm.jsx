@@ -55,6 +55,7 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
       form.time.value = eventToEdit.time || "";
       form.location.value = eventToEdit.location || "";
       form.description.value = eventToEdit.description || "";
+      form.points.value=eventToEdit.points||0;
     }
   }, [eventToEdit]);
 
@@ -125,6 +126,16 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
           required
         />
       </div>
+
+      <div className="mb-4">
+        <label className="text-white">Points</label>
+        <input
+          type="number"
+          name="points"
+          className="input input-bordered w-full mt-2"
+          required
+        />
+      </div>
       <div className="mb-4">
         <label className="text-white">Event Description</label>
         <textarea
@@ -133,6 +144,7 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
           required
         />
       </div>
+
       <button
         type="submit"
         className="btn btn-primary w-full"

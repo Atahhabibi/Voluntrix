@@ -146,7 +146,7 @@ app.get("/api/v1/tasks", async (req, res) => {
 
 app.post("/api/v1/events", validateEvent, async (req, res) => {
   try {
-    const { name, type, location, time, date, description } = req.body;
+    const { name, type, location, time, date, description, points } = req.body;
 
     const event = new Event({
       name,
@@ -154,7 +154,8 @@ app.post("/api/v1/events", validateEvent, async (req, res) => {
       location,
       time,
       description,
-      date
+      date,
+      points
     });
 
     const savedEvent = event.save();
@@ -369,34 +370,52 @@ app.post("/api/v1/tasks/:id/signup", authMiddleware, async (req, res) => {
   const taskId = req.params.id;
 
   try {
-    const task = await Task.findById(taskId);
+    // Update task status
+    const task = await Task.findByIdAndUpdate(
+      taskId,
+      { status: "pending" },
+      { new: true }
+    );
+
     if (!task) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Task not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Task not found"
+      });
     }
 
+    // Find the user
     const user = await User.findById(userId);
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
     }
 
-    if (user.tasks.includes(taskId)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Already signed up" });
+    // Check if task is already assigned
+    if (user.tasks && user.tasks.includes(taskId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Already signed up for this task"
+      });
     }
 
+    // Add the task ID to the user's tasks
+    user.tasks = user.tasks || []; // Initialize tasks if undefined
     user.tasks.push(taskId);
     await user.save();
 
-    res
-      .status(200)
-      .json({ success: true, message: "Task assigned successfully" });
+    return res.status(200).json({
+      success: true,
+      message: "Task assigned successfully"
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("Error in /api/v1/tasks/:id/signup:", error); // Log error for debugging
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
   }
 });
 
@@ -406,7 +425,12 @@ app.post("/api/v1/events/:id/signup", authMiddleware, async (req, res) => {
 
   try {
     // Find the event and user
-    const event = await Event.findOne({ _id: eventId });
+    const event = await Event.findByIdAndUpdate(
+      eventId,
+      { status: "pending" },
+      { new: true }
+    );
+
     if (!event) {
       return res
         .status(404)
@@ -461,7 +485,10 @@ app.post("/api/v1/tasks/IdList", async (req, res) => {
 
 app.post("/api/v1/time-records", authMiddleware, async (req, res) => {
   try {
-    const { taskName, clockIn, clockOut, timeSpent, pointsEarned } = req.body;
+    const { name, clockIn, clockOut, timeSpent, pointsEarned, id, itemType } =
+      req.body;
+
+    console.log(itemType);
 
     // Find the user (optional if you just need to increment total points)
     const user = await User.findOne({ _id: req.userId });
@@ -474,12 +501,20 @@ app.post("/api/v1/time-records", authMiddleware, async (req, res) => {
     // Create a new time record
     const timeRecord = new TimeRecord({
       userId: req.userId,
-      taskName,
+      type: itemType,
+      name,
       clockIn,
       clockOut,
       timeSpent,
       pointsEarned
     });
+
+    if (itemType === "task") {
+      await Task.findByIdAndUpdate(id, { status: "completed" }, { new: true });
+    }
+    if (itemType === "event") {
+      await Event.findByIdAndUpdate(id, { status: "completed" }, { new: true });
+    }
 
     await timeRecord.save();
 
@@ -499,9 +534,7 @@ app.post("/api/v1/time-records", authMiddleware, async (req, res) => {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error" });
   }
-
 });
-
 
 app.get("/api/v1/time-records", authMiddleware, async (req, res) => {
   try {
@@ -510,18 +543,15 @@ app.get("/api/v1/time-records", authMiddleware, async (req, res) => {
     if (!timeRecords || timeRecords.length === 0) {
       return res
         .status(200)
-        .json({ success:true, message: "No records found",data:[]});
+        .json({ success: true, message: "No records found", data: [] });
     }
 
-    res.status(200).json({ success: true, data: timeRecords  });
+    res.status(200).json({ success: true, data: timeRecords });
   } catch (error) {
     console.error("Error fetching time records:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
-
-
-
 
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");

@@ -5,7 +5,8 @@ import {
   FaTasks,
   FaEnvelope,
   FaUserCircle,
-  FaEdit
+  FaEdit,
+  FaArrowLeft
 } from "react-icons/fa";
 import { useLoaderData, Link } from "react-router-dom";
 import { customFetch } from "../util/customFetch";
@@ -43,13 +44,20 @@ export const loader = async ({ params }) => {
 };
 
 const VolunteerProfilePage = () => {
-  const {tasks,volunteer,events} = useLoaderData(); 
-
+  const { tasks, volunteer, events } = useLoaderData();
 
   return (
-  
     <div className="p-6 bg-gray-900 text-gray-200 min-h-screen">
       <div className="w-full max-w-6xl mx-auto">
+        {/* Navigation Section */}
+        <Link
+          to="/userDashboard"
+          className="flex items-center justify-center w-48 py-2 mb-6 text-white  rounded bg-blue-500 hover:bg-blue-600 transition"
+        >
+          <FaArrowLeft className="mr-2" />
+          Back to Dashboard
+        </Link>
+
         {/* Profile Section */}
         <div className="card w-full bg-gray-800 shadow-lg mb-6 border border-gray-700">
           <div className="card-body flex flex-col items-center">
@@ -67,7 +75,7 @@ const VolunteerProfilePage = () => {
                 {volunteer?.email}
               </p>
               <p className="flex items-center text-lg justify-center">
-                <FaUserCircle className="text-green-400 mr-2 " />
+                <FaUserCircle className="text-green-400 mr-2" />
                 Role: {volunteer?.role}
               </p>
             </div>

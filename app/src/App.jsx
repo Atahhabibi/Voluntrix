@@ -20,7 +20,6 @@ import {
 } from "./pages";
 import About from "./pages/About";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { action as loginAction } from "./pages/Login";
 import { action as registerAction } from "./pages/Register";

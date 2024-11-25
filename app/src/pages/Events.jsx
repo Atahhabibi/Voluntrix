@@ -3,6 +3,7 @@ import { FaCalendarAlt, FaMapMarkerAlt, FaInfoCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 import { useSelector } from "react-redux";
+import { FaTrophy } from "react-icons/fa6";
 
 const EventsPage = () => {
 
@@ -44,6 +45,12 @@ const EventsPage = () => {
                   <FaMapMarkerAlt className="text-green-400" />
                   <span>
                     <strong>Location:</strong> {event.location}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-400 flex items-center gap-2 mt-1">
+                  <FaTrophy className="text-green-400" />
+                  <span>
+                    <strong>points:</strong> {event.points}
                   </span>
                 </div>
               </div>

@@ -14,6 +14,8 @@ const RecordsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 30;
 
+  console.log(timeRecordData);
+
   const totalPages = Math.ceil(timeRecordData.length / recordsPerPage);
 
   const formatElapsedTime = (seconds) => {
@@ -89,7 +91,7 @@ const RecordsPage = () => {
                 className="border-t border-gray-700 hover:bg-gray-700 text-center"
               >
                 <td className="px-4 py-2 border border-gray-700">
-                  {record.taskName}
+                  {record.name}
                 </td>
                 <td className="px-4 py-2 border border-gray-700">
                   {new Date(record.clockIn).toLocaleString()}

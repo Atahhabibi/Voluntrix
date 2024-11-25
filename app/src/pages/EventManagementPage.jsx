@@ -15,6 +15,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { customFetch } from "../util/customFetch";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { FaTrophy } from "react-icons/fa6";
 
 const EventManagementPage = () => {
   const [nameFilter, setNameFilter] = useState("");
@@ -36,6 +37,8 @@ const EventManagementPage = () => {
       return response.data.events;
     }
   });
+
+  console.log(events);
 
   // Mutation for creating an event
   const createEventMutation = useMutation({
@@ -215,6 +218,10 @@ const EventManagementPage = () => {
                 <div className="text-gray-400 flex items-center space-x-2">
                   <FaMapMarkerAlt />
                   <p>Location: {event.location}</p>
+                </div>
+                <div className="text-gray-400 flex items-center space-x-2">
+                  <FaTrophy />
+                  <p>points: {event.points}</p>
                 </div>
                 <div className="flex justify-end space-x-3 mt-4">
                   <button

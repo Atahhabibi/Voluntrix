@@ -30,6 +30,12 @@ export const loader = async ({ params }) => {
         events: detailResponse?.data?.data?.events
       };
     }
+
+    return {
+      volunteer,
+      tasks: [],
+      events: []
+    };
   } catch (error) {
     console.log(error);
     throw new Response("Failed to load volunteer data.", { status: 500 });
@@ -37,10 +43,7 @@ export const loader = async ({ params }) => {
 };
 
 const VolunteerProfilePage = () => {
-  const {tasks,volunteer,events} = useLoaderData();
-
-
-
+  const {tasks,volunteer,events} = useLoaderData(); 
 
 
   return (

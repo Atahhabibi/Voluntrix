@@ -143,7 +143,7 @@ const Landing = () => {
               Upcoming Tasks
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-              {tasks.map((task, index) => (
+              {tasks?.slice(0,3)?.map((task, index) => (
                 <div
                   key={index}
                   className="card bg-gray-800 shadow-lg p-6 rounded-lg hover:shadow-xl transition"

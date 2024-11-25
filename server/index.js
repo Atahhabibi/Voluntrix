@@ -9,6 +9,7 @@ const authMiddleware = require("./middleware/authMiddleware");
 const Task = require("./monogdb/modals/TaskSchema");
 const validateEvent = require("./middleware/validateEvent");
 const Event = require("./monogdb/modals/EventSchema");
+const TimeRecord = require("./monogdb/modals/TimeRecordSchema");
 
 require("dotenv").config(); // Load environment variables from .env
 
@@ -457,6 +458,70 @@ app.post("/api/v1/tasks/IdList", async (req, res) => {
     });
   }
 });
+
+app.post("/api/v1/time-records", authMiddleware, async (req, res) => {
+  try {
+    const { taskName, clockIn, clockOut, timeSpent, pointsEarned } = req.body;
+
+    // Find the user (optional if you just need to increment total points)
+    const user = await User.findOne({ _id: req.userId });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Create a new time record
+    const timeRecord = new TimeRecord({
+      userId: req.userId,
+      taskName,
+      clockIn,
+      clockOut,
+      timeSpent,
+      pointsEarned
+    });
+
+    await timeRecord.save();
+
+    // Increment the user's total points
+    await User.findByIdAndUpdate(
+      req.userId,
+      { $inc: { totalPoints: pointsEarned } }, // Increment totalPoints by pointsEarned
+      { new: true } // Return the updated document
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "Time record saved and points updated!",
+      data: timeRecord
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+
+});
+
+
+app.get("/api/v1/time-records", authMiddleware, async (req, res) => {
+  try {
+    const timeRecords = await TimeRecord.find({ userId: req.userId });
+
+    if (!timeRecords || timeRecords.length === 0) {
+      return res
+        .status(200)
+        .json({ success:true, message: "No records found",data:[]});
+    }
+
+    res.status(200).json({ success: true, data: timeRecords  });
+  } catch (error) {
+    console.error("Error fetching time records:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+
+
 
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");

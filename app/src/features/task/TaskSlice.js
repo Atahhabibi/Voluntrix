@@ -9,7 +9,6 @@ const taskSlice = createSlice({
   },
   reducers: {
     addTasks: (state, action) => {
-      console.log(action.payload);
       state.tasks = action.payload;
     },
     isLoading:(state,action)=>{

@@ -2,6 +2,7 @@ import axios from 'axios';
 
 
 export const customFetch = axios.create({
+  // baseURL: "https://mosque-f2mw.onrender.com/api/v1"
   baseURL: "http://localhost:5000/api/v1"
 });
 

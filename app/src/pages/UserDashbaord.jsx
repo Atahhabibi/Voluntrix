@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { PointsBreakdownByTask, TaskCompletionHistory } from "../charts";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import userImg from "../images/atah.jpg";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   FaMedal,
   FaTasks,
@@ -11,36 +11,32 @@ import {
   FaBell,
   FaUser
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLoaderData, useNavigation } from "react-router-dom";
 import { customFetch } from "../util/customFetch";
 import { useQuery } from "@tanstack/react-query";
-import { setUserData } from "../features/user/userSlice";
+import {
+  setUserData
+} from "../features/user/userSlice";
+import useUserData from "../util/useUserData";
 
-const fetchUserData = async () => {
-  const token = localStorage.getItem("authToken");
-
-  if (!token) {
-    throw new Error("No Token found, Please log in");
-  }
-
-  const response = await customFetch("/user", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-
-  return response.data.user; // Make sure the response contains user data
+export const loader = async () => {
+  return useUserData();
 };
 
 const UserDashboard = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const availableTasks = useSelector((store) => store.tasks.tasks);
+
+  const isLoading = navigation.state === "loading";
+
   const [profileImage, setProfileImage] = useState(null);
   const [isHovered, setIsHovered] = useState(false); // Track hover effect
 
-  const { isLoading, data, error } = useQuery({
-    queryKey: ["user"],
-    queryFn: fetchUserData
-  });
+  const data = useLoaderData();
+
+  const tasks = data.tasks;
+  const events = data.events;
 
   useEffect(() => {
     if (data) {
@@ -48,8 +44,8 @@ const UserDashboard = () => {
     }
   }, [data, dispatch]);
 
-  const userName = data?.username || "User"; // Dynamically set the username from the fetched data
-  const userProfileImage = profileImage || data?.profileImage || userImg; // Use dynamic profile image
+  const userName = data?.user?.username || "User"; // Dynamically set the username from the fetched data
+  const userProfileImage = profileImage || data?.user?.profileImage || userImg; // Use dynamic profile image
 
   // Sample points data for history (replace with dynamic data if available)
   const pointsHistory = data?.pointsHistory || [
@@ -92,19 +88,9 @@ const UserDashboard = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen text-red-500">
-        <div>Error: {error.message}</div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
       <div className="w-full max-w-screen-xl">
-      
-
         {/* Welcome Message with Profile Picture */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700">
           <div className="card-body flex items-center flex-col">
@@ -180,17 +166,22 @@ const UserDashboard = () => {
               </h2>
             </div>
             <div className="space-y-4">
+              {tasks.slice(0, 2).map((item) => {
+                return (
+                  <div className="border p-4 rounded-lg bg-gray-700 flex justify-between items-center">
+                    <div>
+                      <p className="font-medium text-white">{item.name}</p>
+                      <p className="text-gray-400">Date: {item.date}</p>
+                      <p className="text-gray-400">Points: {item.points}</p>
+                    </div>
+                    <Link to="/clockInOut" className="btn btn-success">
+                      Clock In
+                    </Link>
+                  </div>
+                );
+              })}
+
               {/* Task Example */}
-              <div className="border p-4 rounded-lg bg-gray-700 flex justify-between items-center">
-                <div>
-                  <p className="font-medium text-white">Friday Prayer Setup</p>
-                  <p className="text-gray-400">Date: Friday, 3 PM</p>
-                  <p className="text-gray-400">Points: 10</p>
-                </div>
-                <Link to="/clockInOut" className="btn btn-success">
-                  Clock In
-                </Link>
-              </div>
             </div>
           </div>
         </div>
@@ -206,16 +197,19 @@ const UserDashboard = () => {
             </div>
             <div className="space-y-4">
               {/* Task Example */}
-              <div className="border p-4 rounded-lg bg-gray-700 flex justify-between items-center">
-                <div>
-                  <p className="font-medium text-white">
-                    Eid Parking Management
-                  </p>
-                  <p className="text-gray-400">Date: Monday, 9 AM</p>
-                  <p className="text-gray-400">Points: 20</p>
-                </div>
-                <button className="btn btn-primary">Sign Up</button>
-              </div>
+
+              {availableTasks.slice(0, 2).map((item) => {
+                return (
+                  <div className="border p-4 rounded-lg bg-gray-700 flex justify-between items-center">
+                    <div>
+                      <p className="font-medium text-white">{item.name}</p>
+                      <p className="text-gray-400">Date: {item.date}</p>
+                      <p className="text-gray-400">Points: {item.points}</p>
+                    </div>
+                    <button className="btn btn-primary">Sign Up</button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

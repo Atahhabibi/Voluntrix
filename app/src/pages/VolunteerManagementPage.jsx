@@ -22,7 +22,9 @@ export const loader = async () => {
 
 const VolunteerManagementPage = () => {
   const data = useLoaderData();
+
   const volunteers = data.volunteers;
+
 
   const [minPoints, setMinPoints] = useState("");
   const [minHours, setMinHours] = useState("");
@@ -149,7 +151,7 @@ const VolunteerManagementPage = () => {
                       className="w-24 h-24 rounded-full mb-4 object-cover shadow-lg"
                     />
                     <h3 className="text-2xl font-semibold text-white">
-                      {volunteer.name}
+                      {volunteer.username }
                     </h3>
                     <div className="mt-2 text-gray-400 flex items-center space-x-2">
                       <FaClock />

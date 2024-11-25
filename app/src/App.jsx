@@ -27,13 +27,14 @@ import { ClockInOut } from "./components";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/PrivateRoute"; // Import PrivateRoute
-import { loader as mainEventLoader } from "./pages/Events";
 import { loader as EventDetailLoader } from "./pages/EventDetailsPage";
 import { loader as volunteersLoader } from "./pages/VolunteerManagementPage";
 import { loader as profileLoader } from "./pages/Profile";
 import { loader as EditProfileLoader } from "./pages/EditProfilePage";
 import { loader as signupTaskLoader } from "./pages/SignupForTaskPage";
 import { loader as homeLoader } from "./pages/HomeLayout";
+import { loader as userDashboardLoader } from "./pages/UserDashbaord";
+import { loader as clockInOutLoader } from "./components/ClockInOut";
 
 const router = createBrowserRouter([
   {
@@ -47,7 +48,7 @@ const router = createBrowserRouter([
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
       { path: "tasks", element: <Tasks /> },
-      { path: "events", element: <Events />, loader: mainEventLoader },
+      { path: "events", element: <Events /> },
       {
         path: "events/:id",
         element: <EventDetailsPage />,
@@ -60,7 +61,8 @@ const router = createBrowserRouter([
             element={<UserDashbaord />}
             allowedRoles={["volunteer", "admin"]} // Allow both roles
           />
-        )
+        ),
+        loader: userDashboardLoader
       },
       {
         path: "/tasks/:id",
@@ -97,7 +99,7 @@ const router = createBrowserRouter([
         element: <EventManagementPage />
       },
 
-      { path: "clockInOut", element: <ClockInOut /> }
+      { path: "clockInOut", element: <ClockInOut />, loader: clockInOutLoader }
     ]
   },
   { path: "/login", element: <Login />, action: loginAction },

@@ -7,8 +7,12 @@ import { customFetch } from "../util/customFetch";
 import { addTasks } from "../features/task/TaskSlice";
 import { addEvents } from "../features/events/event";
 
+
 export const loader = async () => {
+
+
   try {
+
     const response = await customFetch("/tasks");
     const response1 = await customFetch("/events");
     store.dispatch(addTasks(response.data.tasks));
@@ -21,14 +25,12 @@ export const loader = async () => {
   }
 };
 
-
-
 function HomeLayout() {
   return (
     <div>
-      <Header/>
-      <Navbar/>
-      <hr /> 
+      <Header />
+      <Navbar />
+      <hr />
       <Outlet />
     </div>
   );

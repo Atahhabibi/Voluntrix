@@ -10,15 +10,15 @@ const userSchema = new mongoose.Schema(
       trim: true // removes any leading/trailing spaces
     },
 
-    hoursWorked:{
-      type:Number,
-      required:true,
-      default:0
+    hoursWorked: {
+      type: Number,
+      required: true,
+      default: 0
     },
-    points:{
-      type:Number,
-      required:true,
-      default:0
+    points: {
+      type: Number,
+      required: true,
+      default: 0
     },
 
     //Email for authentication (e.g login)
@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema(
     events: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Event" 
+        ref: "Event"
       }
     ],
 
@@ -61,6 +61,11 @@ const userSchema = new mongoose.Schema(
     profileImage: {
       type: String,
       default: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" // Default image URL (set the correct path)
+    },
+
+    totalPoints: {
+      type: Number,
+      default: 0
     },
 
     // Timestamp for when the user was created and last modified

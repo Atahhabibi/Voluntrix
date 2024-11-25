@@ -1,143 +1,180 @@
-import React, { useState, useEffect } from "react";
-import {
-  FaStop,
-  FaPlay,
-  FaClock,
-  FaCalendarAlt,
-  FaSignInAlt,
-  FaSignOutAlt,
-  FaHourglassHalf
-} from "react-icons/fa";
-import {  toast } from "react-toastify";
+import React, { useState, useRef } from "react";
+import { FaStop, FaPlay, FaCalendarAlt, FaClock } from "react-icons/fa";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { customFetch } from "../util/customFetch";
+import useUserData from "../util/useUserData";
 
-const tasks = [
-  {
-    id: 1,
-    name: "Parking Assistance",
-    date: new Date().toISOString().split("T")[0],
-    time: "10:00 AM",
-    points: 10,
-    type: "Crowd Control"
-  },
-  {
-    id: 2,
-    name: "Prayer Hall Setup",
-    date: new Date().toISOString().split("T")[0],
-    time: "9:00 AM",
-    points: 15,
-    type: "Setup"
+export const loader = async () => {
+  return useUserData();
+};
+
+const fetchTimeRecords = async () => {
+  const token = localStorage.getItem("authToken");
+
+  if (!token) {
+    throw new Error("No token found, please log in again.");
   }
-];
+
+  const response = await customFetch("/time-records", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.data?.success) {
+    throw new Error("Failed to fetch time records.");
+  }
+
+  return response.data.data;
+};
 
 const TaskTrackingPage = () => {
+  const { tasks,user } = useLoaderData();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+
   const [trackedTask, setTrackedTask] = useState(null);
   const [clockInTime, setClockInTime] = useState(null);
-  const [timeElapsed, setTimeElapsed] = useState(0);
-  const [timeRecords, setTimeRecords] = useState([]);
-  const [modalType, setModalType] = useState(null);
-  const [modalTask, setModalTask] = useState(null);
+  const [totalPoints, setTotalPoints] = useState(user.totalPoints);
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 10;
 
-  const sortedTasks = tasks.sort(
-    (a, b) =>
-      new Date(`1970/01/01 ${a.time}`) - new Date(`1970/01/01 ${b.time}`)
-  );
+  const {
+    data: timeRecords = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["timeRecords"],
+    queryFn: fetchTimeRecords,
+    retry: 1,
+    onError: (error) => {
+      toast.error(error.message || "Failed to fetch time records.");
+    },
+  });
 
-  useEffect(() => {
-    let interval;
-    if (clockInTime) {
-      interval = setInterval(() => {
-        setTimeElapsed(Math.floor((new Date() - clockInTime) / 1000));
-      }, 1000);
-    } else {
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [clockInTime]);
+  const recordMutation = useMutation({
+    mutationFn: async (record) => {
+      const token = localStorage.getItem("authToken");
 
-  const notify = (message, type = "info") => {
-    toast.dismiss();
-    toast[type](message, {
-      position: "top-center",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined
-    });
-  };
+      if (!token) {
+        throw new Error("No token found, please log in again.");
+      }
 
-  const handleOpenModal = (type, task) => {
-    if (type === "clock-in" && trackedTask) {
-      notify(
-        "Please clock out of the current task before clocking into another.",
-        "error"
-      );
+      const response = await customFetch.post("/time-records", record, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.data?.success) {
+        throw new Error("Failed to save time record.");
+      }
+
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Time record saved successfully!");
+      queryClient.invalidateQueries(["timeRecords"]);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to save time record.");
+    },
+  });
+
+  const handleClockIn = (task) => {
+    if (trackedTask) {
+      toast.error("Please clock out of the current task first.");
       return;
     }
-    setModalType(type);
-    setModalTask(task);
+
+    setTrackedTask(task);
+    setClockInTime(Date.now());
+    toast.success(`You have clocked in for "${task.name}".`);
   };
 
-  const handleConfirmAction = () => {
-    if (modalType === "clock-in") {
-      setTrackedTask(modalTask);
-      setClockInTime(new Date());
-      setTimeElapsed(0);
-      notify(`You have clocked in for "${modalTask.name}".`, "success");
-    } else if (modalType === "clock-out") {
-      const currentTime = new Date();
-      const timeSpent = Math.floor((currentTime - clockInTime) / 60000);
-      const taskRecord = {
-        task: trackedTask.name,
-        timeSpent,
-        clockIn: formatTime(clockInTime),
-        clockOut: formatTime(currentTime)
-      };
-
-      setTimeRecords((prevRecords) => [...prevRecords, taskRecord]);
-      setTrackedTask(null);
-      setClockInTime(null);
-      setTimeElapsed(0);
-      notify(`You have clocked out of "${modalTask.name}".`, "success");
+  const handleClockOut = () => {
+    if (!trackedTask) {
+      toast.error("No task is currently being tracked.");
+      return;
     }
-    closeModal();
-  };
 
-  const closeModal = () => {
-    setModalType(null);
-    setModalTask(null);
-  };
+    const clockOutTime = Date.now();
+    const timeSpentInSeconds = Math.floor((clockOutTime - clockInTime) / 1000);
+    const pointsEarned = calculatePoints(timeSpentInSeconds);
 
-  const formatElapsedTime = (timeInSeconds) => {
-    const hours = String(Math.floor(timeInSeconds / 3600)).padStart(2, "0");
-    const minutes = String(Math.floor((timeInSeconds % 3600) / 60)).padStart(
-      2,
-      "0"
+    const taskRecord = {
+      taskName: trackedTask.name,
+      clockIn: new Date(clockInTime).toISOString(),
+      clockOut: new Date(clockOutTime).toISOString(),
+      timeSpent: timeSpentInSeconds,
+      pointsEarned,
+    };
+
+    recordMutation.mutate(taskRecord);
+    setTrackedTask(null);
+    setClockInTime(null);
+    setTotalPoints((prev) => prev + pointsEarned);
+    toast.success(
+      `Clocked out of "${trackedTask.name}" and earned ${pointsEarned} points.`
     );
-    const seconds = String(timeInSeconds % 60).padStart(2, "0");
-    return `${hours}:${minutes}:${seconds}`;
   };
 
-  const formatTime = (time) =>
-    new Date(time).toLocaleTimeString([], {
+  const calculatePoints = (timeSpentInSeconds) => {
+    if (timeSpentInSeconds < 1800) return 5;
+    if (timeSpentInSeconds < 3600) return 10;
+    return 15;
+  };
+
+  const formatTime = (timestamp) =>
+    new Date(timestamp).toLocaleTimeString([], {
       hour: "2-digit",
-      minute: "2-digit"
+      minute: "2-digit",
     });
 
-  const formatTimeSpent = (timeInMinutes) => {
-    const hours = Math.floor(timeInMinutes / 60);
-    const minutes = timeInMinutes % 60;
-    return `${hours} hrs ${minutes} mins`;
+  const formatElapsedTime = (seconds) => {
+    const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0");
+    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+    return `${hrs}:${mins}:${secs}`;
   };
+
+  const totalRecords = timeRecords.length;
+  const totalPages = Math.ceil(totalRecords / recordsPerPage);
+  const startIndex = (currentPage - 1) * recordsPerPage;
+  const currentRecords = timeRecords.slice(startIndex, startIndex + recordsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (isError) {
+    return <p>Error fetching records.</p>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 py-6 flex justify-center px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-4xl">
+        <button
+          onClick={() => navigate("/userDashboard")}
+          className="mb-6 px-4 py-2 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600 transition"
+        >
+          Back to Dashboard
+        </button>
         <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex justify-center items-center gap-2">
-            <FaClock /> Clock In and Out
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            Clock In and Out
           </h1>
           <p className="text-sm md:text-lg text-gray-400">
             Track your time, stay productive, and earn points for your tasks!
@@ -145,39 +182,37 @@ const TaskTrackingPage = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {sortedTasks.map((task) => (
+          {tasks.map((task) => (
             <div
-              key={task.id}
-              className="p-4 bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition"
+              key={task._id}
+              className="p-6 bg-gray-800 rounded-lg shadow-md hover:shadow-lg hover:bg-gray-700 transition"
             >
-              <h3 className="text-lg font-semibold mb-2 text-white">
-                {task.name}
-              </h3>
-              <p className="text-gray-400 flex items-center gap-2 text-sm">
-                <FaCalendarAlt /> {task.date}
-              </p>
-              <p className="text-gray-400 flex items-center gap-2 text-sm">
-                <FaClock /> {task.time}
-              </p>
-              <div
-                className={`text-green-400 text-sm mt-2 ${
-                  trackedTask?.id === task.id ? "visible" : "invisible"
-                }`}
-              >
-                {trackedTask?.id === task.id
-                  ? `Running Time: ${formatElapsedTime(timeElapsed)}`
-                  : "Click Clock In to start timer"}
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold text-white">{task.name}</h3>
+                <span className="text-sm text-green-400 bg-green-900 px-2 py-1 rounded-full">
+                  {task.points} Points
+                </span>
               </div>
-              {trackedTask?.id === task.id ? (
+              <div className="text-gray-400 text-sm mb-4">
+                <div className="flex items-center gap-2">
+                  <FaCalendarAlt className="text-blue-400" />
+                  <span>{task.date}</span>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <FaClock className="text-yellow-400" />
+                  <span>{task.time}</span>
+                </div>
+              </div>
+              {trackedTask?._id === task._id ? (
                 <button
-                  onClick={() => handleOpenModal("clock-out", task)}
+                  onClick={handleClockOut}
                   className="mt-4 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition text-sm"
                 >
                   <FaStop className="inline mr-2" /> Clock Out
                 </button>
               ) : (
                 <button
-                  onClick={() => handleOpenModal("clock-in", task)}
+                  onClick={() => handleClockIn(task)}
                   className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition text-sm"
                 >
                   <FaPlay className="inline mr-2" /> Clock In
@@ -189,64 +224,81 @@ const TaskTrackingPage = () => {
 
         <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4">Time Records</h2>
-          {timeRecords.length === 0 ? (
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Total Points: {totalPoints}
+          </h3>
+          {currentRecords.length === 0 ? (
             <p className="text-gray-400">No records available.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="table-auto w-full bg-gray-800 text-gray-200 rounded-lg shadow-md text-sm">
+            <>
+              <table className="table-auto w-full bg-gray-800 text-gray-200 rounded-lg shadow-md text-sm border-collapse border border-gray-700">
                 <thead>
-                  <tr className="bg-gray-700 text-left">
-                    <th className="px-4 py-2">Task Name</th>
-                    <th className="px-4 py-2">Clock In</th>
-                    <th className="px-4 py-2">Clock Out</th>
-                    <th className="px-4 py-2">Time Spent</th>
+                  <tr className="bg-gray-700 text-center">
+                    <th className="px-4 py-2 border border-gray-700">
+                      Task Name
+                    </th>
+                    <th className="px-4 py-2 border border-gray-700">
+                      Clock In
+                    </th>
+                    <th className="px-4 py-2 border border-gray-700">
+                      Clock Out
+                    </th>
+                    <th className="px-4 py-2 border border-gray-700">
+                      Time Spent
+                    </th>
+                    <th className="px-4 py-2 border border-gray-700">
+                      Points Earned
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {timeRecords.map((record, index) => (
+                  {currentRecords.map((record, index) => (
                     <tr
                       key={index}
-                      className="border-t border-gray-700 hover:bg-gray-700 transition"
+                      className="border-t border-gray-700 hover:bg-gray-700 transition text-center"
                     >
-                      <td className="px-4 py-2">{record.task}</td>
-                      <td className="px-4 py-2">{record.clockIn}</td>
-                      <td className="px-4 py-2">{record.clockOut}</td>
-                      <td className="px-4 py-2">
-                        {formatTimeSpent(record.timeSpent)}
+                      <td className="px-4 py-2 border border-gray-700">
+                        {record.taskName}
+                      </td>
+                      <td className="px-4 py-2 border border-gray-700">
+                        {formatTime(record.clockIn)}
+                      </td>
+                      <td className="px-4 py-2 border border-gray-700">
+                        {formatTime(record.clockOut)}
+                      </td>
+                      <td className="px-4 py-2 border border-gray-700">
+                        {formatElapsedTime(record.timeSpent)}
+                      </td>
+                      <td className="px-4 py-2 border border-gray-700">
+                        {record.pointsEarned}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-          )}
-        </div>
 
-        {modalType && modalTask && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-gray-800 p-4 rounded-lg shadow-lg text-center w-full max-w-md">
-              <h3 className="text-lg font-bold text-white mb-4">
-                {modalType === "clock-in"
-                  ? `Confirm Clock In for "${modalTask.name}"?`
-                  : `Confirm Clock Out for "${modalTask.name}"?`}
-              </h3>
-              <div className="flex justify-center space-x-4">
+              <div className="flex justify-between items-center mt-4">
                 <button
-                  onClick={handleConfirmAction}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50"
                 >
-                  Confirm
+                  Previous
                 </button>
+                <p className="text-sm text-gray-400">
+                  Page {currentPage} of {totalPages}
+                </p>
                 <button
-                  onClick={closeModal}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50"
                 >
-                  Cancel
+                  Next
                 </button>
               </div>
-            </div>
-          </div>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

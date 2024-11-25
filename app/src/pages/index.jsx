@@ -7,16 +7,17 @@ import Error from "./Error";
 import Login from "./Login";
 import Landing from "./Landing";
 import About from "./About";
-import Events from './Events';
-import UserDashbaord from './UserDashbaord';
-import AdminDashboard from './AdminDasboard';
-import TaskManagementPage from './TaskManagementPage';
-import EventManagementPage from './EventManagementPage';
-import VolunteerManagementPage from './VolunteerManagementPage';
-import Profile from './Profile';
+import Events from "./Events";
+import UserDashbaord from "./UserDashbaord";
+import AdminDashboard from "./AdminDasboard";
+import TaskManagementPage from "./TaskManagementPage";
+import EventManagementPage from "./EventManagementPage";
+import VolunteerManagementPage from "./VolunteerManagementPage";
+import Profile from "./Profile";
 import EventDetailsPage from "./EventDetailsPage";
 import EditProfilePage from "./EditProfilePage";
 import SignupForTaskPage from "./SignupForTaskPage";
+import RecordsPage from "./RecordPage";
 
 export {
   HomeLayout,
@@ -37,6 +38,6 @@ export {
   Profile,
   EventDetailsPage,
   EditProfilePage,
-  SignupForTaskPage
-
+  SignupForTaskPage,
+  RecordsPage
 };

@@ -15,7 +15,8 @@ import {
   Profile,
   EventDetailsPage,
   EditProfilePage,
-  SignupForTaskPage
+  SignupForTaskPage,
+  RecordsPage
 } from "./pages";
 import About from "./pages/About";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -35,6 +36,7 @@ import { loader as signupTaskLoader } from "./pages/SignupForTaskPage";
 import { loader as homeLoader } from "./pages/HomeLayout";
 import { loader as userDashboardLoader } from "./pages/UserDashbaord";
 import { loader as clockInOutLoader } from "./components/ClockInOut";
+import { loader as RecordLoader } from "./pages/RecordPage";
 
 const router = createBrowserRouter([
   {
@@ -99,7 +101,8 @@ const router = createBrowserRouter([
         element: <EventManagementPage />
       },
 
-      { path: "clockInOut", element: <ClockInOut />, loader: clockInOutLoader }
+      { path: "clockInOut", element: <ClockInOut />, loader: clockInOutLoader },
+      { path: "/records", element: <RecordsPage />,loader:RecordLoader }
     ]
   },
   { path: "/login", element: <Login />, action: loginAction },

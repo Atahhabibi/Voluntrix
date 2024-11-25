@@ -1,62 +1,48 @@
 import React, { useEffect, useState } from "react";
-import { PointsBreakdownByTask, TaskCompletionHistory } from "../charts";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import userImg from "../images/atah.jpg";
-import { useDispatch, useSelector } from "react-redux";
 import {
   FaMedal,
   FaTasks,
   FaClipboardList,
   FaBell,
-  FaUser
+  FaArrowRight
 } from "react-icons/fa";
-import { Link, useLoaderData, useNavigation } from "react-router-dom";
-import { customFetch } from "../util/customFetch";
-import { useQuery } from "@tanstack/react-query";
-import {
-  setUserData
-} from "../features/user/userSlice";
+import { Link, useLoaderData } from "react-router-dom";
+import userImg from "../images/atah.jpg";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../features/user/userSlice";
 import useUserData from "../util/useUserData";
 
-export const loader = async () => {
+export const loader = () => {
   return useUserData();
 };
 
 const UserDashboard = () => {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
-  const availableTasks = useSelector((store) => store.tasks.tasks);
-
-  const isLoading = navigation.state === "loading";
-
-  const [profileImage, setProfileImage] = useState(null);
-  const [isHovered, setIsHovered] = useState(false); // Track hover effect
-
   const data = useLoaderData();
 
-  const tasks = data.tasks;
-  const events = data.events;
+  const { tasks, user, timeRecordData } = data;
+  const [profileImage, setProfileImage] = useState(
+    user?.profileImage || userImg
+  );
 
   useEffect(() => {
     if (data) {
-      dispatch(setUserData(data)); // Dispatch only when data is available
+      dispatch(setUserData(data));
     }
   }, [data, dispatch]);
 
-  const userName = data?.user?.username || "User"; // Dynamically set the username from the fetched data
-  const userProfileImage = profileImage || data?.user?.profileImage || userImg; // Use dynamic profile image
+  const userName = user?.username || "User";
 
-  // Sample points data for history (replace with dynamic data if available)
-  const pointsHistory = data?.pointsHistory || [
-    { task: "Friday Prayer Setup", date: "March 5", points: 10 },
-    { task: "Eid Parking Management", date: "March 10", points: 20 },
-    { task: "Community Clean-Up", date: "March 15", points: 15 }
-  ];
+  // Points History
+  const pointsHistory = timeRecordData.map((record) => ({
+    task: record.taskName,
+    date: new Date(record.clockOut).toLocaleDateString(),
+    points: record.pointsEarned
+  }));
 
-  // Calculate the total points earned from the history dynamically
-  const totalPoints = pointsHistory.reduce(
-    (sum, entry) => sum + entry.points,
+  // Total Points
+  const totalPoints = timeRecordData.reduce(
+    (sum, record) => sum + record.pointsEarned,
     0
   );
 
@@ -66,67 +52,57 @@ const UserDashboard = () => {
       const formData = new FormData();
       formData.append("profileImage", file);
 
-      const token = localStorage.getItem("authToken");
-      const response = await customFetch.post("/upload-profile-pic", formData);
+      try {
+        const response = await fetch("/api/v1/upload-profile-pic", {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`
+          }
+        });
 
-      console.log(response);
-
-      if (response.success) {
-        setProfileImage(URL.createObjectURL(file)); // Update local state with the uploaded image
-        toast.success("Profile picture updated successfully!");
-      } else {
-        toast.error("Failed to upload profile picture.");
+        const data = await response.json();
+        if (data.success) {
+          setProfileImage(URL.createObjectURL(file));
+        } else {
+          alert("Failed to upload image.");
+        }
+      } catch (error) {
+        console.error("Image upload error:", error);
       }
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="spinner">Loading...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
       <div className="w-full max-w-screen-xl">
-        {/* Welcome Message with Profile Picture */}
+        {/* Welcome Section */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700">
           <div className="card-body flex items-center flex-col">
-            {/* Make the image clickable and track hover state */}
-            {/* Profile Picture */}
-            <div className="flex flex-col items-center">
-              <img
-                src={userProfileImage}
-                alt="Profile"
-                className="w-32 h-32 rounded-full mb-4 object-cover shadow-md"
+            <img
+              src={profileImage}
+              alt="Profile"
+              className="w-32 h-32 rounded-full mb-4"
+            />
+            <label className="btn btn-outline btn-primary flex items-center cursor-pointer">
+              Upload New Photo
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
               />
-              <label className="btn btn-outline btn-primary flex items-center cursor-pointer">
-                Upload New Photo
-                <input type="file" accept="image/*" className="hidden" />
-              </label>
-            </div>
-            <h2 className="card-title text-2xl font-bold text-white mb-1">
+            </label>
+            <h2 className="text-2xl font-bold text-white mb-2">
               Welcome back, {userName}!
             </h2>
             <p className="text-gray-400 text-center">
-              Thank you for contributing to our community!
+              Thank you for your contributions!
             </p>
           </div>
         </div>
 
-        {/* Chart Container */}
-        <div className="flex flex-col lg:flex-row lg:space-x-4 mb-6">
-          <div className="flex-1">
-            <TaskCompletionHistory />
-          </div>
-          <div className="flex-1">
-            <PointsBreakdownByTask />
-          </div>
-        </div>
-
-        {/* Points Summary Section */}
+        {/* Points Summary */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700">
           <div className="card-body">
             <div className="flex items-center mb-3">
@@ -135,23 +111,52 @@ const UserDashboard = () => {
                 Points Summary
               </h2>
             </div>
-            <p className="text-gray-400 mb-2">
+            <p className="text-gray-400 mb-4">
               Total Points Earned: {totalPoints}
             </p>
 
-            {/* Points History List */}
-            <div className="border p-4 rounded-lg bg-gray-700 space-y-2">
-              <h3 className="text-md font-semibold text-white">
-                Points History
-              </h3>
-              {pointsHistory.map((entry, index) => (
-                <div key={index} className="flex justify-between text-gray-400">
-                  <span>
-                    {entry.task} (Date: {entry.date})
-                  </span>
-                  <span>Points: {entry.points}</span>
-                </div>
-              ))}
+            <div className="overflow-x-auto">
+              <table className="table-auto w-full bg-gray-800 text-gray-200 rounded-lg shadow-md text-sm border-collapse border border-gray-700">
+                <thead>
+                  <tr className="bg-gray-700 text-center">
+                    <th className="px-4 py-2 border border-gray-700">
+                      Task Name
+                    </th>
+                    <th className="px-4 py-2 border border-gray-700">Date</th>
+                    <th className="px-4 py-2 border border-gray-700">
+                      Points Earned
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pointsHistory.slice(0, 4).map((entry, index) => (
+                    <tr
+                      key={index}
+                      className="border-t border-gray-700 hover:bg-gray-700 transition text-center"
+                    >
+                      <td className="px-4 py-2 border border-gray-700">
+                        {entry.task}
+                      </td>
+                      <td className="px-4 py-2 border border-gray-700">
+                        {entry.date}
+                      </td>
+                      <td className="px-4 py-2 border border-gray-700">
+                        {entry.points}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-4">
+              <Link
+                to="/records"
+                className="text-blue-400 hover:underline flex items-center"
+              >
+                View All Records
+                <FaArrowRight className="ml-2" />
+              </Link>
             </div>
           </div>
         </div>
@@ -166,22 +171,21 @@ const UserDashboard = () => {
               </h2>
             </div>
             <div className="space-y-4">
-              {tasks.slice(0, 2).map((item) => {
-                return (
-                  <div className="border p-4 rounded-lg bg-gray-700 flex justify-between items-center">
-                    <div>
-                      <p className="font-medium text-white">{item.name}</p>
-                      <p className="text-gray-400">Date: {item.date}</p>
-                      <p className="text-gray-400">Points: {item.points}</p>
-                    </div>
-                    <Link to="/clockInOut" className="btn btn-success">
-                      Clock In
-                    </Link>
+              {tasks.slice(0, 2).map((item) => (
+                <div
+                  key={item._id}
+                  className="border p-4 rounded-lg bg-gray-700 flex justify-between items-center"
+                >
+                  <div>
+                    <p className="font-medium text-white">{item.name}</p>
+                    <p className="text-gray-400">Date: {item.date}</p>
+                    <p className="text-gray-400">Points: {item.points}</p>
                   </div>
-                );
-              })}
-
-              {/* Task Example */}
+                  <Link to="/clockInOut" className="btn btn-success">
+                    Clock In
+                  </Link>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -196,20 +200,19 @@ const UserDashboard = () => {
               </h2>
             </div>
             <div className="space-y-4">
-              {/* Task Example */}
-
-              {availableTasks.slice(0, 2).map((item) => {
-                return (
-                  <div className="border p-4 rounded-lg bg-gray-700 flex justify-between items-center">
-                    <div>
-                      <p className="font-medium text-white">{item.name}</p>
-                      <p className="text-gray-400">Date: {item.date}</p>
-                      <p className="text-gray-400">Points: {item.points}</p>
-                    </div>
-                    <button className="btn btn-primary">Sign Up</button>
+              {tasks.slice(0, 2).map((item) => (
+                <div
+                  key={item._id}
+                  className="border p-4 rounded-lg bg-gray-700 flex justify-between items-center"
+                >
+                  <div>
+                    <p className="font-medium text-white">{item.name}</p>
+                    <p className="text-gray-400">Date: {item.date}</p>
+                    <p className="text-gray-400">Points: {item.points}</p>
                   </div>
-                );
-              })}
+                  <button className="btn btn-primary">Sign Up</button>
+                </div>
+              ))}
             </div>
           </div>
         </div>

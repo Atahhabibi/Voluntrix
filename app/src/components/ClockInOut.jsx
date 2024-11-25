@@ -41,7 +41,7 @@ const TaskTrackingPage = () => {
   const [clockInTime, setClockInTime] = useState(null);
   const [totalPoints, setTotalPoints] = useState(user.totalPoints);
   const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 10;
+  const recordsPerPage = 5;
 
   const {
     data: timeRecords = [],

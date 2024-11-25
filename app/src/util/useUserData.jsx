@@ -10,13 +10,20 @@ if (!token) {
 }
 
 try {
-  const resposne = await customFetch("/user", {
+  const userResponse = await customFetch("/user", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  const recordTimeResponse = await customFetch("/time-records", {
     headers: {
       Authorization: `Bearer ${token}`
     }
   });
 
-  const user = resposne.data.user;
+
+  const timeRecordData = recordTimeResponse.data.data || [];
+  const user =userResponse.data.user;
 
   if (!user) {
     throw new Error("User not  found ,Try log in again ");
@@ -38,7 +45,8 @@ try {
       return {
         user,
         tasks,
-        events
+        events,
+        timeRecordData,
       };
     }
   }

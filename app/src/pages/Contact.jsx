@@ -30,8 +30,8 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center p-6">
-      <div className="w-full max-w-6xl bg-base-100 rounded-xl shadow-lg p-8 md:flex md:gap-8">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
+      <div className="w-full max-w-6xl bg-gray-800 rounded-xl shadow-lg p-8 md:flex md:gap-8">
         {/* Contact Details Section without Card */}
         <div className="md:w-1/2 p-6">
           <div className="space-y-8">

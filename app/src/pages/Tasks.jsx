@@ -10,9 +10,7 @@ import {
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { useQuery } from "@tanstack/react-query";
-import { customFetch } from "../util/customFetch";
-import { Link, useNavigation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const TasksPage = () => {
@@ -22,18 +20,16 @@ const TasksPage = () => {
 
   const tasks = useSelector((store) => store.tasks.tasks);
 
-  const navigation = useNavigation();
-  const isLoading = navigation.state === "loading";
-  const isError = navigation.state === "error";
-
   const [filter, setFilter] = useState({
     date: "",
     type: "",
     minPoints: 0
   });
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
 
-  // Apply filters to tasks and only show tasks for the selected date
+  // Apply filters to tasks
   const applyFilters = () => {
     if (!tasks) return;
     const filtered = tasks.filter((task) => {
@@ -50,17 +46,19 @@ const TasksPage = () => {
     applyFilters();
   }, [filter, tasks]);
 
-  const handleDateChange = (date) => {
-    const selectedDate = date.toISOString().split("T")[0]; // Format to 'yyyy-mm-dd'
-    setFilter({ ...filter, date: selectedDate });
+  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+
+  // Handle pagination
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
-  const handleTaskTypeChange = (e) => {
-    setFilter({ ...filter, type: e.target.value });
+  const handlePrevious = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const handleMinPointsChange = (e) => {
-    setFilter({ ...filter, minPoints: Number(e.target.value) });
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
   const calendarEvents = (filteredTasks || []).map((task) => ({
@@ -70,20 +68,13 @@ const TasksPage = () => {
     extendedProps: { type: task.type, volunteersNeeded: task.volunteersNeeded }
   }));
 
-  if (isLoading) {
-    return <div>Loading tasks...</div>;
-  }
-
-  if (isError) {
-    return <div>Failed to load tasks. Please try again later.</div>;
-  }
-
-  if (tasks?.length < 0) {
-    return <div>no task available</div>;
-  }
+  const currentTasks = filteredTasks.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
-    <div className="min-h-screen bg-base-200 text-base-content p-6 md:p-12 flex justify-center">
+    <div className="min-h-screen bg-gray-900 text-base-content p-6 md:p-12 flex justify-center">
       <div className="w-full max-w-5xl">
         {/* Header Section */}
         <section className="text-center mb-8">
@@ -97,10 +88,10 @@ const TasksPage = () => {
         </section>
 
         {/* Filter Options */}
-        <section className="mb-8 bg-base-300 p-4 rounded-lg shadow-lg">
+        <section className="mb-8 bg-gray-800 p-4 rounded-lg shadow-lg">
           <div className="flex flex-col md:flex-row w-full gap-4">
             <div className="flex-1">
-              <label className="block text-primary mb-2 font-bold flex items-center gap-2">
+              <label className=" text-white mb-2 font-bold flex items-center gap-2">
                 <FaCalendarAlt /> Date
               </label>
               <input
@@ -111,13 +102,15 @@ const TasksPage = () => {
               />
             </div>
             <div className="flex-1">
-              <label className="block text-primary mb-2 font-bold flex items-center gap-2">
+              <label className="text-white mb-2 font-bold flex items-center gap-2">
                 <FaFilter /> Task Type
               </label>
               <select
                 className="select select-bordered w-full bg-base-100"
                 value={filter.type}
-                onChange={handleTaskTypeChange}
+                onChange={(e) =>
+                  setFilter({ ...filter, type: e.target.value })
+                }
               >
                 <option value="">Select Type</option>
                 <option value="setup">Setup</option>
@@ -126,7 +119,7 @@ const TasksPage = () => {
               </select>
             </div>
             <div className="flex-1">
-              <label className="block text-primary mb-2 font-bold flex items-center gap-2">
+              <label className=" text-white mb-2 font-bold flex items-center gap-2">
                 <FaCheck /> Min Points
               </label>
               <input
@@ -134,22 +127,23 @@ const TasksPage = () => {
                 className="input input-bordered w-full bg-base-100"
                 placeholder="Min Points"
                 value={filter.minPoints}
-                onChange={handleMinPointsChange}
+                onChange={(e) =>
+                  setFilter({ ...filter, minPoints: Number(e.target.value) })
+                }
               />
             </div>
           </div>
         </section>
 
         {/* FullCalendar Section */}
-        <section className="mb-12 bg-base-300 p-4 rounded-lg shadow-lg hidden sm:block">
+        <section className="mb-12 bg-gray-800 p-4 rounded-lg shadow-lg hidden sm:block">
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
             events={calendarEvents}
             dateClick={(info) => {
-              handleDateChange(info.date);
+              setFilter({ ...filter, date: info.dateStr });
             }}
-            eventClick={(info) => alert(info.event.title)}
             eventContent={(eventInfo) => (
               <div className="text-xs text-white ">
                 <p>
@@ -157,7 +151,6 @@ const TasksPage = () => {
                     ? eventInfo.event.title.slice(0, 10)
                     : eventInfo.event.extendedProps.description}
                 </p>
-                <p>{eventInfo.event.extendedProps.description}</p>
               </div>
             )}
             headerToolbar={{
@@ -166,68 +159,81 @@ const TasksPage = () => {
               right: "dayGridMonth,dayGridWeek,dayGridDay"
             }}
             contentHeight="auto"
-            eventTextColor="#000000" // Ensure text is visible
           />
         </section>
 
         {/* Task Cards for Selected Date */}
-
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 text-gray-200 flex items-center gap-2">
             <FaCalendarAlt className="text-yellow-400" /> Tasks for{" "}
             {filter.date || "Select a date"}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredTasks.map((task) => (
+            {currentTasks.map((task) => (
               <div
                 key={task._id}
-                className="card bg-base-300 shadow-md p-6 border border-gray-600 rounded-lg transition transform hover:shadow-xl "
-                style={{ maxHeight: "380px", minHeight: "320px" }} // Fixed max height and consistent min height
+                className="card bg-gray-800 shadow-md p-6 border border-gray-600 rounded-lg transition transform hover:shadow-xl"
               >
-                {/* Card Title */}
-                <h3 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2 truncate">
-                  <FaTasks className="text-blue-400" /> {task.name}
+                <h3 className="text-lg font-semibold text-gray-100 mb-4">
+                  {task.name}
                 </h3>
-
-                {/* Card Content */}
-                <div className="text-gray-300 space-y-3">
-                  <p className="flex items-center gap-2">
-                    <FaCalendarAlt className="text-yellow-400" />
-                    <span className="font-medium truncate">
-                      Date: {task.date}
-                    </span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <FaClock className="text-blue-400" />
-                    <span className="font-medium truncate">
-                      Time: {task.time}
-                    </span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <FaUserFriends className="text-green-400" />
-                    <span className="font-medium truncate">
-                      Volunteers Needed: {task.volunteersNeeded}
-                    </span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <FaCheck className="text-purple-400" />
-                    <span className="font-medium text-purple-300 truncate">
-                      Points: {task.points}
-                    </span>
-                  </p>
-                </div>
-
-                {/* Sign Up Button */}
+                <p className="text-gray-300">
+                  <FaCalendarAlt className="inline-block text-yellow-400 mr-2" />
+                  Date: {task.date}
+                </p>
+                <p className="text-gray-300">
+                  <FaClock className="inline-block text-blue-400 mr-2" />
+                  Time: {task.time}
+                </p>
+                <p className="text-gray-300">
+                  <FaUserFriends className="inline-block text-green-400 mr-2" />
+                  Volunteers Needed: {task.volunteersNeeded}
+                </p>
+                <p className="text-gray-300">
+                  <FaCheck className="inline-block text-purple-400 mr-2" />
+                  Points: {task.points}
+                </p>
                 <Link
                   to={`/tasks/${task._id}`}
-                  className="mt-6 w-full bg-primary  text-black font-semibold py-3 rounded-lg transition duration-300 flex items-center justify-center gap-2 hover:bg-gray-300"
+                  className="px-4 py-2 flex items-center justify-center gap-2 text-lg font-semibold text-black bg-green-300 hover:bg-green-600 rounded-lg shadow-md hover:shadow-lg transition duration-300 capitalize mt-6"
                 >
-                  <FaCheck className="text-whjte" /> Sign Up
+                  Sign Up
                 </Link>
               </div>
             ))}
           </div>
         </section>
+
+        {/* Pagination */}
+        <div className="flex justify-center items-center space-x-4 mt-6">
+          <button
+            onClick={handlePrevious}
+            disabled={currentPage === 1}
+            className="px-4 py-2 rounded bg-gray-700 text-gray-400 hover:bg-gray-600 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-4 py-2 rounded ${
+                currentPage === index + 1
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-700 text-gray-400"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            onClick={handleNext}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 rounded bg-gray-700 text-gray-400 hover:bg-gray-600 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

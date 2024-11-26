@@ -68,6 +68,13 @@ const userSchema = new mongoose.Schema(
       default: 0
     },
 
+    timeRecords: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "TimeRecord"
+      }
+    ],
+
     // Timestamp for when the user was created and last modified
     createdAt: {
       type: Date,

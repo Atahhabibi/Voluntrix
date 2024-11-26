@@ -488,9 +488,20 @@ app.post("/api/v1/time-records", authMiddleware, async (req, res) => {
     const { name, clockIn, clockOut, timeSpent, pointsEarned, id, itemType } =
       req.body;
 
-    console.log(itemType);
+    if (
+      !name ||
+      !clockIn ||
+      !clockOut ||
+      !timeSpent ||
+      !pointsEarned ||
+      !id ||
+      !itemType
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid request data" });
+    }
 
-    // Find the user (optional if you just need to increment total points)
     const user = await User.findOne({ _id: req.userId });
     if (!user) {
       return res
@@ -498,31 +509,56 @@ app.post("/api/v1/time-records", authMiddleware, async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    // Create a new time record
+    // Create and save the new time record
     const timeRecord = new TimeRecord({
       userId: req.userId,
       type: itemType,
       name,
       clockIn,
       clockOut,
-      timeSpent,
-      pointsEarned
+      timeSpent: Number(timeSpent),
+      pointsEarned: Number(pointsEarned)
     });
 
     if (itemType === "task") {
-      await Task.findByIdAndUpdate(id, { status: "completed" }, { new: true });
+      const task = await Task.findByIdAndUpdate(
+        id,
+        { status: "completed" },
+        { new: true }
+      );
+      if (!task) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Task not found" });
+      }
     }
+
     if (itemType === "event") {
-      await Event.findByIdAndUpdate(id, { status: "completed" }, { new: true });
+      const event = await Event.findByIdAndUpdate(
+        id,
+        { status: "completed" },
+        { new: true }
+      );
+      if (!event) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Event not found" });
+      }
     }
 
     await timeRecord.save();
 
-    // Increment the user's total points
+    // Increment user's total points and hoursWorked
     await User.findByIdAndUpdate(
       req.userId,
-      { $inc: { totalPoints: pointsEarned } }, // Increment totalPoints by pointsEarned
-      { new: true } // Return the updated document
+      {
+        $inc: {
+          totalPoints: Number(pointsEarned),
+          hoursWorked: Number(timeSpent)
+        },
+        $push: { timeRecords: timeRecord._id }
+      },
+      { new: true }
     );
 
     res.status(201).json({
@@ -535,6 +571,7 @@ app.post("/api/v1/time-records", authMiddleware, async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+
 
 app.get("/api/v1/time-records", authMiddleware, async (req, res) => {
   try {
@@ -552,6 +589,45 @@ app.get("/api/v1/time-records", authMiddleware, async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+
+
+
+const storage = multer.memoryStorage(); 
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png"];
+    if (!allowedTypes.includes(file.mimetype)) {
+      return cb(new Error("Invalid file type. Only JPEG and PNG are allowed."));
+    }
+    cb(null, true);
+  }
+});
+
+
+
+app.post("/api/v1/upload", upload.single("profileImage"), async (req, res) => {
+  const file = req.file;
+
+  if (!file) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No file uploaded" });
+  }
+
+  try {
+    // Example: Upload to AWS S3
+    const result = await uploadToS3(file);
+    res.status(200).json({ success: true, fileUrl: result.Location });
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    res.status(500).json({ success: false, message: "Upload failed" });
+  }
+});
+
+
 
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");

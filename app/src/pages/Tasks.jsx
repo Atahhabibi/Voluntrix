@@ -16,13 +16,15 @@ import { Link, useNavigation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const TasksPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-  const tasks=useSelector((store)=>store.tasks.tasks)
+  const tasks = useSelector((store) => store.tasks.tasks);
 
-  const navigation=useNavigation(); 
-  const isLoading=navigation.state==="loading"; 
-  const isError=navigation.state==="error"; 
-
+  const navigation = useNavigation();
+  const isLoading = navigation.state === "loading";
+  const isError = navigation.state === "error";
 
   const [filter, setFilter] = useState({
     date: "",

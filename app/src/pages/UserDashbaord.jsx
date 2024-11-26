@@ -19,8 +19,6 @@ import {
   DonutChart,
   LineChart,
   PieChart,
-  PointsBreakdownByTask,
-  TaskCompletionHistory
 } from "../charts";
 
 export const loader = () => {
@@ -131,9 +129,9 @@ const UserDashboard = () => {
 
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
-      <div className="w-full max-w-screen-xl">
+      <div className="w-full max-w-[76rem]">
         {/* Navigation Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6 max-w-[77rem] mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6 max-w-[79.5rem] mx-auto p-0">
           <Link to={`/profile/${user._id}`}>
             <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-purple-700 transition duration-200">
               <FaUser className="text-4xl text-purple-400 mb-2 sm:mb-0 sm:mr-4" />
@@ -251,7 +249,6 @@ const UserDashboard = () => {
                 </thead>
                 <tbody>
                   {pointsHistory?.slice(0, 4)?.map((entry, index) => (
-                
                     <tr
                       key={index}
                       className="border-t border-gray-700 hover:bg-gray-700 transition text-center"

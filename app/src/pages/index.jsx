@@ -18,6 +18,7 @@ import EventDetailsPage from "./EventDetailsPage";
 import EditProfilePage from "./EditProfilePage";
 import SignupForTaskPage from "./SignupForTaskPage";
 import RecordsPage from "./RecordPage";
+import DetailChartsPage from './DetailChartsPage';
 
 export {
   HomeLayout,
@@ -39,5 +40,6 @@ export {
   EventDetailsPage,
   EditProfilePage,
   SignupForTaskPage,
-  RecordsPage
+  RecordsPage,
+  DetailChartsPage
 };

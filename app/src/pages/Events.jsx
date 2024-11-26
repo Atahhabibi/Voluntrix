@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect } from "react";
 import { FaCalendarAlt, FaMapMarkerAlt, FaInfoCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
@@ -6,6 +7,10 @@ import { useSelector } from "react-redux";
 import { FaTrophy } from "react-icons/fa6";
 
 const EventsPage = () => {
+
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
 
   const events =useSelector((store)=>store.events.events); 
 

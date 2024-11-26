@@ -16,7 +16,8 @@ import {
   EventDetailsPage,
   EditProfilePage,
   SignupForTaskPage,
-  RecordsPage
+  RecordsPage,
+  DetailChartsPage
 } from "./pages";
 import About from "./pages/About";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -101,7 +102,11 @@ const router = createBrowserRouter([
       },
 
       { path: "clockInOut", element: <ClockInOut />, loader: clockInOutLoader },
-      { path: "/records", element: <RecordsPage />,loader:RecordLoader }
+      { path: "/records", element: <RecordsPage />, loader: RecordLoader },
+      {
+        path: "/detailChartsPage",
+        element: <DetailChartsPage />
+      }
     ]
   },
   { path: "/login", element: <Login />, action: loginAction },

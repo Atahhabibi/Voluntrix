@@ -1,21 +1,33 @@
-import TaskCompletionHistory from "./TaskCompletionHistory";
-import PointsBreakdownByTask from "./PointsBreakdownTask";
-import VolunteerHoursOverTime from "./VolunteerHOursOverTime";
-import PointsDistributionByVolunteer from "./PointsDistributionByVolunteer";
-import PointsEarnedByVolunteers from './PointsEarnedByVolunteers';
 import LineChart from "./LineChart";
-import BarChart from './Barchart';
-import PieChart from './PieChart';
-import DonutChart from './DonutChart';
+import BarChart from "./Barchart";
+import PieChart from "./PieChart";
+import DonutChart from "./DonutChart";
+import UserParticipationOverview from "./UserParticipationOverview";
+import HoursWorkedByUsers from "./HoursWorkedByUsers";
+import TaskCompletionStatus from "./TaskCompletionStatus";
+import PointsEarnedByUsers from "./PointsEarnedByUsers";
+import TimeSpentOnTasksAndEvents from "./TimeSpentOnTasksAndEvents";
+import TasksVsEventsParticipation from "./TasksVsEventsParticipation";
+import VolunteerAvailability from "./VolunteerAvailability";
+import WeeklyEngagement from "./WeeklyEngagement";
+import NewUsersOverTime from "./NewUsersOverTime";
+import TaskPointsDistribution from "./TaskPointsDistribution";
+import EventAttendanceStatus from "./EventAttendanceStatus";
 
 export {
-  TaskCompletionHistory,
-  PointsBreakdownByTask,
-  VolunteerHoursOverTime,
-  PointsDistributionByVolunteer,
-  PointsEarnedByVolunteers,
   LineChart,
   BarChart,
   PieChart,
-  DonutChart
+  DonutChart,
+  UserParticipationOverview,
+  HoursWorkedByUsers,
+  TaskCompletionStatus,
+  PointsEarnedByUsers,
+  TimeSpentOnTasksAndEvents,
+  TasksVsEventsParticipation,
+  VolunteerAvailability,
+  WeeklyEngagement,
+  NewUsersOverTime,
+  TaskPointsDistribution,
+  EventAttendanceStatus,
 };

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect} from "react";
 import { FaStop, FaPlay, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -6,6 +6,7 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { customFetch } from "../util/customFetch";
 import useUserData from "../util/useUserData";
+
 
 export const loader = async () => {
   return useUserData();
@@ -32,6 +33,11 @@ const fetchTimeRecords = async () => {
 };
 
 const TaskTrackingPage = () => {
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const { tasks, user, events } = useLoaderData();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -94,72 +100,69 @@ const TaskTrackingPage = () => {
     if (type === "task") {
       setTrackedTask(item);
       toast.success(`You have clocked in for the task: "${item.name}"`);
-    }
-    else if (type === "event") {
+    } else if (type === "event") {
       setTrackedEvent(item);
       toast.success(`You have clocked in for the event: "${item.name}"`);
-    }else{
-        toast.error("Invalid clock-in type.");
-        return;
+    } else {
+      toast.error("Invalid clock-in type.");
+      return;
     }
 
     setClockInTime(Date.now());
-  
   };
 
-const handleClockOut = () => {
-  if (!trackedTask && !trackedEvent) {
-    toast.error("Nothing is currently being tracked.");
-    return;
-  }
+  const handleClockOut = () => {
+    if (!trackedTask && !trackedEvent) {
+      toast.error("Nothing is currently being tracked.");
+      return;
+    }
 
-  const clockOutTime = Date.now();
-  const timeSpentInSeconds = Math.floor((clockOutTime - clockInTime) / 1000);
-  const pointsEarned = calculatePoints(timeSpentInSeconds);
+    const clockOutTime = Date.now();
+    const timeSpentInSeconds = Math.floor((clockOutTime - clockInTime) / 1000);
+    const pointsEarned = calculatePoints(timeSpentInSeconds);
 
-  let record;
-  let itemType;
+    let record;
+    let itemType;
 
-  if (trackedTask) {
-    record = {
-      id: trackedTask._id,
-      name: trackedTask.name,
-      clockIn: new Date(clockInTime).toISOString(),
-      clockOut: new Date(clockOutTime).toISOString(),
-      timeSpent: timeSpentInSeconds,
-      pointsEarned
-    };
-    itemType = "task";
-    toast.success(
-      `Clocked out of the task: "${trackedTask.name}" and earned ${pointsEarned} points.`
-    );
-  } else if (trackedEvent) {
-    record = {
-      id: trackedEvent._id,
-      name: trackedEvent.name,
-      clockIn: new Date(clockInTime).toISOString(),
-      clockOut: new Date(clockOutTime).toISOString(),
-      timeSpent: timeSpentInSeconds,
-      pointsEarned
-    };
-    itemType = "event";
-    toast.success(
-      `Clocked out of the event: "${trackedEvent.name}" and earned ${pointsEarned} points.`
-    );
-  }
+    if (trackedTask) {
+      record = {
+        id: trackedTask._id,
+        name: trackedTask.name,
+        clockIn: new Date(clockInTime).toISOString(),
+        clockOut: new Date(clockOutTime).toISOString(),
+        timeSpent: timeSpentInSeconds,
+        pointsEarned
+      };
+      itemType = "task";
+      toast.success(
+        `Clocked out of the task: "${trackedTask.name}" and earned ${pointsEarned} points.`
+      );
+    } else if (trackedEvent) {
+      record = {
+        id: trackedEvent._id,
+        name: trackedEvent.name,
+        clockIn: new Date(clockInTime).toISOString(),
+        clockOut: new Date(clockOutTime).toISOString(),
+        timeSpent: timeSpentInSeconds,
+        pointsEarned
+      };
+      itemType = "event";
+      toast.success(
+        `Clocked out of the event: "${trackedEvent.name}" and earned ${pointsEarned} points.`
+      );
+    }
 
-  // Submit the record for mutation
-  recordMutation.mutate({ ...record, itemType });
+    // Submit the record for mutation
+    recordMutation.mutate({ ...record, itemType });
 
-  // Reset tracking
-  setTrackedTask(null);
-  setTrackedEvent(null);
-  setClockInTime(null);
+    // Reset tracking
+    setTrackedTask(null);
+    setTrackedEvent(null);
+    setClockInTime(null);
 
-  // Update total points
-  setTotalPoints((prev) => prev + pointsEarned);
-};
-
+    // Update total points
+    setTotalPoints((prev) => prev + pointsEarned);
+  };
 
   const calculatePoints = (timeSpentInSeconds) => {
     if (timeSpentInSeconds < 900) return 5;

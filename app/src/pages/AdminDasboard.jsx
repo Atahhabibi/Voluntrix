@@ -5,30 +5,38 @@ import {
   FaUserFriends,
   FaTasks,
   FaUsers,
-  FaCalendarAlt
+  FaCalendarAlt,
+  FaBell,
+  FaChartPie,
+  FaTable
 } from "react-icons/fa";
-import { Link, Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
 import imamImg from "../images/imam.png";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import the CSS
-import { PointsEarnedByVolunteers, VolunteerHoursOverTime } from "../charts";
-
-
+import {
+  EventAttendanceStatus,
+  PointsEarnedByUsers,
+  TaskPointsDistribution,
+  UserParticipationOverview
+} from "../charts";
+import {
+  EventOverviewTable,
+  TaskOverviewTable,
+  VolunteerTable
+} from "../components";
 
 const AdminDashboard = () => {
   const adminName = "Sheikh Hamzah Khalid";
 
-
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
       <div className="w-full max-w-screen-xl">
-        {/* Navigation Links to Each Management Section */}
+        {/* Navigation Links */}
         <div className="grid grid-cols-1 gap-6 mb-6 max-w-[77rem] m-auto sm:grid-cols-2 md:grid-cols-3">
           <Link to="/volunteer-management">
             <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-green-700 transition duration-200">
               <FaUsers className="text-4xl text-green-400 mb-2 sm:mb-0 sm:mr-4" />
               <div className="text-center sm:text-left">
-                <p className="text-lg font-semibold text-white sm:text-lg  md:text-xl">
+                <p className="text-lg font-semibold text-white sm:text-lg md:text-xl">
                   Volunteer Management
                 </p>
                 <p className="text-gray-400">
@@ -37,7 +45,6 @@ const AdminDashboard = () => {
               </div>
             </div>
           </Link>
-
           <Link to="/task-management">
             <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-blue-700 transition duration-200">
               <FaTasks className="text-4xl text-blue-400 mb-2 sm:mb-0 sm:mr-4" />
@@ -49,7 +56,6 @@ const AdminDashboard = () => {
               </div>
             </div>
           </Link>
-
           <Link to="/event-management">
             <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-yellow-600 transition duration-200">
               <FaCalendarAlt className="text-4xl text-yellow-400 mb-2 sm:mb-0 sm:mr-4" />
@@ -62,10 +68,10 @@ const AdminDashboard = () => {
             </div>
           </Link>
         </div>
-        {/* Welcome Message with Profile Picture */}
+
+        {/* Welcome Section */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700 max-w-[77rem] m-auto">
           <div className="card-body flex items-center flex-col">
-            {/* Profile Picture */}
             <div className="flex flex-col items-center">
               <img
                 src={imamImg}
@@ -81,14 +87,13 @@ const AdminDashboard = () => {
               Welcome back, {adminName}!
             </h2>
             <p className="text-gray-400 text-center">
-              Here is your overview metrics
+              Here's your dashboard overview.
             </p>
           </div>
         </div>
 
-        {/* Overview Section with Icons */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6 max-w-[77rem] m-auto">
-          {/* Add Overview Stats */}
+        {/* Overview Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6 max-w-[77rem] m-auto ">
           <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
             <FaClock className="text-4xl text-blue-400 mr-4" />
             <div>
@@ -112,18 +117,53 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Chart Container */}
-        <div className="flex flex-col lg:flex-row lg:space-x-4 mb-6">
-          <div className="flex-1">
-            <VolunteerHoursOverTime />
-          </div>
-          <div className="flex-1">
-            <PointsEarnedByVolunteers />
+        {/* Charts Section */}
+        <div className="mb-10 p-6">
+          <h3 className="text-xl font-bold text-white flex items-center mb-4">
+            <FaChartPie className="text-yellow-400 mr-2" /> Key Charts Overview
+          </h3>
+          <p className="text-gray-400 mb-4">
+            Gain insights from the data visualization below.
+          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <EventAttendanceStatus />
+            <TaskPointsDistribution />
+            <PointsEarnedByUsers />
+            <UserParticipationOverview />
           </div>
         </div>
 
-        {/* Outlet for nested routes */}
-        <Outlet />
+        {/* Tables Section */}
+        <div className="mb-10 p-6'">
+          <h3 className="text-xl font-bold text-white flex items-center mb-4 px-6">
+            <FaTable className="text-blue-400 mr-2 " /> Volunteer and Task
+            Management Tables
+          </h3>
+          <p className="text-gray-400 mb-4 px-6">
+            Review detailed insights on volunteers, tasks, and events below.
+          </p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-6">
+            <VolunteerTable />
+            <TaskOverviewTable />
+          </div>
+
+        </div>
+
+        <div className="px-6">
+        <EventOverviewTable />
+
+        </div>
+
+        {/* Link to View More Features */}
+        <div className="flex justify-center mb-6">
+          <Link
+            to="/detailChartsPage"
+            className="btn btn-primary text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600"
+          >
+            View More Charts and Features
+          </Link>
+        </div>
       </div>
     </div>
   );

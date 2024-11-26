@@ -1,4 +1,5 @@
 import React from "react";
+import{useEffect} from "react";
 import { motion } from "framer-motion";
 import { FaBullseye, FaHandsHelping, FaHeart, FaUsers } from "react-icons/fa"; // Import refined icons
 import "swiper/css";
@@ -6,6 +7,11 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 const AboutPage = () => {
+
+      useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
+
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i) => ({

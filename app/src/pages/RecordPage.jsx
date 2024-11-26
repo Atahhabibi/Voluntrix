@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaTasks, FaClock, FaMedal } from "react-icons/fa";
 import { Link, useLoaderData } from "react-router-dom";
 import useUserData from "../util/useUserData";
@@ -8,6 +8,10 @@ export const loader = () => {
 };
 
 const RecordsPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const { timeRecordData, user } = useLoaderData();
   const totalPoints = user.totalPoints;
 

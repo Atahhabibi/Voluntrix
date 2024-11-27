@@ -32,7 +32,7 @@ const PointsDistributionTable = () => {
   };
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+    <div className="bg-gray-800 p-6 rounded-lg shadow-md ">
       <h3 className="text-lg font-semibold text-white mb-4">
         Points Distribution by Volunteers
       </h3>

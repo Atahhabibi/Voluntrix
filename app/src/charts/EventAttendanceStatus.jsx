@@ -1,10 +1,15 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { useLoaderData } from 'react-router-dom';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const EventAttendanceStatus = () => {
+
+
+  const data=useLoaderData(); 
+
   // Temporary Data
   const tempEvents = [
     { name: "Event 1", status: "not_attended" },

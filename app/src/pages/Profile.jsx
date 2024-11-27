@@ -1,50 +1,70 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaClock,
   FaStar,
   FaTasks,
+  FaCalendarAlt,
   FaEnvelope,
   FaUserCircle,
   FaEdit,
-  FaArrowLeft
+  FaArrowLeft,
+  FaTrashAlt
 } from "react-icons/fa";
 import { useLoaderData, Link } from "react-router-dom";
+import useUserData from "../util/useUserData";
+import ProfileTableData from "../components/ProfileDataTable";
+import { BarChart, PieChart } from "../charts";
 import { customFetch } from "../util/customFetch";
 
 export const loader = async ({ params }) => {
-  try {
-    const response = await customFetch(`/users/${params.id}`);
-    const volunteer = response.data.volunteer;
-
-    if (
-      (volunteer.tasks && volunteer.tasks.length > 0) ||
-      (volunteer.events && volunteer.length > 0)
-    ) {
-      const detailResponse = await customFetch.post("/tasks/IdList", {
-        taskids: volunteer.tasks,
-        eventIds: volunteer.events
-      });
-
-      return {
-        volunteer,
-        tasks: detailResponse?.data?.data?.tasks,
-        events: detailResponse?.data?.data?.events
-      };
-    }
-
-    return {
-      volunteer,
-      tasks: [],
-      events: []
-    };
-  } catch (error) {
-    console.log(error);
-    throw new Response("Failed to load volunteer data.", { status: 500 });
-  }
+  return useUserData({ params });
 };
 
+function convertSecondsToHours(seconds) {
+  if (typeof seconds !== "number" || seconds < 0) {
+    throw new Error("Input must be a non-negative number.");
+  }
+  const hours = seconds / 3600;
+  return hours.toFixed(2);
+}
+
 const VolunteerProfilePage = () => {
-  const { tasks, volunteer, events } = useLoaderData();
+  const { tasks, user: volunteer, events, timeRecordData } = useLoaderData();
+
+  // Assigned and completed tasks/events state
+  const [assignedTasks, setAssignedTasks] = useState([]);
+  const [assignedEvents, setAssignedEvents] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
+  const [completedEvents, setCompletedEvents] = useState([]);
+
+  // Set state on component mount
+  useEffect(() => {
+    setCompletedTasks(tasks.filter((item) => item.status === "completed"));
+    setCompletedEvents(events.filter((item) => item.status === "completed"));
+    setAssignedTasks(tasks.filter((item) => item.status !== "completed"));
+    setAssignedEvents(events.filter((item) => item.status !== "completed"));
+  }, [tasks, events]);
+
+  // Delete handlers
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await customFetch.delete(`/tasks/${taskId}`); // Adjust endpoint to match your backend
+      setAssignedTasks(assignedTasks.filter((task) => task._id !== taskId));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  };
+
+  const handleDeleteEvent = async (eventId) => {
+    try {
+      await customFetch.delete(`/events/${eventId}`); // Adjust endpoint to match your backend
+      setAssignedEvents(
+        assignedEvents.filter((event) => event._id !== eventId)
+      );
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    }
+  };
 
   return (
     <div className="p-6 bg-gray-900 text-gray-200 min-h-screen">
@@ -52,7 +72,7 @@ const VolunteerProfilePage = () => {
         {/* Navigation Section */}
         <Link
           to="/userDashboard"
-          className="flex items-center justify-center w-48 py-2 mb-6 text-white  rounded bg-blue-500 hover:bg-blue-600 transition"
+          className="flex items-center justify-center w-48 py-2 mb-6 text-white rounded bg-blue-500 hover:bg-blue-600 transition"
         >
           <FaArrowLeft className="mr-2" />
           Back to Dashboard
@@ -92,119 +112,65 @@ const VolunteerProfilePage = () => {
         </div>
 
         {/* Summary Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-          <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
-            <FaClock className="text-5xl text-blue-400 mr-4" />
-            <div>
-              <p className="text-3xl font-semibold text-white">
-                {volunteer.hoursWorked}
-              </p>
-              <p className="text-gray-400">Hours Worked</p>
-            </div>
-          </div>
-          <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
-            <FaStar className="text-5xl text-yellow-400 mr-4" />
-            <div>
-              <p className="text-3xl font-semibold text-white">
-                {volunteer.points}
-              </p>
-              <p className="text-gray-400">Points Earned</p>
-            </div>
-          </div>
-          <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
-            <FaTasks className="text-5xl text-green-400 mr-4" />
-            <div>
-              <p className="text-3xl font-semibold text-white">
-                {volunteer?.tasks?.length}
-              </p>
-              <p className="text-gray-400">Tasks Completed</p>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+          <SummaryCard
+            icon={<FaClock className="text-5xl text-blue-400" />}
+            value={convertSecondsToHours(volunteer.hoursWorked)}
+            label="Hours Worked"
+          />
+          <SummaryCard
+            icon={<FaStar className="text-5xl text-yellow-400" />}
+            value={volunteer.totalPoints}
+            label="Points Earned"
+          />
+          <SummaryCard
+            icon={<FaTasks className="text-5xl text-green-400" />}
+            value={completedTasks.length}
+            label="Tasks Completed"
+          />
+          <SummaryCard
+            icon={<FaCalendarAlt className="text-5xl text-green-400" />}
+            value={completedEvents.length}
+            label="Events Attended"
+          />
         </div>
 
-        {/* Tasks and Events Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Assigned Tasks */}
-          <div className="card bg-gray-800 shadow-lg border border-gray-700">
-            <div className="card-body">
-              <h3 className="text-2xl font-bold text-white mb-4">
-                Assigned Tasks
-              </h3>
-              {tasks.length > 0 ? (
-                <ul className="space-y-4">
-                  {tasks.map((task, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center p-3 bg-gray-700 rounded-lg shadow-md"
-                    >
-                      <FaTasks className="text-green-400 mr-3" />
-                      <span className="text-white">
-                        {task.name || "Task Name"}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-400">No assigned tasks to show.</p>
-              )}
-            </div>
-          </div>
+        <div className="grid grid-cols-2 gap-4 mb-5">
+          <PieChart
+            tasks={completedTasks.length}
+            events={completedEvents.length}
+          />
+          <BarChart timeRecordData={timeRecordData} />
+        </div>
 
-          {/* Assigned Events */}
-          <div className="card bg-gray-800 shadow-lg border border-gray-700">
-            <div className="card-body">
-              <h3 className="text-2xl font-bold text-white mb-4">
-                Assigned Events
-              </h3>
-              {events.length > 0 ? (
-                <ul className="space-y-4">
-                  {events.map((event, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center p-3 bg-gray-700 rounded-lg shadow-md"
-                    >
-                      <FaTasks className="text-yellow-400 mr-3" />
-                      <span className="text-white">
-                        {event.name || "Event Name"}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-400">No assigned events to show.</p>
-              )}
-            </div>
-          </div>
-
-          {/* Completed Tasks */}
-          <div className="card bg-gray-800 shadow-lg border border-gray-700">
-            <div className="card-body">
-              <h3 className="text-2xl font-bold text-white mb-4">
-                Completed Tasks
-              </h3>
-              {tasks.length > 0 ? (
-                <ul className="space-y-4">
-                  {tasks.map((task, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center p-3 bg-gray-700 rounded-lg shadow-md"
-                    >
-                      <FaTasks className="text-green-400 mr-3" />
-                      <span className="text-white">
-                        {task.name || "Task Name"}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-400">No completed tasks to show.</p>
-              )}
-            </div>
-          </div>
+        {/* Tables for Tasks and Events */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ProfileTableData
+            title="Assigned Tasks"
+            data={assignedTasks}
+            onDelete={handleDeleteTask}
+          />
+          <ProfileTableData
+            title="Assigned Events"
+            data={assignedEvents}
+            onDelete={handleDeleteEvent}
+          />
+          <ProfileTableData title="Tasks Completed" data={completedTasks} />
+          <ProfileTableData title="Events Completed" data={completedEvents} />
         </div>
       </div>
     </div>
   );
 };
+
+const SummaryCard = ({ icon, value, label }) => (
+  <div className="flex items-center justify-center gap-5 p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
+    {icon}
+    <div>
+      <p className="text-3xl font-semibold text-white">{value}</p>
+      <p className="text-gray-400">{label}</p>
+    </div>
+  </div>
+);
 
 export default VolunteerProfilePage;

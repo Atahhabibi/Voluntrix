@@ -10,8 +10,10 @@ const Task = require("./monogdb/modals/TaskSchema");
 const validateEvent = require("./middleware/validateEvent");
 const Event = require("./monogdb/modals/EventSchema");
 const TimeRecord = require("./monogdb/modals/TimeRecordSchema");
+const multer = require("multer");
+const { storage } = require("./util/cloudinaryConfig");
 
-require("dotenv").config(); // Load environment variables from .env
+const upload = multer({ storage });
 
 const app = express();
 app.use(cors());
@@ -572,7 +574,6 @@ app.post("/api/v1/time-records", authMiddleware, async (req, res) => {
   }
 });
 
-
 app.get("/api/v1/time-records", authMiddleware, async (req, res) => {
   try {
     const timeRecords = await TimeRecord.find({ userId: req.userId });
@@ -590,44 +591,76 @@ app.get("/api/v1/time-records", authMiddleware, async (req, res) => {
   }
 });
 
-
-
-const storage = multer.memoryStorage(); 
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/png"];
-    if (!allowedTypes.includes(file.mimetype)) {
-      return cb(new Error("Invalid file type. Only JPEG and PNG are allowed."));
+app.post(
+  "/api/v1/upload",
+  authMiddleware,
+  upload.single("profileImage"),
+  async (req, res) => {
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No file uploaded" });
     }
-    cb(null, true);
+
+    try {
+      // Cloudinary automatically stores the file and returns the URL
+      const fileUrl = req.file.path; // This is the URL of the uploaded image
+
+      const user = await User.findOneAndUpdate(
+        { _id: req.userId },
+        { profileImage: req.file.path },
+        { new: true }
+      );
+
+      if (!user) {
+        return res
+          .status(404)
+          .json({ success: false, message: "User not found" });
+      }
+
+      res.status(200).json({ success: true, user });
+    } catch (error) {
+      console.error("File upload error:", error);
+      res.status(500).json({ success: false, message: "Upload failed" });
+    }
   }
-});
+);
 
-
-
-app.post("/api/v1/upload", upload.single("profileImage"), async (req, res) => {
-  const file = req.file;
-
-  if (!file) {
-    return res
-      .status(400)
-      .json({ success: false, message: "No file uploaded" });
-  }
+app.put("/api/v1/user", authMiddleware, async (req, res) => {
+  const { email, password, profileImage, username } = req.body;
 
   try {
-    // Example: Upload to AWS S3
-    const result = await uploadToS3(file);
-    res.status(200).json({ success: true, fileUrl: result.Location });
+    const updateFields = {};
+    if (email) updateFields.email = email;
+    if (username) updateFields.username = username;
+    if (profileImage) updateFields.profileImage = profileImage;
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      updateFields.password = await bcrypt.hash(password, salt);
+    }
+
+    const user = await User.findByIdAndUpdate(req.userId, updateFields, {
+      new: true
+    });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    const { password: _, ...responseUser } = user._doc;
+
+    res.status(200).json({ success: true, data: responseUser });
   } catch (error) {
-    console.error("Error uploading file:", error);
-    res.status(500).json({ success: false, message: "Upload failed" });
+    console.error("Error updating user:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update user. Please try again."
+    });
   }
 });
-
-
 
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");

@@ -37,6 +37,7 @@ import { loader as homeLoader } from "./pages/HomeLayout";
 import { loader as userDashboardLoader } from "./pages/UserDashbaord";
 import { loader as clockInOutLoader } from "./components/ClockInOut";
 import { loader as RecordLoader } from "./pages/RecordPage";
+import { loader as adminLoader } from "./pages/AdminDasboard";
 
 const router = createBrowserRouter([
   {
@@ -84,7 +85,8 @@ const router = createBrowserRouter([
             element={<AdminDashboard />}
             allowedRoles={["volunteer", "admin"]} // Only allow "admin" role
           />
-        )
+        ),
+        loader:adminLoader,
       },
 
       {

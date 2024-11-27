@@ -3,30 +3,33 @@ import { FaSave, FaArrowLeft, FaUpload } from "react-icons/fa";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../util/customFetch";
+import useUserData from "../util/useUserData";
+import useHandleImageUpload from "../util/handleImageUpload";
 
-export const loader = async ({ params }) => {
-  try {
-    const response = await customFetch(`/users/${params.id}`);
-    return response.data.volunteer;
-  } catch (error) {
-    console.error(error);
-    throw new Response("Failed to load volunteer data.", { status: 500 });
-  }
+export const loader = async () => {
+  return useUserData();
 };
 
 const EditProfilePage = () => {
-  const volunteer = useLoaderData();
+  const { user: volunteer } = useLoaderData();
   const navigate = useNavigate();
+
+  const {
+    handleImageUpload,
+    uploading,
+    profileImage: imagefromHook
+  } = useHandleImageUpload();
 
   const [formData, setFormData] = useState({
     username: volunteer.username,
     email: volunteer.email,
-    profileImage: volunteer.profileImage,
+    profileImage: imagefromHook,
     password: "" // Empty by default
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value
@@ -34,32 +37,27 @@ const EditProfilePage = () => {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setFormData((prev) => ({
-          ...prev,
-          profileImage: reader.result // Convert image to base64 string
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
+    handleImageUpload(e);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      throw new Error("No token found,please log in again");
+    }
+
     try {
       const payload = { ...formData };
-      if (!payload.password) delete payload.password; // Remove password if not updated
-      const response = await customFetch.put(
-        `/users/${volunteer._id}`,
-        payload
-      );
 
-      if (response.success) {
+      if (!payload.password) delete payload.password; // Remove password if not updated
+      const response = await customFetch.put(`/user`, payload);
+
+      if (response.data.success) {
         toast.success("Profile updated successfully!");
-        navigate(`/volunteers/${volunteer._id}`); // Navigate back to the profile page
+        navigate(`/profile/${volunteer._id}`); // Navigate back to the profile page
       }
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -85,8 +83,9 @@ const EditProfilePage = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Profile Picture */}
             <div className="flex flex-col items-center">
+              {uploading && <p>Uploading....</p>}
               <img
-                src={formData.profileImage}
+                src={imagefromHook || volunteer.profileImage}
                 alt="Profile"
                 className="w-32 h-32 rounded-full mb-4 object-cover shadow-md"
               />

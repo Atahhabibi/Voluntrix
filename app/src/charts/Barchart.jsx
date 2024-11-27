@@ -10,7 +10,17 @@ import {
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip);
 
-const BarChart = ({ minutesWorked, nameList }) => {
+const BarChart = ({ timeRecordData}) => {
+
+    const minutesWorked = timeRecordData.map((item) =>
+      (item.timeSpent / 60).toFixed(0)
+    );
+
+    const nameList = timeRecordData.map((item) => item.name);
+
+
+
+
   const data = {
     labels: nameList, // Task names for x-axis
     datasets: [

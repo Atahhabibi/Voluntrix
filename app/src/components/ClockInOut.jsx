@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { FaStop, FaPlay, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -6,7 +6,7 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { customFetch } from "../util/customFetch";
 import useUserData from "../util/useUserData";
-
+import getClosestPending from "./../util/getClosetPending";
 
 export const loader = async () => {
   return useUserData();
@@ -33,12 +33,15 @@ const fetchTimeRecords = async () => {
 };
 
 const TaskTrackingPage = () => {
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   const { tasks, user, events } = useLoaderData();
+
+  let closePendingTaskOrEvent = getClosestPending(tasks, events);
+  closePendingTaskOrEvent = [closePendingTaskOrEvent];
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -228,11 +231,13 @@ const TaskTrackingPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Title for Tasks */}
           <div className="col-span-1 md:col-span-2">
-            <h2 className="text-2xl font-bold text-white mb-4">Tasks</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Task and Event available for clock in
+            </h2>
           </div>
 
           {/* Render tasks */}
-          {tasks.map((task) => (
+          {closePendingTaskOrEvent.map((task) => (
             <div
               key={task._id}
               className="p-6 bg-gray-800 rounded-lg shadow-md hover:shadow-lg hover:bg-gray-700 transition"
@@ -263,51 +268,6 @@ const TaskTrackingPage = () => {
               ) : (
                 <button
                   onClick={() => handleClockIn(task, "task")}
-                  className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition text-sm"
-                >
-                  <FaPlay className="inline mr-2" /> Clock In
-                </button>
-              )}
-            </div>
-          ))}
-
-          {/* Title for Events */}
-          <div className="col-span-1 md:col-span-2">
-            <h2 className="text-2xl font-bold text-white mb-4">Events</h2>
-          </div>
-
-          {/* Render events */}
-          {events.map((event) => (
-            <div
-              key={event._id}
-              className="p-6 bg-gray-800 rounded-lg shadow-md hover:shadow-lg hover:bg-gray-700 transition"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold text-white">{event.name}</h3>
-                <span className="text-sm text-green-400 bg-green-900 px-2 py-1 rounded-full">
-                  {event.points} Points
-                </span>
-              </div>
-              <div className="text-gray-400 text-sm mb-4">
-                <div className="flex items-center gap-2">
-                  <FaCalendarAlt className="text-blue-400" />
-                  <span>{event.date}</span>
-                </div>
-                <div className="flex items-center gap-2 mt-2">
-                  <FaClock className="text-yellow-400" />
-                  <span>{event.time}</span>
-                </div>
-              </div>
-              {trackedEvent?._id === event._id ? (
-                <button
-                  onClick={handleClockOut}
-                  className="mt-4 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition text-sm"
-                >
-                  <FaStop className="inline mr-2" /> Clock Out
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleClockIn(event, "event")}
                   className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition text-sm"
                 >
                   <FaPlay className="inline mr-2" /> Clock In
@@ -353,7 +313,7 @@ const TaskTrackingPage = () => {
                       className="border-t border-gray-700 hover:bg-gray-700 transition text-center"
                     >
                       <td className="px-4 py-2 border border-gray-700">
-                        {record.taskName}
+                        {record.name}
                       </td>
                       <td className="px-4 py-2 border border-gray-700">
                         {formatTime(record.clockIn)}

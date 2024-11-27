@@ -9,6 +9,7 @@ import TaskOverviewTable from "./TaskOverviewTable";
 import TopPerformingVolunteersTable from './TopPerformingVolunteersTable';
 import PointsDistributionTable from './PointsDistributionTable';
 import { Pagination } from 'swiper/modules';
+import ProfileDataTable from './ProfileDataTable';
 
 export {
   FormInput,
@@ -21,5 +22,6 @@ export {
   TaskOverviewTable,
   TopPerformingVolunteersTable,
   PointsDistributionTable,
-  Pagination
+  Pagination,
+  ProfileDataTable
 };

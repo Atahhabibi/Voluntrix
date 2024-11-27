@@ -23,6 +23,13 @@ import {
   TaskOverviewTable,
   VolunteerTable
 } from "../components";
+import useUserData from "../util/useUserData";
+
+
+
+export const loader=()=>{
+return useUserData(); 
+}
 
 const AdminDashboard = () => {
   const adminName = "Sheikh Hamzah Khalid";

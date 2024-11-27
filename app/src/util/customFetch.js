@@ -1,20 +1,31 @@
-import axios from 'axios';
+import axios from "axios";
 
-
+// Create an Axios instance with the base URL from Vite's environment variables
 export const customFetch = axios.create({
-  // baseURL: "https://mosque-f2mw.onrender.com/api/v1"
-  baseURL: "http://localhost:5000/api/v1"
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1"
 });
 
+// Request Interceptor to Add Token Dynamically
+customFetch.interceptors.request.use((config) => {
+  const token = localStorage.getItem("authToken"); // Fetch token dynamically
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    console.warn("No token found. Redirecting to login...");
+    window.location.href = "/login"; // Redirect to login
+  }
+  return config;
+});
 
-
+// Response Interceptor to Handle Errors
 customFetch.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Redirect user to login when token is invalid/expired
-      window.location.href = "/login";
+      localStorage.removeItem("authToken"); // Clear token
+      alert("Session expired. Please log in again.");
+      window.location.href = "/login"; // Redirect to login
     }
-    return Promise.reject(error);
+    return Promise.reject(error); // Reject the promise for other errors
   }
 );

@@ -54,7 +54,8 @@ try {
   return {
     user,
     tasks: [],
-    events: []
+    events: [],
+    timeRecordData:[],
   };
 } catch (error) {
   console.log(error);

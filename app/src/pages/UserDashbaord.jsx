@@ -9,33 +9,53 @@ import {
   FaArrowRight
 } from "react-icons/fa";
 import { Link, useLoaderData } from "react-router-dom";
-import userImg from "../images/atah.jpg";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../features/user/userSlice";
 import useUserData from "../util/useUserData";
 import { toast } from "react-toastify";
-import {
-  BarChart,
-  DonutChart,
-  LineChart,
-  PieChart,
-} from "../charts";
+import moment from "moment"; // Import Moment.js
+import { BarChart, DonutChart, LineChart, PieChart } from "../charts";
+import { customFetch } from "../util/customFetch";
+import useHandleImageUpload from "../util/handleImageUpload";
+import getClosestPending from "../util/getClosetPending";
+
+const userImg = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
 export const loader = () => {
-  // toast.warn(" Reminder: You are scheduled for Friday Prayer Setup tomorrow at 3 PM")
   return useUserData();
 };
 
 const UserDashboard = () => {
   const dispatch = useDispatch();
   const data = useLoaderData();
-
+  const { handleImageUpload, uploading, profileImage } = useHandleImageUpload();
   const { tasks, user, timeRecordData, events } = data;
-  const [profileImage, setProfileImage] = useState(
-    user?.profileImage || userImg
-  );
+  const closePendingItem = getClosestPending(tasks, events);
 
-  //CHART CALCULATIONS
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const hasShown = localStorage.getItem("message");
+    const eventDateTime = moment(
+      `${closePendingItem.date} ${closePendingItem.time}`,
+      "YYYY-MM-DD HH:mm"
+    );
+
+    const formattedDate = eventDateTime.format("dddd, MMMM Do YYYY");
+    const formattedTime = eventDateTime.format("h:mm A");
+
+    const message = `Reminder: You are scheduled for ${closePendingItem.name} on ${formattedDate} at ${formattedTime}`;
+    setMessage(message);
+
+    if (hasShown === "true") {
+      return;
+    }
+
+    if (hasShown === "false" || hasShown === null) {
+      localStorage.setItem("message", "true");
+      toast.warn(message);
+    }
+  }, []);
 
   //piechart
   const { pendingTaskLength, completedTaskLength } = tasks?.reduce(
@@ -58,23 +78,9 @@ const UserDashboard = () => {
 
   //donut chart:
 
-  const completedTasks = tasks.filter(
-    (task) => task.status === "completed"
-  ).length;
-
   const completedEvents = events.filter(
     (event) => event.status === "completed"
-  ).length;
-
-  //bar chart:
-
-  const minutesWorked = timeRecordData.map((item) =>
-    ((item.timeSpent) / 60).toFixed(0)
   );
-
-  const nameList = timeRecordData.map((item) => item.name.slice(0,26));
-
-
 
   useEffect(() => {
     if (data) {
@@ -97,35 +103,11 @@ const UserDashboard = () => {
     0
   );
 
-  const handleImageUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("profileImage", file);
-
-      try {
-        const response = await fetch("/api/v1/upload-profile-pic", {
-          method: "POST",
-          body: formData,
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`
-          }
-        });
-
-        const data = await response.json();
-        if (data.success) {
-          setProfileImage(URL.createObjectURL(file));
-        } else {
-          alert("Failed to upload image.");
-        }
-      } catch (error) {
-        console.error("Image upload error:", error);
-      }
-    }
-  };
-
-
-
+  const notSignUpTask = tasks?.filter(
+    (item) => item.status === "not_signed_up"
+  );
+  const pendingTask = tasks?.filter((item) => item.status === "pending");
+  const completedTasks = tasks?.filter((item) => item.status === "pending");
 
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
@@ -169,14 +151,29 @@ const UserDashboard = () => {
           </Link>
         </div>
 
-        {/* Welcome Section */}
+        {/* Welcome section */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700">
           <div className="card-body flex items-center flex-col">
-            <img
-              src={profileImage}
-              alt="Profile"
-              className="w-32 h-32 rounded-full mb-4"
-            />
+            {uploading && <p>Uploading...</p>}
+
+            {profileImage ? (
+              <div className="w-32 h-32 rounded-full overflow-hidden shadow-md mb-4">
+                <img
+                  src={profileImage}
+                  alt="user image"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-32 h-32 rounded-full overflow-hidden shadow-md mb-4">
+                <img
+                  src={user.profileImage}
+                  alt="user image"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
             <label className="btn btn-outline btn-primary flex items-center cursor-pointer">
               Upload New Photo
               <input
@@ -204,10 +201,7 @@ const UserDashboard = () => {
                 Notifications
               </h2>
             </div>
-            <p className="text-gray-400">
-              Reminder: You are scheduled for Friday Prayer Setup tomorrow at 3
-              PM.
-            </p>
+            <p className="text-gray-400">{message}</p>
           </div>
         </div>
 
@@ -217,8 +211,11 @@ const UserDashboard = () => {
             pendingTasks={pendingTaskLength}
           />
           <LineChart userPointsData={userPointsData} />
-          <BarChart minutesWorked={minutesWorked} nameList={nameList} />
-          <PieChart tasks={completedTasks} events={completedEvents} />
+          <BarChart timeRecordData={timeRecordData} />
+          <PieChart
+            tasks={completedTasks.length}
+            events={completedEvents.length}
+          />
         </div>
 
         {/* Points Summary */}
@@ -284,80 +281,120 @@ const UserDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Upcoming Tasks */}
           <div className="card w-full bg-gray-800 shadow-xl border border-gray-700">
-            <div className="card-body">
-              <div className="flex items-center mb-3">
-                <FaTasks className="text-xl text-green-400 mr-2" />
-                <h2 className="card-title text-lg font-semibold text-white">
-                  Upcoming Tasks
-                </h2>
+            <div className="card-body flex flex-col justify-between h-[400px]">
+              {" "}
+              {/* Fixed height */}
+              <div>
+                <div className="flex items-center mb-3">
+                  <FaTasks className="text-xl text-green-400 mr-2" />
+                  <h2 className="card-title text-lg font-semibold text-white">
+                    Pending Tasks for Clock In
+                  </h2>
+                </div>
+                <div className="space-y-4">
+                  {pendingTask?.length > 0 ? (
+                    pendingTask.slice(0, 2).map((item) => (
+                      <div
+                        key={item._id}
+                        className="p-4 bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 flex justify-between items-center transition duration-200"
+                      >
+                        <div>
+                          <p className="font-medium text-white">{item.name}</p>
+                          <p className="text-gray-400">Date: {item.date}</p>
+                          <p className="text-gray-400">Points: {item.points}</p>
+                        </div>
+                        <Link
+                          to="/clockInOut"
+                          className="px-4 py-2 text-sm font-semibold text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-md hover:shadow-lg transition duration-300"
+                        >
+                          Clock In
+                        </Link>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-center mt-4">
+                      No pending tasks available.Please singup for task first
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="space-y-4">
-                {tasks?.slice(0, 2)?.map((item) => (
-                  <div
-                    key={item._id}
-                    className="p-4 bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 flex justify-between items-center transition duration-200"
+              {pendingTask.length > 0 ? (
+                <div className="mt-4 text-center">
+                  <Link
+                    to="/clockInOut"
+                    className="px-4 py-2 inline-flex items-center justify-center bg-gray-700 text-green-400 border border-green-500 rounded-lg font-medium text-sm hover:bg-green-500 hover:text-gray-900 transition duration-300"
                   >
-                    <div>
-                      <p className="font-medium text-white">{item.name}</p>
-                      <p className="text-gray-400">Date: {item.date}</p>
-                      <p className="text-gray-400">Points: {item.points}</p>
-                    </div>
-                    <Link
-                      to="/clockInOut"
-                      className="px-4 py-2 text-sm font-semibold text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-md hover:shadow-lg transition duration-300"
-                    >
-                      Clock In
-                    </Link>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 text-center">
-                <Link
-                  to="/clockInOut"
-                  className="px-4 py-2 inline-flex items-center justify-center bg-gray-700 text-green-400 border border-green-500 rounded-lg font-medium text-sm hover:bg-green-500 hover:text-gray-900 transition duration-300"
-                >
-                  <FaArrowRight className="mr-2" />
-                  View All Tasks for Clock In
-                </Link>
-              </div>
+                    <FaArrowRight className="mr-2" />
+                    View All Tasks for Clock In
+                  </Link>
+                </div>
+              ) : (
+                <div className="mt-4 text-center">
+                  <Link
+                    to="/tasks"
+                    className="px-4 py-2 inline-flex items-center justify-center bg-gray-700 text-green-400 border border-green-500 rounded-lg font-medium text-sm hover:bg-green-500 hover:text-gray-900 transition duration-300"
+                  >
+                    <FaArrowRight className="mr-2" />
+                    View all tasks for signup
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Available Tasks */}
           <div className="card w-full bg-gray-800 shadow-xl border border-gray-700">
-            <div className="card-body">
-              <div className="flex items-center mb-3">
-                <FaClipboardList className="text-xl text-purple-400 mr-2" />
-                <h2 className="card-title text-lg font-semibold text-white">
-                  Available Tasks
-                </h2>
+            <div className="card-body flex flex-col justify-between h-[400px]">
+              {" "}
+              {/* Fixed height */}
+              <div>
+                <div className="flex items-center mb-3">
+                  <FaClipboardList className="text-xl text-purple-400 mr-2" />
+                  <h2 className="card-title text-lg font-semibold text-white">
+                    Available Tasks for Signup
+                  </h2>
+                </div>
+                <div className="space-y-4">
+                  {notSignUpTask?.length > 0 ? (
+                    notSignUpTask.slice(0, 2).map((item) => (
+                      <div
+                        key={item._id}
+                        className="p-4 bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 flex justify-between items-center transition duration-200"
+                      >
+                        <div>
+                          <p className="font-medium text-white">{item.name}</p>
+                          <p className="text-gray-400">Date: {item.date}</p>
+                          <p className="text-gray-400">Points: {item.points}</p>
+                        </div>
+                        <Link
+                          to={`/tasks/${item._id}`}
+                          className="px-4 py-2 text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600 rounded-lg shadow-md hover:shadow-lg transition duration-300"
+                        >
+                          Sign Up
+                        </Link>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-center mt-4">
+                      No tasks available for signup. Check for pending tasks on
+                      your profile.
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="space-y-4">
-                {tasks?.slice(0, 2)?.map((item) => (
-                  <div
-                    key={item._id}
-                    className="p-4 bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 flex justify-between items-center transition duration-200"
+              {completedTasks.length < 0 ? (
+                <div className="mt-4 text-center">
+                  <Link
+                    to="/tasks"
+                    className="px-4 py-2 inline-flex items-center justify-center bg-gray-700 text-purple-400 border border-purple-500 rounded-lg font-medium text-sm hover:bg-purple-500 hover:text-gray-900 transition duration-300"
                   >
-                    <div>
-                      <p className="font-medium text-white">{item.name}</p>
-                      <p className="text-gray-400">Date: {item.date}</p>
-                      <p className="text-gray-400">Points: {item.points}</p>
-                    </div>
-                    <button className="px-4 py-2 text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600 rounded-lg shadow-md hover:shadow-lg transition duration-300">
-                      Sign Up
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 text-center">
-                <Link
-                  to="/tasks"
-                  className="px-4 py-2 inline-flex items-center justify-center bg-gray-700 text-purple-400 border border-purple-500 rounded-lg font-medium text-sm hover:bg-purple-500 hover:text-gray-900 transition duration-300"
-                >
-                  <FaArrowRight className="mr-2" />
-                  View All Available Tasks
-                </Link>
-              </div>
+                    <FaArrowRight className="mr-2" />
+                    View All Available Tasks
+                  </Link>
+                </div>
+              ) : (
+                <p></p>
+              )}
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaTasks, FaClock, FaMedal } from "react-icons/fa";
 import { Link, useLoaderData } from "react-router-dom";
 import useUserData from "../util/useUserData";
+import { BarChart, LineChart, TaskPointsDistribution } from "../charts";
 
 export const loader = () => {
   return useUserData();
@@ -18,7 +19,13 @@ const RecordsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 30;
 
-  console.log(timeRecordData);
+
+   const userPointsData = timeRecordData.map((item) => {
+     return {
+       createdAt: item.createdAt,
+       totalPoints: item.pointsEarned
+     };
+   });
 
   const totalPages = Math.ceil(timeRecordData.length / recordsPerPage);
 
@@ -67,6 +74,10 @@ const RecordsPage = () => {
           <p className="text-3xl font-bold text-white">{totalPoints}</p>
         </div>
 
+        <div className="grid grid-cols-2 gap-3 py-3">
+          <BarChart timeRecordData={timeRecordData} />
+          <LineChart userPointsData={userPointsData} />
+        </div>
         {/* Records Table */}
         <table className="w-full bg-gray-800 text-gray-200 rounded-lg shadow-md text-sm border-collapse border border-gray-700">
           <thead>

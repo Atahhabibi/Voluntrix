@@ -12,6 +12,7 @@ import { Pagination } from 'swiper/modules';
 import ProfileDataTable from './ProfileDataTable';
 import TaskTable from "./TaskFormTable";
 import EventFormTable from './EventFormTable';
+import AdminPagination from './AdminPagination';
 
 export {
   FormInput,
@@ -27,5 +28,6 @@ export {
   Pagination,
   ProfileDataTable,
   TaskTable,
-  EventFormTable
+  EventFormTable,
+  AdminPagination
 };

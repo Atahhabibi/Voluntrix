@@ -10,15 +10,14 @@ import {
   FaArrowLeft,
   FaTrashAlt
 } from "react-icons/fa";
-import { useLoaderData, Link } from "react-router-dom";
+import { useLoaderData, Link, useParams } from "react-router-dom";
 import useUserData from "../util/useUserData";
 import ProfileTableData from "../components/ProfileDataTable";
 import { BarChart, PieChart } from "../charts";
 import { customFetch } from "../util/customFetch";
-
-export const loader = async ({ params }) => {
-  return useUserData({ params });
-};
+import useLoader from "../util/useUserData";
+import useUserDataCustom from "../util/CustomHooks/useUserData";
+import { useNavigate } from "react-router-dom";
 
 function convertSecondsToHours(seconds) {
   if (typeof seconds !== "number" || seconds < 0) {
@@ -29,7 +28,14 @@ function convertSecondsToHours(seconds) {
 }
 
 const VolunteerProfilePage = () => {
-  const { tasks, user: volunteer, events, timeRecordData } = useLoaderData();
+  const navigate = useNavigate();
+
+  const { data, isLoading, error } = useUserDataCustom();
+
+  const tasks = data?.tasks || [];
+  const events = data?.events || [];
+  const volunteer = data?.volunteer || {};
+  const timeRecordData = [data?.timeRecords || {}];
 
   // Assigned and completed tasks/events state
   const [assignedTasks, setAssignedTasks] = useState([]);
@@ -66,17 +72,26 @@ const VolunteerProfilePage = () => {
     }
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading data: {error.message}</div>;
+  }
+
   return (
     <div className="p-6 bg-gray-900 text-gray-200 min-h-screen">
       <div className="w-full max-w-6xl mx-auto">
         {/* Navigation Section */}
-        <Link
+        <button
+          onClick={() => navigate(-1)}
           to="/userDashboard"
           className="flex items-center justify-center w-48 py-2 mb-6 text-white rounded bg-blue-500 hover:bg-blue-600 transition"
         >
           <FaArrowLeft className="mr-2" />
           Back to Dashboard
-        </Link>
+        </button>
 
         {/* Profile Section */}
         <div className="card w-full bg-gray-800 shadow-lg mb-6 border border-gray-700">

@@ -29,8 +29,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/PrivateRoute"; // Import PrivateRoute
 import { loader as EventDetailLoader } from "./pages/EventDetailsPage";
-import { loader as volunteersLoader } from "./pages/VolunteerManagementPage";
-import { loader as profileLoader } from "./pages/Profile";
 import { loader as EditProfileLoader } from "./pages/EditProfilePage";
 import { loader as signupTaskLoader } from "./pages/SignupForTaskPage";
 import { loader as homeLoader } from "./pages/HomeLayout";
@@ -71,7 +69,7 @@ const router = createBrowserRouter([
         element: <SignupForTaskPage />,
         loader: signupTaskLoader
       },
-      { path: "/profile/:id", element: <Profile />, loader: profileLoader },
+      { path: "/profile/:id", element: <Profile /> },
       {
         path: "/editProfile/:id",
         element: <EditProfilePage />,
@@ -91,7 +89,6 @@ const router = createBrowserRouter([
       {
         path: "/volunteer-management",
         element: <VolunteerManagementPage />,
-        loader: volunteersLoader
       },
       {
         path: "/task-management",

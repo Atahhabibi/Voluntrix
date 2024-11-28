@@ -662,7 +662,7 @@ app.put("/api/v1/user", authMiddleware, async (req, res) => {
   }
 });
 
-app.get("/api/v1/tasks-events",authMiddleware, async (req, res) => {
+app.get("/api/v1/tasks-events", authMiddleware, async (req, res) => {
   try {
     const userId = req.userId; // Assuming you have a middleware to set req.userId
 
@@ -694,6 +694,117 @@ app.get("/api/v1/tasks-events",authMiddleware, async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error." });
   }
 });
+
+app.delete("/api/v1/deleteVolunteer/:id", async (req, res) => {
+  try {
+    const volunteer = await User.findOneAndDelete({ _id: req.params.id });
+
+    if (!volunteer) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Volunteer not found" });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Volunteer deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting volunteer:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+app.get("/api/v1/admin-volunteers", async (req, res) => {
+  try {
+    const users = await User.find();
+
+    res.status(200).json({ success: true, data: users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.get("/api/v1/admin-tasks", async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    res.status(200).json({ success: true, data: tasks });
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.get("/api/v1/admin-events", async (req, res) => {
+  try {
+    const events = await Event.find();
+    res.status(200).json({ success: true, data: events });
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.get("/api/v1/admin-time-records", async (req, res) => {
+  try {
+    const timeRecords = await TimeRecord.find();
+    res.status(200).json({ success: true, data: timeRecords });
+  } catch (error) {
+    console.error("Error fetching time records:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+
+
+app.get("/api/v1/volunteer/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ID
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Volunteer ID is required" });
+    }
+
+    // Fetch volunteer data excluding password
+    const volunteer = await User.findById(id).select("-password");
+    if (!volunteer) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Volunteer not found" });
+    }
+
+    // Fetch tasks, events, and time records if referenced in the schema
+    const tasks =
+      volunteer.tasks && Array.isArray(volunteer.tasks)
+        ? await Task.find({ _id: { $in: volunteer.tasks } })
+        : [];
+    const events =
+      volunteer.events && Array.isArray(volunteer.events)
+        ? await Event.find({ _id: { $in: volunteer.events } })
+        : [];
+    const timeRecords = await TimeRecord.findOne({ userId: volunteer._id });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        volunteer,
+        tasks,
+        events,
+        timeRecords
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching volunteer data:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+});
+
+
 
 
 app.get("/", (req, res) => {

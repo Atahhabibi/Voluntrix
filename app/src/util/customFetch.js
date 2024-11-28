@@ -10,9 +10,6 @@ customFetch.interceptors.request.use((config) => {
   const token = localStorage.getItem("authToken"); // Fetch token dynamically
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
-  } else {
-    console.warn("No token found. Redirecting to login...");
-    window.location.href = "/login"; // Redirect to login
   }
   return config;
 });

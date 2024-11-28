@@ -4,7 +4,6 @@ import { FaTrash, FaEdit } from "react-icons/fa";
 const ITEMS_PER_PAGE = 5;
 
 const TaskTable = ({ tasks, onDelete, onEdit }) => {
-  console.log(tasks);
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(tasks.length / ITEMS_PER_PAGE);
@@ -12,6 +11,9 @@ const TaskTable = ({ tasks, onDelete, onEdit }) => {
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+
+  // Fill empty rows to ensure consistent row height
+  const rowsToFill = Math.max(0, ITEMS_PER_PAGE - currentTasks.length);
 
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
@@ -22,80 +24,93 @@ const TaskTable = ({ tasks, onDelete, onEdit }) => {
   };
 
   return (
-    <div className="card bg-gray-800 p-6 shadow-md border border-gray-700 overflow-x-auto min-h-[400px] flex flex-col">
-      <h2 className="text-2xl text-white font-semibold mb-4 text-center">
+    <div className="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 flex flex-col min-h-[400px]">
+      <h2 className="text-2xl text-white font-semibold mb-6 text-center">
         Task Records
       </h2>
-      <table className="table-auto w-full text-gray-400 text-sm">
-        <thead>
-          <tr className="bg-gray-700 text-white text-center">
-            <th className="px-4 py-2 border border-gray-600">Task Name</th>
-            <th className="px-4 py-2 border border-gray-600">Date</th>
-            <th className="px-4 py-2 border border-gray-600">Edit</th>
-            <th className="px-4 py-2 border border-gray-600">Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentTasks.length > 0 ? (
-            currentTasks.map((task, index) => (
+      <div className="flex-grow overflow-y-auto">
+        <table className="table-auto w-full text-gray-400 text-sm border-collapse">
+          <thead>
+            <tr className="bg-gray-700 text-white text-center">
+              <th className="px-4 py-2 border border-gray-600 w-[50%] h-[50px]">
+                Task Name
+              </th>
+              <th className="px-4 py-2 border border-gray-600 w-[25%] h-[50px]">
+                Date
+              </th>
+              <th className="px-4 py-2 border border-gray-600 w-[25%] h-[50px]">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* Render rows for current tasks */}
+            {currentTasks.map((task) => (
               <tr
-                key={index}
-                className={`${
-                  index % 2 === 0 ? "bg-gray-600" : "bg-gray-700"
-                } text-center`}
+                key={task._id}
+                className="text-center border-b border-gray-700"
               >
-                <td className="px-4 py-2 border border-gray-600">
-                  {task.name}
+                <td className="px-4 py-2 border border-gray-600 text-left h-[50px]">
+                  {task.name || ""}
                 </td>
-                <td className="px-4 py-2 border border-gray-600">
-                  {task.date}
+                <td className="px-4 py-2 border border-gray-600 h-[50px]">
+                  {task.date || ""}
                 </td>
-                <td className="px-4 py-2 border border-gray-600">
+                <td className="px-4 py-2 border border-gray-600 h-[50px] flex justify-center space-x-2">
                   <button
-                    className="text-blue-500 hover:text-blue-700"
                     onClick={() => onEdit(task)}
+                    className="p-2 bg-yellow-500 rounded text-white flex items-center justify-center hover:bg-yellow-600 transition"
                   >
-                    <FaEdit />
+                    <FaEdit className="mr-1" /> Edit
                   </button>
-                </td>
-                <td className="px-4 py-2 border border-gray-600">
                   <button
-                    className="text-red-500 hover:text-red-700"
                     onClick={() => onDelete(task._id)}
+                    className="p-2 bg-red-600 rounded text-white flex items-center justify-center hover:bg-red-700 transition"
                   >
-                    <FaTrash />
+                    <FaTrash className="mr-1" /> Delete
                   </button>
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td
-                colSpan="4"
-                className="text-center py-4 text-gray-500 border border-gray-600"
-              >
-                No tasks available.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      {/* Pagination */}
-      <div className="mt-auto flex justify-between items-center pt-4">
+            ))}
+
+            {/* Add empty rows to fill up to 5 */}
+            {rowsToFill > 0 &&
+              Array.from({ length: rowsToFill }).map((_, index) => (
+                <tr
+                  key={`empty-row-${index}`}
+                  className="border-b border-gray-700"
+                >
+                  <td className="px-4 py-2 border border-gray-600 w-[50%] h-[50px]">
+                    &nbsp;
+                  </td>
+                  <td className="px-4 py-2 border border-gray-600 w-[25%] h-[50px]">
+                    &nbsp;
+                  </td>
+                  <td className="px-4 py-2 border border-gray-600 w-[25%] h-[50px]">
+                    &nbsp;
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="mt-4 flex justify-between items-center">
         <button
-          className="px-4 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 disabled:opacity-50"
-          disabled={currentPage === 1}
           onClick={handlePrevPage}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-700 text-gray-400 rounded hover:bg-gray-600 disabled:opacity-50"
         >
           Previous
         </button>
         <p className="text-gray-400">
-          Page {currentPage} of {totalPages}
+          Page {currentPage} of {totalPages || 1}
         </p>
         <button
-          className="px-4 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 disabled:opacity-50"
-          disabled={currentPage === totalPages}
           onClick={handleNextPage}
+          disabled={currentPage === totalPages || totalPages === 0}
+          className="px-4 py-2 bg-gray-700 text-gray-400 rounded hover:bg-gray-600 disabled:opacity-50"
         >
           Next
         </button>

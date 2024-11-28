@@ -129,10 +129,6 @@ const EventManagementPage = () => {
 
         {/* Event Creation Section */}
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-white flex items-center mb-4">
-            <FaEdit className="text-green-400 mr-2" />
-            Create a New Event
-          </h2>
           <EventCreationForm
             onSubmit={(newEvent) => createEventMutation.mutate(newEvent)}
             eventToEdit={eventToEdit}
@@ -189,64 +185,71 @@ const EventManagementPage = () => {
         </div>
 
         {/* Events Section */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-white flex items-center mb-4">
-            <FaCalendarAlt className="text-blue-500 mr-2" />
-            Upcoming Events
-          </h2>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {currentEvents.map((event) => (
-              <div
-                key={event.id}
-                className="p-4 rounded-lg shadow-lg bg-gray-800"
-              >
-                <h3 className="text-2xl font-semibold text-white mb-2">
-                  {event.name}
-                </h3>
-                <div className="text-gray-400 flex items-center space-x-2">
-                  <FaTag />
-                  <p>Type: {event.type}</p>
-                </div>
-                <div className="text-gray-400 flex items-center space-x-2">
-                  <FaCalendarAlt />
-                  <p>Date: {event.date}</p>
-                </div>
-                <div className="text-gray-400 flex items-center space-x-2">
-                  <FaClock />
-                  <p>Time: {event.time}</p>
-                </div>
-                <div className="text-gray-400 flex items-center space-x-2">
-                  <FaMapMarkerAlt />
-                  <p>Location: {event.location}</p>
-                </div>
-                <div className="text-gray-400 flex items-center space-x-2">
-                  <FaTrophy />
-                  <p>points: {event.points}</p>
-                </div>
-                <div className="flex justify-end space-x-3 mt-4">
-                  <button
-                    onClick={() => handleEditClick(event)}
-                    className="p-2 bg-yellow-500 rounded text-white flex items-center"
-                  >
-                    <FaEdit className="mr-1" /> Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(event)}
-                    className="p-2 bg-red-600 rounded text-white flex items-center"
-                  >
-                    <FaTrashAlt className="mr-1" /> Delete
-                  </button>
-                </div>
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 min-h-[800px]  p-8">
+          {currentEvents.map((event) => (
+            <div
+              key={event.id}
+              className="p-6 rounded-lg shadow-xl bg-gradient-to-br from-gray-800 to-gray-900  border-gray-700 hover:shadow-2xl transition-shadow duration-300 flex flex-col min-h-[400px] max-h-[400px] border max-w-[400px]"
+            >
+              {/* Event Name */}
+              <h3 className="text-lg font-bold text-white mb-7 text-center">
+                {event.name}
+              </h3>
+
+              {/* Event Details */}
+              <div className="text-gray-400 flex items-center mb-2">
+                <FaTag className="mr-2 text-blue-400" />
+                <p>Type: {event.type}</p>
               </div>
-            ))}
-          </div>
+              <div className="text-gray-400 flex items-center mb-2">
+                <FaCalendarAlt className="mr-2 text-yellow-400" />
+                <p>Date: {event.date}</p>
+              </div>
+              <div className="text-gray-400 flex items-center mb-2">
+                <FaClock className="mr-2 text-green-400" />
+                <p>Time: {event.time}</p>
+              </div>
+              <div className="text-gray-400 flex items-center mb-2">
+                <FaMapMarkerAlt className="mr-2 text-red-400" />
+                <p>Location: {event.location}</p>
+              </div>
+              <div className="text-gray-400 flex items-center mb-2">
+                <FaTrophy className="mr-2 text-yellow-500" />
+                <p>Points: {event.points}</p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-3 mt-auto ">
+                <button
+                  onClick={() => handleEditClick(event)}
+                  className="p-2 bg-yellow-500 rounded text-white flex items-center justify-center hover:bg-yellow-600 transition-colors"
+                >
+                  <FaEdit className="mr-1" /> Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteClick(event)}
+                  className="p-2 bg-red-600 rounded text-white flex items-center justify-center hover:bg-red-700 transition-colors"
+                >
+                  <FaTrashAlt className="mr-1" /> Delete
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {/* If no events, show a placeholder */}
+          {currentEvents.length === 0 && (
+            <div className="col-span-full text-center text-gray-500">
+              No events available.
+            </div>
+          )}
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-center space-x-4">
+        <div className=" bottom-4 w-full flex justify-center space-x-4 mt-9">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600"
+            className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 text-white"
           >
             Previous
           </button>
@@ -267,7 +270,7 @@ const EventManagementPage = () => {
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
-            className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600"
+            className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 text-white"
           >
             Next
           </button>

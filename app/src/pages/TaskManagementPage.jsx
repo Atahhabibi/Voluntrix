@@ -126,10 +126,6 @@ const TaskManagementPage = () => {
 
         {/* Task Creation */}
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-white mb-4 flex items-center">
-            <FaEdit className="text-green-400 mr-2" />
-            Create a New Task
-          </h2>
           <TaskCreationForm
             taskToEdit={taskToEdit}
             clearEditTask={() => setTaskToEdit(null)}
@@ -177,52 +173,59 @@ const TaskManagementPage = () => {
           </form>
         </div>
 
-        {/* Tasks Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {currentTasks.map((task, index) => (
-            <div
-              key={index}
-              className="p-6 rounded-lg shadow-lg bg-gray-800 flex flex-col"
-            >
-              <h3 className="text-2xl font-semibold text-white mb-2">
-                {task.name}
-              </h3>
-              <div className="text-gray-400 flex items-center space-x-2">
-                <FaCalendarAlt />
-                <p>Date: {task.date}</p>
+        <div className="flex flex-col min-h-[700px]">
+          {/* Cards Container */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 grid-rows-2 p-5">
+            {currentTasks.map((task, index) => (
+              <div
+                key={index}
+                className="p-6 rounded-lg shadow-xl bg-gradient-to-br from-gray-800 to-gray-900 flex flex-col min-h-[300px] border border-gray-700 hover:shadow-2xl transition-shadow duration-300 relative"
+              >
+                {/* Task Name */}
+                <h3 className="text-md font-bold text-white mb-3 text-center">
+                  {task.name}
+                </h3>
+
+                {/* Task Details */}
+                <div className="text-gray-400 flex items-center mb-2">
+                  <FaCalendarAlt className="mr-2 text-blue-400" />
+                  <p>Date: {task.date}</p>
+                </div>
+                <div className="text-gray-400 flex items-center mb-2">
+                  <FaClock className="mr-2 text-yellow-400" />
+                  <p>Time: {task.time}</p>
+                </div>
+                <div className="text-gray-400 flex items-center mb-2">
+                  <FaUsers className="mr-2 text-green-400" />
+                  <p>Volunteers: {task.volunteers}</p>
+                </div>
+                <div className="text-gray-400 flex items-center mb-4">
+                  <FaStar className="mr-2 text-yellow-500" />
+                  <p>Points: {task.points}</p>
+                </div>
+
+                {/* Buttons */}
+                <div className="grid grid-cols-2 gap-3 mt-auto">
+                  <button
+                    onClick={() => setTaskToEdit(task)}
+                    className="p-2 bg-yellow-500 rounded text-white flex items-center justify-center hover:bg-yellow-600 transition-colors"
+                  >
+                    <FaEdit className="mr-1" /> Edit
+                  </button>
+                  <button
+                    onClick={() => setTaskToDelete(task)}
+                    className="p-2 bg-red-600 rounded text-white flex items-center justify-center hover:bg-red-700 transition-colors"
+                  >
+                    <FaTrashAlt className="mr-1" /> Delete
+                  </button>
+                </div>
               </div>
-              <div className="text-gray-400 flex items-center space-x-2">
-                <FaClock />
-                <p>Time: {task.time}</p>
-              </div>
-              <div className="text-gray-400 flex items-center space-x-2">
-                <FaUsers />
-                <p>Volunteers Needed: {task.volunteers}</p>
-              </div>
-              <div className="text-gray-400 flex items-center space-x-2">
-                <FaStar className="text-yellow-500" />
-                <p>Points: {task.points}</p>
-              </div>
-              <div className="flex justify-end space-x-3 mt-4">
-                <button
-                  onClick={() => setTaskToEdit(task)}
-                  className="p-2 bg-yellow-500 rounded text-white flex items-center"
-                >
-                  <FaEdit className="mr-1" /> Edit
-                </button>
-                <button
-                  onClick={() => setTaskToDelete(task)}
-                  className="p-2 bg-red-600 rounded text-white flex items-center"
-                >
-                  <FaTrashAlt className="mr-1" /> Delete
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-4">
           <button
             onClick={handlePrevious}
             disabled={currentPage === 1}

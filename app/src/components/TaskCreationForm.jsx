@@ -1,26 +1,45 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { customFetch } from "../util/customFetch";
 import { toast } from "react-toastify";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import TaskTable from "./TaskFormTable";
 
+
+// TaskCreationForm Component
 const TaskCreationForm = ({ taskToEdit, clearEditTask }) => {
+  
   const queryClient = useQueryClient();
+  const [tasks, setTasks] = useState([]); // State to hold tasks
 
   const createMutation = useMutation({
     mutationFn: async (data) => {
       const response = await customFetch.post("/tasks", data);
       return response.data;
     },
-    onSuccess: () => {
-      toast.success("Task created successfully ");
+    onSuccess: (newTask) => {
+      toast.success("Task created successfully!");
       queryClient.invalidateQueries(["Tasks"]);
-      
+      setTasks((prev) => [...prev, newTask]); // Add new task to the list
     },
     onError: () => {
-      toast.error("There is some error in Creating ");
+      toast.error("There was an error creating the task.");
     }
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (taskId) => {
+      await customFetch.delete(`/tasks/${taskId}`);
+    },
+    onSuccess: (_, taskId) => {
+      toast.success("Task deleted successfully!");
+      queryClient.invalidateQueries(["Tasks"]);
+      setTasks((prev) => prev.filter((task) => task._id !== taskId)); // Remove deleted task from the list
+    },
+    onError: () => {
+      toast.error("There was an error deleting the task.");
+    }
+  });
 
   const updateMutation = useMutation({
     mutationFn: async (data) => {
@@ -28,12 +47,12 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask }) => {
       return response.data;
     },
     onSuccess: () => {
+      toast.success("Task updated successfully!");
       queryClient.invalidateQueries(["Tasks"]);
-      toast.success("Task udpated successfully ");
-      clearEditTask(); 
+      clearEditTask();
     },
     onError: () => {
-      toast.error("There is some error in Updating ");
+      toast.error("There was an error updating the task.");
     }
   });
 
@@ -41,7 +60,6 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask }) => {
 
   useEffect(() => {
     const form = formRef.current;
-
     if (taskToEdit && form) {
       form.name.value = taskToEdit.name || "";
       form.date.value = taskToEdit.date || "";
@@ -68,71 +86,95 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask }) => {
     }
   };
 
+  const handleDelete = (taskId) => {
+    deleteMutation.mutate(taskId);
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      ref={formRef}
-      className="card bg-gray-800 p-8 shadow-md border border-gray-700 mb-[2rem]"
-    >
-      <h2 className="text-2xl text-white font-semibold mb-4">
-        {taskToEdit ? "Edit Task" : "Create Task"}
-      </h2>
-      <input type="hidden" name="id" />
-      <div className="mb-4">
-        <label className="text-white">Task Title</label>
-        <input
-          type="text"
-          className="input input-bordered w-full mt-2"
-          name="name"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="text-white">Date</label>
-        <input
-          type="date"
-          className="input input-bordered w-full mt-2"
-          name="date"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="text-white">Time</label>
-        <input
-          type="time"
-          name="time"
-          className="input input-bordered w-full mt-2"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="text-white">Volunteers Needed</label>
-        <input
-          type="number"
-          name="volunteers"
-          className="input input-bordered w-full mt-2"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="text-white">Points</label>
-        <input
-          type="number"
-          name="points"
-          className="input input-bordered w-full mt-2"
-          required
-        />
-      </div>
-      <button type="submit" className="btn btn-primary w-full">
-        {createMutation.isLoading
-          ? "Creating..."
-          : updateMutation.isLoading
-          ? "Updating..."
-          : taskToEdit
-          ? "Update Task"
-          : "Create Task"}
-      </button>
-    </form>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Task Creation Form */}
+      <form
+        onSubmit={handleSubmit}
+        ref={formRef}
+        className="card bg-gray-800 p-8 shadow-md border border-gray-700 space-y-6"
+      >
+        <h2 className="text-2xl text-white font-semibold text-center flex items-center justify-center gap-2">
+          {taskToEdit ? (
+            <>
+              <FaEdit className="text-yellow-400" />
+              Edit Task
+            </>
+          ) : (
+            <>
+              <FaPlus className="text-green-400" />
+              Create Task
+            </>
+          )}
+        </h2>
+        <input type="hidden" name="id" />
+        <div>
+          <label className="text-white block mb-2">Task Title</label>
+          <input
+            type="text"
+            className="input input-bordered w-full"
+            name="name"
+            required
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="text-white block mb-2">Date</label>
+            <input
+              type="date"
+              className="input input-bordered w-full"
+              name="date"
+              required
+            />
+          </div>
+          <div>
+            <label className="text-white block mb-2">Time</label>
+            <input
+              type="time"
+              name="time"
+              className="input input-bordered w-full"
+              required
+            />
+          </div>
+          <div>
+            <label className="text-white block mb-2">Volunteers Needed</label>
+            <input
+              type="number"
+              name="volunteers"
+              className="input input-bordered w-full"
+              required
+            />
+          </div>
+          <div>
+            <label className="text-white block mb-2">Points</label>
+            <input
+              type="number"
+              name="points"
+              className="input input-bordered w-full"
+              required
+            />
+          </div>
+        </div>
+        <div className="w-full">
+          <button type="submit" className="btn btn-primary w-full">
+            {createMutation.isLoading
+              ? "Creating..."
+              : updateMutation.isLoading
+              ? "Updating..."
+              : taskToEdit
+              ? "Update Task"
+              : "Create Task"}
+          </button>
+        </div>
+      </form>
+
+      {/* Task Table */}
+      <TaskTable tasks={tasks} onDelete={handleDelete} />
+    </div>
   );
 };
 

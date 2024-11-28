@@ -6,7 +6,7 @@ const getClosestPending = (tasks, events) => {
   ];
 
   if (pendingItems.length === 0) {
-    return "No pending tasks or events available.";
+    return pendingItems;  
   }
 
   // Get the current date and time
@@ -27,7 +27,7 @@ const getClosestPending = (tasks, events) => {
       : closestItem;
   });
 
-  return closest;
+  return [closest];
 };
 
 export default getClosestPending;

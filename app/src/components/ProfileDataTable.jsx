@@ -30,6 +30,7 @@ const ProfileTableData = ({ title, data = [], onDelete }) => {
             <tr className="bg-gray-700 text-white">
               <th className="px-4 py-2 border border-gray-600">Name</th>
               <th className="px-4 py-2 border border-gray-600">Date</th>
+              <th className="px-4 py-2 border border-gray-600">Time</th>
               {onDelete && (
                 <th className="px-4 py-2 border border-gray-600">Actions</th>
               )}
@@ -42,13 +43,16 @@ const ProfileTableData = ({ title, data = [], onDelete }) => {
                   key={index}
                   className={`${
                     index % 2 === 0 ? "bg-gray-600" : "bg-gray-700"
-                  } hover:bg-gray-500 transition`}
+                  } hover:bg-gray-500 transition text-gray-300`}
                 >
                   <td className="px-4 py-2 text-center border border-gray-600">
                     {item.name || "Unnamed"}
                   </td>
                   <td className="px-4 py-2 text-center border border-gray-600">
                     {item.date || "N/A"}
+                  </td>
+                  <td className="px-4 py-2 text-center border border-gray-600">
+                    {item.time || "N/A"}
                   </td>
                   {onDelete && (
                     <td className="px-4 py-2 text-center border border-gray-600">
@@ -65,7 +69,7 @@ const ProfileTableData = ({ title, data = [], onDelete }) => {
             ) : (
               <tr>
                 <td
-                  colSpan={onDelete ? 3 : 2}
+                  colSpan={onDelete ? 4 : 3}
                   className="text-center py-16 text-gray-400 border border-gray-600"
                 >
                   No data available.

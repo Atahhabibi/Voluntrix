@@ -17,7 +17,7 @@ const RecordsPage = () => {
   const totalPoints = user.totalPoints;
 
   const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 30;
+  const recordsPerPage =7;
 
 
    const userPointsData = timeRecordData.map((item) => {
@@ -79,71 +79,101 @@ const RecordsPage = () => {
           <LineChart userPointsData={userPointsData} />
         </div>
         {/* Records Table */}
-        <table className="w-full bg-gray-800 text-gray-200 rounded-lg shadow-md text-sm border-collapse border border-gray-700">
-          <thead>
-            <tr className="bg-gray-700 text-center">
-              <th className="px-4 py-2 border border-gray-700">
-                <FaTasks className="inline mr-1" /> Task Name
-              </th>
-              <th className="px-4 py-2 border border-gray-700">
-                <FaClock className="inline mr-1" /> Clock In
-              </th>
-              <th className="px-4 py-2 border border-gray-700">
-                <FaClock className="inline mr-1" /> Clock Out
-              </th>
-              <th className="px-4 py-2 border border-gray-700">
-                <FaClock className="inline mr-1" /> Time Spent
-              </th>
-              <th className="px-4 py-2 border border-gray-700">
-                <FaMedal className="inline mr-1" /> Points Earned
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentRecords.map((record, index) => (
-              <tr
-                key={index}
-                className="border-t border-gray-700 hover:bg-gray-700 text-center"
-              >
-                <td className="px-4 py-2 border border-gray-700">
-                  {record.name}
-                </td>
-                <td className="px-4 py-2 border border-gray-700">
-                  {new Date(record.clockIn).toLocaleString()}
-                </td>
-                <td className="px-4 py-2 border border-gray-700">
-                  {new Date(record.clockOut).toLocaleString()}
-                </td>
-                <td className="px-4 py-2 border border-gray-700">
-                  {formatElapsedTime(record.timeSpent)}
-                </td>
-                <td className="px-4 py-2 border border-gray-700">
-                  {record.pointsEarned}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Pagination Controls */}
-        <div className="flex justify-center items-center mt-6 space-x-4">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            className="px-4 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 transition"
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <span className="text-gray-400">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            className="px-4 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 transition"
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
+        <div className="flex flex-col min-h-[20rem]">
+          <div className="flex-grow">
+            <table className="w-full bg-gray-800 text-gray-200 rounded-lg shadow-md text-sm border-collapse border border-gray-700 min-h-[10rem]">
+              <thead>
+                <tr className="bg-gray-700 text-center">
+                  <th className="px-4 py-2 border border-gray-700">
+                    <FaTasks className="inline mr-1" /> Task Name
+                  </th>
+                  <th className="px-4 py-2 border border-gray-700">
+                    <FaClock className="inline mr-1" /> Clock In
+                  </th>
+                  <th className="px-4 py-2 border border-gray-700">
+                    <FaClock className="inline mr-1" /> Clock Out
+                  </th>
+                  <th className="px-4 py-2 border border-gray-700">
+                    <FaClock className="inline mr-1" /> Time Spent
+                  </th>
+                  <th className="px-4 py-2 border border-gray-700">
+                    <FaMedal className="inline mr-1" /> Points Earned
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentRecords.map((record, index) => (
+                  <tr
+                    key={index}
+                    className="border-t border-gray-700 hover:bg-gray-700 text-center"
+                  >
+                    <td className="px-4 py-2 border border-gray-700">
+                      {record.name}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700">
+                      {new Date(record.clockIn).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700">
+                      {new Date(record.clockOut).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700">
+                      {formatElapsedTime(record.timeSpent)}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700">
+                      {record.pointsEarned}
+                    </td>
+                  </tr>
+                ))}
+                {/* Add empty rows to maintain consistent table height */}
+                {currentRecords.length < recordsPerPage &&
+                  Array.from(
+                    { length: recordsPerPage - currentRecords.length },
+                    (_, index) => (
+                      <tr
+                        key={`empty-${index}`}
+                        className="border-t border-gray-700 text-center"
+                      >
+                        <td className="px-4 py-2 border border-gray-700">
+                          &nbsp;
+                        </td>
+                        <td className="px-4 py-2 border border-gray-700">
+                          &nbsp;
+                        </td>
+                        <td className="px-4 py-2 border border-gray-700">
+                          &nbsp;
+                        </td>
+                        <td className="px-4 py-2 border border-gray-700">
+                          &nbsp;
+                        </td>
+                        <td className="px-4 py-2 border border-gray-700">
+                          &nbsp;
+                        </td>
+                      </tr>
+                    )
+                  )}
+              </tbody>
+            </table>
+          </div>
+          {/* Pagination Controls */}
+          <div className="flex justify-between items-center mt-4">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="px-4 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 transition disabled:opacity-50"
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span className="text-gray-400">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="px-4 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 transition disabled:opacity-50"
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>

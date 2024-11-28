@@ -662,6 +662,40 @@ app.put("/api/v1/user", authMiddleware, async (req, res) => {
   }
 });
 
+app.get("/api/v1/tasks-events",authMiddleware, async (req, res) => {
+  try {
+    const userId = req.userId; // Assuming you have a middleware to set req.userId
+
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID is required." });
+    }
+
+    // Fetch the user
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    const taskIds = user.tasks || [];
+    const eventIds = user.events || [];
+
+    // Fetch tasks and events based on IDs
+    const tasks = await Task.find({ _id: { $in: taskIds } });
+    const events = await Event.find({ _id: { $in: eventIds } });
+
+    res.status(200).json({ success: true, tasks, events });
+  } catch (error) {
+    console.error("Error fetching tasks and events:", error);
+    res.status(500).json({ success: false, message: "Internal server error." });
+  }
+});
+
+
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");
 });

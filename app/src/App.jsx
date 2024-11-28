@@ -35,7 +35,6 @@ import { loader as EditProfileLoader } from "./pages/EditProfilePage";
 import { loader as signupTaskLoader } from "./pages/SignupForTaskPage";
 import { loader as homeLoader } from "./pages/HomeLayout";
 import { loader as userDashboardLoader } from "./pages/UserDashbaord";
-import { loader as clockInOutLoader } from "./components/ClockInOut";
 import { loader as RecordLoader } from "./pages/RecordPage";
 import { loader as adminLoader } from "./pages/AdminDasboard";
 
@@ -103,7 +102,7 @@ const router = createBrowserRouter([
         element: <EventManagementPage />
       },
 
-      { path: "clockInOut", element: <ClockInOut />, loader: clockInOutLoader },
+      { path: "clockInOut", element: <ClockInOut />},
       { path: "/records", element: <RecordsPage />, loader: RecordLoader },
       {
         path: "/detailChartsPage",

@@ -3,23 +3,9 @@ import { customFetch } from "./customFetch";
 
 const useUserData=async()=>{
 
-const token = localStorage.getItem("authToken");
-
-if (!token) {
-  throw new Error("No token found,please log in again");
-}
-
 try {
-  const userResponse = await customFetch("/user", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-  const recordTimeResponse = await customFetch("/time-records", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+  const userResponse = await customFetch("/user");
+  const recordTimeResponse = await customFetch("/time-records");
 
 
   const timeRecordData = recordTimeResponse.data.data || [];

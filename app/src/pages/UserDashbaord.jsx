@@ -9,7 +9,7 @@ import {
   FaArrowRight
 } from "react-icons/fa";
 import { Link, useLoaderData } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUserData } from "../features/user/userSlice";
 import useUserData from "../util/useUserData";
 import { toast } from "react-toastify";
@@ -18,6 +18,7 @@ import { BarChart, DonutChart, LineChart, PieChart } from "../charts";
 import { customFetch } from "../util/customFetch";
 import useHandleImageUpload from "../util/handleImageUpload";
 import getClosestPending from "../util/getClosetPending";
+import TaskReminder from "../components/TaskRemainder";
 
 const userImg = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
@@ -32,30 +33,12 @@ const UserDashboard = () => {
   const { tasks, user, timeRecordData, events } = data;
   const closePendingItem = getClosestPending(tasks, events);
 
-  const [message, setMessage] = useState("");
+  const {
+    events: { events: storeEvents },
+    tasks: { tasks: storeTasks }
+  } = useSelector((store) => store); 
 
-  useEffect(() => {
-    const hasShown = localStorage.getItem("message");
-    const eventDateTime = moment(
-      `${closePendingItem.date} ${closePendingItem.time}`,
-      "YYYY-MM-DD HH:mm"
-    );
 
-    const formattedDate = eventDateTime.format("dddd, MMMM Do YYYY");
-    const formattedTime = eventDateTime.format("h:mm A");
-
-    const message = `Reminder: You are scheduled for ${closePendingItem.name} on ${formattedDate} at ${formattedTime}`;
-    setMessage(message);
-
-    if (hasShown === "true") {
-      return;
-    }
-
-    if (hasShown === "false" || hasShown === null) {
-      localStorage.setItem("message", "true");
-      toast.warn(message);
-    }
-  }, []);
 
   //piechart
   const { pendingTaskLength, completedTaskLength } = tasks?.reduce(
@@ -103,10 +86,24 @@ const UserDashboard = () => {
     0
   );
 
-  const notSignUpTask = tasks?.filter(
+  const notSignUpTask = storeTasks?.filter(
     (item) => item.status === "not_signed_up"
   );
-  const pendingTask = tasks?.filter((item) => item.status === "pending");
+  const notAttendedEvents = storeTasks?.filter(
+    (item) => item.status === "not_attended"
+  );
+
+
+  const notSingupNotAttendedEventTask=[...notAttendedEvents,...notSignUpTask]
+
+
+
+
+  const pendingTasks = tasks?.filter((item) => item.status === "pending");
+  const pendingEvents = events?.filter((item) => item.status === "pending");
+
+ const pendingEventTasks=[...pendingEvents,...pendingTasks]; 
+
   const completedTasks = tasks?.filter((item) => item.status === "pending");
 
   return (
@@ -201,7 +198,9 @@ const UserDashboard = () => {
                 Notifications
               </h2>
             </div>
-            <p className="text-gray-400">{message}</p>
+            <p className="text-gray-400">
+              <TaskReminder pendingTask={closePendingItem} />
+            </p>
           </div>
         </div>
 
@@ -288,12 +287,12 @@ const UserDashboard = () => {
                 <div className="flex items-center mb-3">
                   <FaTasks className="text-xl text-green-400 mr-2" />
                   <h2 className="card-title text-lg font-semibold text-white">
-                    Pending Tasks for Clock In
+                    Pending Tasks/Events for Clock In
                   </h2>
                 </div>
                 <div className="space-y-4">
-                  {pendingTask?.length > 0 ? (
-                    pendingTask.slice(0, 2).map((item) => (
+                  {pendingEventTasks?.length > 0 ? (
+                    pendingEventTasks.slice(0, 2).map((item) => (
                       <div
                         key={item._id}
                         className="p-4 bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 flex justify-between items-center transition duration-200"
@@ -307,7 +306,7 @@ const UserDashboard = () => {
                           to="/clockInOut"
                           className="px-4 py-2 text-sm font-semibold text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-md hover:shadow-lg transition duration-300"
                         >
-                          Clock In
+                          Check Status
                         </Link>
                       </div>
                     ))
@@ -318,24 +317,24 @@ const UserDashboard = () => {
                   )}
                 </div>
               </div>
-              {pendingTask.length > 0 ? (
+              {pendingEventTasks.length > 0 ? (
                 <div className="mt-4 text-center">
                   <Link
-                    to="/clockInOut"
+                    to={`/profile/${user._id}`}
                     className="px-4 py-2 inline-flex items-center justify-center bg-gray-700 text-green-400 border border-green-500 rounded-lg font-medium text-sm hover:bg-green-500 hover:text-gray-900 transition duration-300"
                   >
                     <FaArrowRight className="mr-2" />
-                    View All Tasks for Clock In
+                    View All pending Tasks or Events on your profile
                   </Link>
                 </div>
               ) : (
                 <div className="mt-4 text-center">
                   <Link
-                    to="/tasks"
+                    to={`/tasks`}
                     className="px-4 py-2 inline-flex items-center justify-center bg-gray-700 text-green-400 border border-green-500 rounded-lg font-medium text-sm hover:bg-green-500 hover:text-gray-900 transition duration-300"
                   >
                     <FaArrowRight className="mr-2" />
-                    View all tasks for signup
+                    View all Tasks or Events for signup
                   </Link>
                 </div>
               )}
@@ -351,12 +350,12 @@ const UserDashboard = () => {
                 <div className="flex items-center mb-3">
                   <FaClipboardList className="text-xl text-purple-400 mr-2" />
                   <h2 className="card-title text-lg font-semibold text-white">
-                    Available Tasks for Signup
+                    Available Tasks/Events for Signup
                   </h2>
                 </div>
                 <div className="space-y-4">
-                  {notSignUpTask?.length > 0 ? (
-                    notSignUpTask.slice(0, 2).map((item) => (
+                  {notSingupNotAttendedEventTask?.length > 0 ? (
+                    notSingupNotAttendedEventTask.slice(0, 2).map((item) => (
                       <div
                         key={item._id}
                         className="p-4 bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 flex justify-between items-center transition duration-200"
@@ -382,14 +381,14 @@ const UserDashboard = () => {
                   )}
                 </div>
               </div>
-              {completedTasks.length < 0 ? (
+              {notSingupNotAttendedEventTask.length > 0 ? (
                 <div className="mt-4 text-center">
                   <Link
                     to="/tasks"
                     className="px-4 py-2 inline-flex items-center justify-center bg-gray-700 text-purple-400 border border-purple-500 rounded-lg font-medium text-sm hover:bg-purple-500 hover:text-gray-900 transition duration-300"
                   >
                     <FaArrowRight className="mr-2" />
-                    View All Available Tasks
+                    View All Available Tasks or Events
                   </Link>
                 </div>
               ) : (

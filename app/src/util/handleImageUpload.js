@@ -17,11 +17,7 @@ const useHandleImageUpload = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await customFetch.get("/user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
+        const response = await customFetch.get("/user");
 
         if (response.data.success) {
           setProfileImage(response.data.user.profileImage); // Set the profile image from the backend
@@ -50,7 +46,6 @@ const useHandleImageUpload = () => {
     try {
       const response = await customFetch.post("/upload", formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data"
         }
       });

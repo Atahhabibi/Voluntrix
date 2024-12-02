@@ -754,8 +754,6 @@ app.get("/api/v1/admin-time-records", async (req, res) => {
   }
 });
 
-
-
 app.get("/api/v1/volunteer/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -804,9 +802,22 @@ app.get("/api/v1/volunteer/:id", async (req, res) => {
   }
 });
 
+// Promote to Admin
+app.post("/promote",authMiddleware, async (req, res) => {
+  const { email } = req.body;
 
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
+    user.role = "admin";
+    await user.save();
 
+    res.json({ message: `${email} promoted to admin` });
+  } catch (err) {
+    res.status(500).json({ message: "Error promoting user", error: err });
+  }
+})
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");
 });

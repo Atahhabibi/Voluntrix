@@ -1,26 +1,25 @@
 import React, { useRef, useEffect, useState } from "react";
 import { customFetch } from "../util/customFetch";
 import { toast } from "react-toastify";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import TaskTable from "./TaskFormTable";
 
 
 // TaskCreationForm Component
-const TaskCreationForm = ({ taskToEdit, clearEditTask }) => {
-  
+const TaskCreationForm = ({ taskToEdit, clearEditTask,tasks,setTaskToEdit }) => {
+
   const queryClient = useQueryClient();
-  const [tasks, setTasks] = useState([]); // State to hold tasks
 
   const createMutation = useMutation({
     mutationFn: async (data) => {
       const response = await customFetch.post("/tasks", data);
       return response.data;
     },
-    onSuccess: (newTask) => {
+    onSuccess: () => {
       toast.success("Task created successfully!");
-      queryClient.invalidateQueries(["Tasks"]);
-      setTasks((prev) => [...prev, newTask]); // Add new task to the list
+      queryClient.invalidateQueries(["AppData"]);
+     
     },
     onError: () => {
       toast.error("There was an error creating the task.");
@@ -31,10 +30,10 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask }) => {
     mutationFn: async (taskId) => {
       await customFetch.delete(`/tasks/${taskId}`);
     },
-    onSuccess: (_, taskId) => {
+    onSuccess: () => {
       toast.success("Task deleted successfully!");
-      queryClient.invalidateQueries(["Tasks"]);
-      setTasks((prev) => prev.filter((task) => task._id !== taskId)); // Remove deleted task from the list
+      queryClient.invalidateQueries(["AppData"]);
+
     },
     onError: () => {
       toast.error("There was an error deleting the task.");
@@ -48,7 +47,7 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask }) => {
     },
     onSuccess: () => {
       toast.success("Task updated successfully!");
-      queryClient.invalidateQueries(["Tasks"]);
+      queryClient.invalidateQueries(["AppData"]);
       clearEditTask();
     },
     onError: () => {
@@ -173,7 +172,11 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask }) => {
       </form>
 
       {/* Task Table */}
-      <TaskTable tasks={tasks} onDelete={handleDelete} />
+      <TaskTable
+        tasks={tasks}
+        onDelete={handleDelete}
+        setTaskToEdit={setTaskToEdit}
+      />
     </div>
   );
 };

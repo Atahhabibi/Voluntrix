@@ -13,6 +13,7 @@ import ProfileDataTable from './ProfileDataTable';
 import TaskTable from "./TaskFormTable";
 import EventFormTable from './EventFormTable';
 import AdminPagination from './AdminPagination';
+import DeleteConfirmationModal from './DeleteConfirmationModal/';
 
 export {
   FormInput,
@@ -29,5 +30,6 @@ export {
   ProfileDataTable,
   TaskTable,
   EventFormTable,
-  AdminPagination
+  AdminPagination,
+  DeleteConfirmationModal
 };

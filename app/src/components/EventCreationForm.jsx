@@ -5,7 +5,7 @@ import { customFetch } from "../util/customFetch";
 import { FaPlusCircle, FaEdit } from "react-icons/fa";
 import EventFormTable from "./EventFormTable"; // Import the table component
 
-const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
+const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit,setShowModal ,confirmDelete,showModal}) => {
   const formRef = useRef();
   const queryClient = useQueryClient();
 
@@ -142,6 +142,15 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
             />
           </div>
           <div>
+            <label className="text-white block mb-2">Type</label>
+            <input
+              type="text"
+              name="type"
+              className="input input-bordered w-full"
+              required
+            />
+          </div>
+          <div>
             <label className="text-white block mb-2">Time</label>
             <input
               type="time"
@@ -159,7 +168,7 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
               required
             />
           </div>
-          <div>
+          <div className="col-span-2">
             <label className="text-white block mb-2">Location</label>
             <input
               type="text"

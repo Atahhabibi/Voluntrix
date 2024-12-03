@@ -125,9 +125,7 @@ const TasksPage = () => {
               <select
                 className="select select-bordered w-full bg-base-100"
                 value={filter.type}
-                onChange={(e) =>
-                  setFilter({ ...filter, type: e.target.value })
-                }
+                onChange={(e) => setFilter({ ...filter, type: e.target.value })}
               >
                 <option value="">Select Type</option>
                 <option value="setup">Setup</option>
@@ -179,46 +177,56 @@ const TasksPage = () => {
           />
         </section>
 
+       
         {/* Task Cards for Selected Date */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 text-gray-200 flex items-center gap-2">
             <FaCalendarAlt className="text-yellow-400" /> Tasks for{" "}
             {filter.date || "Select a date"}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {currentTasks.map((task) => (
-              <div
-                key={task._id}
-                className="card bg-gray-800 shadow-md p-6 border border-gray-600 rounded-lg transition transform hover:shadow-xl"
-              >
-                <h3 className="text-lg font-semibold text-gray-100 mb-4">
-                  {task.name}
-                </h3>
-                <p className="text-gray-300">
-                  <FaCalendarAlt className="inline-block text-yellow-400 mr-2" />
-                  Date: {task.date}
-                </p>
-                <p className="text-gray-300">
-                  <FaClock className="inline-block text-blue-400 mr-2" />
-                  Time: {task.time}
-                </p>
-                <p className="text-gray-300">
-                  <FaUserFriends className="inline-block text-green-400 mr-2" />
-                  Volunteers Needed: {task.volunteersNeeded}
-                </p>
-                <p className="text-gray-300">
-                  <FaCheck className="inline-block text-purple-400 mr-2" />
-                  Points: {task.points}
-                </p>
-                <Link
-                  to={`/tasks/${task._id}`}
-                  className="px-4 py-2 flex items-center justify-center gap-2 text-lg font-semibold text-black bg-green-300 hover:bg-green-600 rounded-lg shadow-md hover:shadow-lg transition duration-300 capitalize mt-6"
+          {currentTasks.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {currentTasks.map((task) => (
+                <div
+                  key={task._id}
+                  className="card bg-gray-800 shadow-md p-6 border border-gray-600 rounded-lg transition transform hover:shadow-xl"
                 >
-                  Sign Up
-                </Link>
-              </div>
-            ))}
-          </div>
+                  <h3 className="text-lg font-semibold text-gray-100 mb-4">
+                    {task.name}
+                  </h3>
+                  <p className="text-gray-300">
+                    <FaCalendarAlt className="inline-block text-yellow-400 mr-2" />
+                    Date: {task.date}
+                  </p>
+                  <p className="text-gray-300">
+                    <FaClock className="inline-block text-blue-400 mr-2" />
+                    Time: {task.time}
+                  </p>
+                  <p className="text-gray-300">
+                    <FaUserFriends className="inline-block text-green-400 mr-2" />
+                    Volunteers Needed: {task.volunteersNeeded}
+                  </p>
+                  <p className="text-gray-300">
+                    <FaCheck className="inline-block text-purple-400 mr-2" />
+                    Points: {task.points}
+                  </p>
+                  <Link
+                    to={`/tasks/${task._id}`}
+                    className="px-4 py-2 flex items-center justify-center gap-2 text-lg font-semibold text-black bg-green-300 hover:bg-green-600 rounded-lg shadow-md hover:shadow-lg transition duration-300 capitalize mt-6"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-400">
+              <p>
+                No tasks available for the selected date or filters. Please try
+                adjusting your filters or check back later.
+              </p>
+            </div>
+          )}
         </section>
 
         {/* Pagination */}

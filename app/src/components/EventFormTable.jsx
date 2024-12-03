@@ -4,7 +4,7 @@ import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
 const EventFormTable = ({ events, onEdit, onDelete}) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 8;
   
 
   // Pagination logic

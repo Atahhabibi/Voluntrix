@@ -37,45 +37,6 @@ const AdminDashboard = () => {
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
       <div className="w-full max-w-screen-xl">
-        {/* Navigation Links */}
-        <div className="grid grid-cols-1 gap-6 mb-6 max-w-[77rem] m-auto sm:grid-cols-2 md:grid-cols-3">
-          <Link to="/volunteer-management">
-            <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-green-700 transition duration-200">
-              <FaUsers className="text-4xl text-green-400 mb-2 sm:mb-0 sm:mr-4" />
-              <div className="text-center sm:text-left">
-                <p className="text-lg font-semibold text-white sm:text-lg md:text-xl">
-                  Volunteer Management
-                </p>
-                <p className="text-gray-400">
-                  Manage volunteers and their hours
-                </p>
-              </div>
-            </div>
-          </Link>
-          <Link to="/task-management">
-            <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-blue-700 transition duration-200">
-              <FaTasks className="text-4xl text-blue-400 mb-2 sm:mb-0 sm:mr-4" />
-              <div className="text-center sm:text-left">
-                <p className="text-lg font-semibold text-white sm:text-lg md:text-xl">
-                  Task Management
-                </p>
-                <p className="text-gray-400">Create and manage tasks</p>
-              </div>
-            </div>
-          </Link>
-          <Link to="/event-management">
-            <div className="flex flex-col sm:flex-row items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700 transform hover:scale-105 hover:bg-yellow-600 transition duration-200">
-              <FaCalendarAlt className="text-4xl text-yellow-400 mb-2 sm:mb-0 sm:mr-4" />
-              <div className="text-center sm:text-left">
-                <p className="text-lg font-semibold text-white sm:text-lg md:text-xl">
-                  Event Management
-                </p>
-                <p className="text-gray-400">Create and manage events</p>
-              </div>
-            </div>
-          </Link>
-        </div>
-
         {/* Welcome Section */}
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700 max-w-[77rem] m-auto">
           <div className="card-body flex items-center flex-col">
@@ -124,6 +85,97 @@ const AdminDashboard = () => {
           </div>
         </div>
 
+        {/* Announcements Section */}
+        <div className="mb-6 bg-gray-800 p-6 rounded-lg shadow-md max-w-[77rem] m-auto">
+          <div className="overflow-x-auto">
+            <table className="table-auto w-full text-left text-gray-200 border-collapse">
+              <thead className="bg-gray-900 text-white">
+                <tr>
+                  <th className="px-6 py-3 border border-gray-700 w-[25%] text-center">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 border border-gray-700 hidden lg:table-cell text-center">
+                    Title
+                  </th>
+                  <th className="px-6 py-3 border border-gray-700 text-center">
+                    Announcement
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* Announcement Row */}
+                <tr className="bg-gray-800 hover:bg-gray-600 transition">
+                  <td className="px-6 py-4 border border-gray-700 w-[25%]">
+                    December 1, 2024
+                  </td>
+                  <td className="px-6 py-4 border border-gray-700 hidden lg:table-cell">
+                    Monthly Data Review
+                  </td>
+                  <td className="px-6 py-4 border border-gray-700">
+                    <span className="text-gray-400">
+                      Please review the monthly reports for tasks and events by
+                      December 5th. Ensure data accuracy before finalizing.
+                    </span>
+                  </td>
+                </tr>
+                {/* Announcement Row */}
+                <tr className="bg-gray-800 hover:bg-gray-600 transition">
+                  <td className="px-6 py-4 border border-gray-700 w-[25%]">
+                    November 28, 2024
+                  </td>
+                  <td className="px-6 py-4 border border-gray-700 hidden lg:table-cell">
+                    System Maintenance
+                  </td>
+                  <td className="px-6 py-4 border border-gray-700">
+                    <span className="text-gray-400">
+                      Scheduled system maintenance will occur on December 2nd
+                      from 12:00 AM to 4:00 AM. Admin access may be limited
+                      during this time.
+                    </span>
+                  </td>
+                </tr>
+                {/* Announcement Row */}
+                <tr className="bg-gray-800 hover:bg-gray-600 transition">
+                  <td className="px-6 py-4 border border-gray-700 w-[25%]">
+                    November 25, 2024
+                  </td>
+                  <td className="px-6 py-4 border border-gray-700 hidden lg:table-cell">
+                    Volunteer Feedback Review
+                  </td>
+                  <td className="px-6 py-4 border border-gray-700">
+                    <span className="text-gray-400">
+                      A meeting to discuss volunteer feedback and improvement
+                      strategies is scheduled for December 6th at 3:00 PM.
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* See More Button */}
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={() => (window.location.href = "/announcements")}
+              className="btn btn-primary px-6 py-3 rounded-lg shadow-md text-white hover:bg-blue-600"
+            >
+              See More Announcements
+            </button>
+          </div>
+        </div>
+
+        {/* Recent Activity Section */}
+        <div className="mb-10 bg-gray-800 p-6 rounded-lg shadow-md max-w-[77rem] m-auto">
+          <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+            <FaBell className="text-blue-400 mr-2" /> Recent Activity
+          </h3>
+          <ul className="text-gray-400 space-y-2">
+            <li>- Task X assigned to Volunteer A</li>
+            <li>- Event Y updated by Admin</li>
+            <li>- Volunteer B completed Task Z</li>
+          </ul>
+        </div>
+
         {/* Charts Section */}
         <div className="mb-10 p-6">
           <h3 className="text-xl font-bold text-white flex items-center mb-4">
@@ -154,12 +206,10 @@ const AdminDashboard = () => {
             <VolunteerTable />
             <TaskOverviewTable />
           </div>
-
         </div>
 
         <div className="px-6">
-        <EventOverviewTable />
-
+          <EventOverviewTable />
         </div>
 
         {/* Link to View More Features */}

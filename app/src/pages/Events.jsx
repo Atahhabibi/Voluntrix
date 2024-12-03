@@ -67,43 +67,51 @@ const EventsPage = () => {
 
         {/* Events Grid Section */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {currentEvents.map((event) => (
-            <div
-              key={event.id}
-              className="bg-gray-800 shadow-lg rounded-lg p-4 border border-gray-700 flex flex-col justify-between"
-              style={{ minHeight: "13rem" }} // Reduced height
-            >
-              <div>
-                <h2 className="text-xl font-semibold mb-2 text-blue-100 flex items-center gap-2">
-                  <FaInfoCircle className="text-yellow-400" /> {event.name}
-                </h2>
-                <div className="text-sm text-gray-400 mb-2 flex items-center gap-2">
-                  <FaCalendarAlt className="text-blue-400" />
-                  <span>
-                    <strong>Date:</strong> {event.date}
-                  </span>
-                </div>
-                <div className="text-sm text-gray-400 flex items-center gap-2">
-                  <FaMapMarkerAlt className="text-green-400" />
-                  <span>
-                    <strong>Location:</strong> {event.location}
-                  </span>
-                </div>
-                <div className="text-sm text-gray-400 flex items-center gap-2 mt-1">
-                  <FaTrophy className="text-green-400" />
-                  <span>
-                    <strong>Points:</strong> {event.points}
-                  </span>
-                </div>
-              </div>
-              <Link
-                to={`/events/${event._id}`}
-                className="btn text-black bg-green-300 w-full text-center mt-6 hover:bg-green-600 rounded-lg shadow-md hover:shadow-lg"
+          {currentEvents.length > 0 ? (
+            currentEvents.map((event) => (
+              <div
+                key={event.id}
+                className="bg-gray-800 shadow-lg rounded-lg p-4 border border-gray-700 flex flex-col justify-between"
+                style={{ minHeight: "13rem" }} // Reduced height
               >
-                Learn More
-              </Link>
+                <div>
+                  <h2 className="text-xl font-semibold mb-2 text-blue-100 flex items-center gap-2">
+                    <FaInfoCircle className="text-yellow-400" /> {event.name}
+                  </h2>
+                  <div className="text-sm text-gray-400 mb-2 flex items-center gap-2">
+                    <FaCalendarAlt className="text-blue-400" />
+                    <span>
+                      <strong>Date:</strong> {event.date}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-400 flex items-center gap-2">
+                    <FaMapMarkerAlt className="text-green-400" />
+                    <span>
+                      <strong>Location:</strong> {event.location}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-400 flex items-center gap-2 mt-1">
+                    <FaTrophy className="text-green-400" />
+                    <span>
+                      <strong>Points:</strong> {event.points}
+                    </span>
+                  </div>
+                </div>
+                <Link
+                  to={`/events/${event._id}`}
+                  className="btn text-black bg-green-300 w-full text-center mt-6 hover:bg-green-600 rounded-lg shadow-md hover:shadow-lg"
+                >
+                  Learn More
+                </Link>
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-400 col-span-full">
+              <p>
+                No events are available at the moment. Please check back later!
+              </p>
             </div>
-          ))}
+          )}
         </section>
 
         {/* Pagination Section */}

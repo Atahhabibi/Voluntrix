@@ -30,10 +30,11 @@ const userSlice = createSlice({
         } else if (role === "admin" || role === "super-admin") {
           state.navLinks = [
             { label: "Dashboard", path: "/adminDashboard" },
-            { label: "Tasks", path: "/tasks" },
-            { label: "Events", path: "/events" },
-            { label: "About", path: "/about" },
-            { label: "Contact", path: "/contact" }
+            { label: "Create Tasks", path: "/task-management" },
+            { label: "Create Events", path: "/event-management" },
+            { label: "Charts", path: "/detailChartsPage" },
+            { label: "Tables", path: "/detailTablesPage" },
+            { label: "Volunteers", path: "/volunteer-management" }
           ];
         }
       } else {

@@ -115,7 +115,7 @@ app.post("/api/v1/tasks", async (req, res) => {
       name,
       date,
       time,
-      volunteers: Number(volunteers),
+      volunteersNeeded: Number(volunteers),
       points: Number(points)
     });
 
@@ -150,7 +150,16 @@ app.get("/api/v1/tasks", async (req, res) => {
 
 app.post("/api/v1/events", validateEvent, async (req, res) => {
   try {
-    const { name, type, location, time, date, description, points } = req.body;
+    const {
+      name,
+      type,
+      location,
+      time,
+      date,
+      description,
+      points,
+      volunteersNeeded
+    } = req.body;
 
     const event = new Event({
       name,
@@ -159,7 +168,8 @@ app.post("/api/v1/events", validateEvent, async (req, res) => {
       time,
       description,
       date,
-      points
+      points,
+      volunteersNeeded
     });
 
     const savedEvent = event.save();

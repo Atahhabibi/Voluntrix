@@ -8,7 +8,7 @@ const eventSchema = new mongoose.Schema(
       required: true
     },
     date: {
-      type: String,
+      type:String,
       required: true
     },
     type: {
@@ -27,15 +27,36 @@ const eventSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    status: {
-      type: String,
-      enum: ["not_attended", "pending", "completed"],
-      default: "not_attended"
-    },
     points: {
       type: Number,
       required: true
-    }
+    },
+    totalAttended: {
+      type: Number,
+      required: true,
+      default: 0
+    },
+    totalSignUp: {
+      type: Number,
+      required: true,
+      default: 0
+    },
+    volunteersNeeded: {
+      type: Number,
+      required: true,
+      default:1,
+    },
+    volunteersAssigned: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        status: {
+          type: String,
+          enum: ["not_sign_up", "signedUp.", "completed"],
+          default: "not_sign_up"
+        },
+        ref: "User"
+      }
+    ]
   },
   { timestamps: true }
 );

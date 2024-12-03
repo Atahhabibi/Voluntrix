@@ -18,7 +18,8 @@ import {
   SignupForTaskPage,
   RecordsPage,
   DetailChartsPage,
-  AdminLoginPage
+  AdminLoginPage,
+  DetailTablesPage
 } from "./pages";
 import About from "./pages/About";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -59,9 +60,9 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute
             element={<UserDashbaord />}
-            allowedRoles={["volunteer"]} 
+            allowedRoles={["volunteer"]}
           />
-        ),
+        )
       },
       {
         path: "/tasks/:id",
@@ -103,6 +104,10 @@ const router = createBrowserRouter([
       {
         path: "/detailChartsPage",
         element: <DetailChartsPage />
+      },
+      {
+        path: "/detailTablesPage",
+        element: <DetailTablesPage />
       }
     ]
   },

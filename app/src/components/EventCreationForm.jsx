@@ -5,7 +5,14 @@ import { customFetch } from "../util/customFetch";
 import { FaPlusCircle, FaEdit } from "react-icons/fa";
 import EventFormTable from "./EventFormTable"; // Import the table component
 
-const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit,setShowModal ,confirmDelete,showModal}) => {
+const EventCreationForm = ({
+  eventToEdit = null,
+  onComplete,
+  clearEdit,
+  setShowModal,
+  confirmDelete,
+  showModal
+}) => {
   const formRef = useRef();
   const queryClient = useQueryClient();
 
@@ -67,6 +74,7 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit,setShowMo
       form.location.value = eventToEdit.location || "";
       form.description.value = eventToEdit.description || "";
       form.points.value = eventToEdit.points || 0;
+      form.volunteersNeeded.value = eventToEdit.volunteersNeeded || 0;
     }
   }, [eventToEdit]);
 
@@ -122,7 +130,7 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit,setShowMo
           )}
         </div>
         <input type="hidden" name="id" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
           <div className="col-span-2">
             <label className="text-white block mb-2">Event Name</label>
             <input
@@ -164,6 +172,15 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit,setShowMo
             <input
               type="number"
               name="points"
+              className="input input-bordered w-full"
+              required
+            />
+          </div>
+          <div>
+            <label className="text-white block mb-2">Volunteers Needed</label>
+            <input
+              type="number"
+              name="volunteersNeeded"
               className="input input-bordered w-full"
               required
             />

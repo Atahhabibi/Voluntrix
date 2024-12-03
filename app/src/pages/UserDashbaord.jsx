@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   FaUser,
   FaMedal,
@@ -10,35 +10,25 @@ import {
 } from "react-icons/fa";
 import { Link, useLoaderData } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserData } from "../features/user/userSlice";
-import useUserData from "../util/useUserData";
-import { toast } from "react-toastify";
-import moment from "moment"; // Import Moment.js
+import useUserData from "../util/CustomHooks/useUserData";
 import { BarChart, DonutChart, LineChart, PieChart } from "../charts";
-import { customFetch } from "../util/customFetch";
+
 import useHandleImageUpload from "../util/handleImageUpload";
 import getClosestPending from "../util/getClosetPending";
 import TaskReminder from "../components/TaskRemainder";
-
-const userImg = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
-
-export const loader = () => {
-  return useUserData();
-};
+import useAppData from "../util/CustomHooks/useAppData";
 
 const UserDashboard = () => {
-  const dispatch = useDispatch();
-  const data = useLoaderData();
   const { handleImageUpload, uploading, profileImage } = useHandleImageUpload();
-  const { tasks, user, timeRecordData, events } = data;
+
+  const { data, isLoading, error } = useUserData();
+
+  const tasks = data?.tasks?.tasks || [];
+  const events = data?.events?.events || [];
+  const user = data?.user.user || {};
+  const timeRecordData = data?.timeRecords?.data || [];
+
   const closePendingItem = getClosestPending(tasks, events);
-
-  const {
-    events: { events: storeEvents },
-    tasks: { tasks: storeTasks }
-  } = useSelector((store) => store); 
-
-
 
   //piechart
   const { pendingTaskLength, completedTaskLength } = tasks?.reduce(
@@ -65,12 +55,6 @@ const UserDashboard = () => {
     (event) => event.status === "completed"
   );
 
-  useEffect(() => {
-    if (data) {
-      dispatch(setUserData(data));
-    }
-  }, [data, dispatch]);
-
   const userName = user?.username || "User";
 
   // Points History
@@ -86,25 +70,32 @@ const UserDashboard = () => {
     0
   );
 
-  const notSignUpTask = storeTasks?.filter(
+  const notSignUpTask = tasks?.filter(
     (item) => item.status === "not_signed_up"
   );
-  const notAttendedEvents = storeTasks?.filter(
+  const notAttendedEvents = events?.filter(
     (item) => item.status === "not_attended"
   );
 
-
-  const notSingupNotAttendedEventTask=[...notAttendedEvents,...notSignUpTask]
-
-
-
+  const notSingupNotAttendedEventTask = [
+    ...notAttendedEvents,
+    ...notSignUpTask
+  ];
 
   const pendingTasks = tasks?.filter((item) => item.status === "pending");
   const pendingEvents = events?.filter((item) => item.status === "pending");
 
- const pendingEventTasks=[...pendingEvents,...pendingTasks]; 
+  const pendingEventTasks = [...pendingEvents, ...pendingTasks];
 
   const completedTasks = tasks?.filter((item) => item.status === "pending");
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading data: {error.message}</div>;
+  }
 
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">

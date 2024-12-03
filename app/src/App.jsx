@@ -32,8 +32,6 @@ import PrivateRoute from "./components/PrivateRoute"; // Import PrivateRoute
 import { loader as EventDetailLoader } from "./pages/EventDetailsPage";
 import { loader as EditProfileLoader } from "./pages/EditProfilePage";
 import { loader as signupTaskLoader } from "./pages/SignupForTaskPage";
-
-import { loader as userDashboardLoader } from "./pages/UserDashbaord";
 import { loader as RecordLoader } from "./pages/RecordPage";
 import { loader as adminLoader } from "./pages/AdminDasboard";
 import { action as adminLoginAction } from "./pages/AdminLoginPage";
@@ -64,7 +62,6 @@ const router = createBrowserRouter([
             allowedRoles={["volunteer"]} 
           />
         ),
-        loader: userDashboardLoader
       },
       {
         path: "/tasks/:id",

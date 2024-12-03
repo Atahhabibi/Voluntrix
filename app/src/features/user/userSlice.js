@@ -1,52 +1,72 @@
-// userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import navLinkData from "../../util/navLinksData";
+import { parseJwt } from "../../util/dataHandlingFunctions";
 
 const initialState = {
-  user: null,
-  tasks: [],
-  events: [],
-  links: navLinkData
+  navLinks: [
+    { label: "Home", path: "/" },
+    { label: "About", path: "/about" },
+    { label: "Tasks", path: "/tasks" },
+    { label: "Events", path: "/events" },
+    { label: "Contact", path: "/contact" }
+  ]
 };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    addUserTasks: (state, action) => {
-      state.tasks = action.payload;
+    updateNavLinks: (state, action) => {
+      const token = action.payload;
+      if (token) {
+        const role = parseJwt(token).role;
+        if (role === "volunteer") {
+          state.navLinks = [
+            { label: "Dashboard", path: "/userDashboard" },
+            { label: "Tasks", path: "/tasks" },
+            { label: "Events", path: "/events" },
+            { label: "About", path: "/about" },
+            { label: "Contact", path: "/contact" }
+          ];
+        } else if (role === "admin" || role === "super-admin") {
+          state.navLinks = [
+            { label: "Dashboard", path: "/adminDashboard" },
+            { label: "Tasks", path: "/tasks" },
+            { label: "Events", path: "/events" },
+            { label: "About", path: "/about" },
+            { label: "Contact", path: "/contact" }
+          ];
+        }
+      } else {
+        state.navLinks = [
+          { label: "Home", path: "/" },
+          { label: "About", path: "/about" },
+          { label: "Tasks", path: "/tasks" },
+          { label: "Events", path: "/events" },
+          { label: "Contact", path: "/contact" }
+        ];
+      }
     },
-
-    addUserEvents: (state, action) => {
-      state.events = action.payload;
-    },
-
-    setUserData: (state, action) => {
-      state.user = action.payload;
+    setNavLinksLogout: (state) => {
+      state.navLinks = [
+        { label: "Home", path: "/" },
+        { label: "About", path: "/about" },
+        { label: "Tasks", path: "/tasks" },
+        { label: "Events", path: "/events" },
+        { label: "Contact", path: "/contact" }
+      ];
     },
     logoutUser: (state) => {
-      state.user = null;
-    },
-
-    setNavLinksLogout: () => {
-      let newLinks = navLinkData.filter(
-        (item) =>
-          item.path !== "/userDashboard" && item.path !== "/adminDashboard"
-      );
-      localStorage.setItem("nav-links", JSON.stringify(newLinks));
+      state.navLinks = [
+        { label: "Home", path: "/" },
+        { label: "About", path: "/about" },
+        { label: "Tasks", path: "/tasks" },
+        { label: "Events", path: "/events" },
+        { label: "Contact", path: "/contact" }
+      ];
     }
-  },
-  setNavLinksLogin: () => {
-    localStorage.setItem("nav-links", JSON.stringify(navLinkData));
   }
 });
 
-export const {
-  setUserData,
-  logoutUser,
-  addUserEvents,
-  addUserTasks,
-  setNavLinksLogout,
-  setNavLinksLogin
-} = userSlice.actions;
+export const { updateNavLinks, setNavLinksLogout, logoutUser } =
+  userSlice.actions;
 export default userSlice.reducer;

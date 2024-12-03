@@ -1,30 +1,35 @@
-const User = require("../monogdb/modals/userSchema");
+const Admin = require("../monogdb/modals/AdminSchema");
 const bcrypt = require("bcryptjs");
 
 const seedAdmin = async () => {
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@example.com";
-  const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD ;
+  const username = process.env.USER_NAME;
+
 
   try {
-    const existingAdmin = await User.findOne({ role: "admin" });
+     const existingAdmin = await Admin.findOne({
+       $or: [{ username: username }, { email: adminEmail }]
+     });
+
 
     if (!existingAdmin) {
       const hashedPassword = await bcrypt.hash(adminPassword, 10);
-      const admin = new User({
+      const admin = new Admin({
+        username: username,
         email: adminEmail,
         password: hashedPassword,
-        role: "admin"
+        role: "super-admin"
       });
 
       await admin.save();
-      console.log(`Admin user created: ${adminEmail}`);
+      console.log(` Super Admin user created: ${adminEmail}`);
     } else {
-      console.log("Admin user already exists");
+      console.log("super admin already exists");
     }
   } catch (error) {
     console.error("Error seeding admin user:", error);
   }
 };
 
-
-module.exports=seedAdmin; 
+module.exports = seedAdmin;

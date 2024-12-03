@@ -19,6 +19,7 @@ import EditProfilePage from "./EditProfilePage";
 import SignupForTaskPage from "./SignupForTaskPage";
 import RecordsPage from "./RecordPage";
 import DetailChartsPage from './DetailChartsPage';
+import AdminLoginPage from './AdminLoginPage';
 
 export {
   HomeLayout,
@@ -41,5 +42,6 @@ export {
   EditProfilePage,
   SignupForTaskPage,
   RecordsPage,
-  DetailChartsPage
+  DetailChartsPage,
+  AdminLoginPage
 };

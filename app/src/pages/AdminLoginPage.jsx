@@ -2,35 +2,42 @@ import { FormInput, SubmitBtn } from "../components";
 import { Form, Link, redirect, useNavigate } from "react-router-dom";
 import { customFetch } from "../util/customFetch";
 import { toast } from "react-toastify";
+import store from "../../store";
+import { setAuth } from "../features/admin/admin";
 
 export const action = async ({ request }) => {
   try {
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
-    const response = await customFetch.post("/login", data);
+
+    // Send login request to the backend
+    const response = await customFetch.post("/adminLogin", data);
 
     // Store token and user data in localStorage
-    localStorage.setItem("authToken", response.data.token); // Store token
-    localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user data (e.g., role, name)
-    toast.success("login succesfully");
+    const token = response.data.token;
+    localStorage.setItem("authToken", token); // Store token
+    localStorage.setItem("adminUser", JSON.stringify(response.data.admin)); // Store admin details
 
-    return redirect("/userDashboard");
+    // Show success toast and redirect
+    toast.success("Login successful!");
+    return redirect("/adminDashboard");
   } catch (error) {
-    console.log(error?.response?.data?.message);
-    toast.error(error?.response?.data?.message);
+    console.error(error?.response?.data?.message);
 
+    // Display error message via toast
+    toast.error(error?.response?.data?.message || "Login failed!");
     return null;
   }
 };
 
-const Login = () => {
+const AdminLoginPage = () => {
   return (
     <section className="h-screen grid place-items-center">
       <Form
         method="POST"
         className="card w-96 p-8 bg-base-200 shadow-lg flex flex-col gap-y-4  "
       >
-        <h4 className="text-center text-3xl font-bold"> Volunteer Login</h4>
+        <h4 className="text-center text-3xl font-bold">Admin Login</h4>
         <FormInput
           type="email"
           label="email"
@@ -45,25 +52,15 @@ const Login = () => {
         />
 
         <div className="mt-4">
-          <SubmitBtn text="login" />
+          <SubmitBtn text="Admin login" />
         </div>
 
-        <Link to="/adminLogin" className="btn btn-secondary btn-block uppercase">
-           I am Admin 
+        <Link to={"/login"} className="btn btn-secondary btn-block uppercase">
+          I am volunteer
         </Link>
-
-        <p className="text-center">
-          Not a Volunteer yet ?{" "}
-          <Link
-            to="/register"
-            className="ml-2 link link-hover link-primary capitalize"
-          >
-            register
-          </Link>
-        </p>
       </Form>
     </section>
   );
 };
 
-export default Login;
+export default AdminLoginPage;

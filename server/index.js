@@ -12,6 +12,8 @@ const Event = require("./monogdb/modals/EventSchema");
 const TimeRecord = require("./monogdb/modals/TimeRecordSchema");
 const multer = require("multer");
 const { storage } = require("./util/cloudinaryConfig");
+const Admin = require("./monogdb/modals/AdminSchema");
+const jwt = require("jsonwebtoken");
 
 const upload = multer({ storage });
 
@@ -71,7 +73,7 @@ app.post("/api/v1/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const token = generateToken(user._id, user.username);
+    const token = generateToken(user._id, user.username, user.role);
 
     res.status(200).json({
       message: "Login successfully",
@@ -803,7 +805,7 @@ app.get("/api/v1/volunteer/:id", async (req, res) => {
 });
 
 // Promote to Admin
-app.post("/promote",authMiddleware, async (req, res) => {
+app.post("/promote", async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -817,7 +819,61 @@ app.post("/promote",authMiddleware, async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Error promoting user", error: err });
   }
-})
+});
+
+app.post("/api/v1/adminLogin", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const admin = await Admin.findOne({ email });
+
+    if (!admin) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid email or password" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
+
+    if (!isPasswordValid) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid email or password" });
+    }
+
+    const token = jwt.sign(
+      { id: admin._id, role: admin.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "6h" }
+    );
+
+    // Send success response
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      admin
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Login error",
+      error: error.message
+    });
+  }
+});
+
+app.get("/api/v1/admin", authMiddleware, async (req, res) => {
+  try {
+    const admin = await Admin.findById({ _id: req.userId }).select("-password");
+
+    res.status(200).json({ success: true, admin });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "internal server error" });
+  }
+});
+
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");
 });

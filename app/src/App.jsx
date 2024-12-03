@@ -17,7 +17,8 @@ import {
   EditProfilePage,
   SignupForTaskPage,
   RecordsPage,
-  DetailChartsPage
+  DetailChartsPage,
+  AdminLoginPage
 } from "./pages";
 import About from "./pages/About";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -31,16 +32,16 @@ import PrivateRoute from "./components/PrivateRoute"; // Import PrivateRoute
 import { loader as EventDetailLoader } from "./pages/EventDetailsPage";
 import { loader as EditProfileLoader } from "./pages/EditProfilePage";
 import { loader as signupTaskLoader } from "./pages/SignupForTaskPage";
-import { loader as homeLoader } from "./pages/HomeLayout";
+
 import { loader as userDashboardLoader } from "./pages/UserDashbaord";
 import { loader as RecordLoader } from "./pages/RecordPage";
 import { loader as adminLoader } from "./pages/AdminDasboard";
+import { action as adminLoginAction } from "./pages/AdminLoginPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout />,
-    loader: homeLoader,
 
     errorElement: <Error />,
     children: [
@@ -59,7 +60,7 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute
             element={<UserDashbaord />}
-            allowedRoles={["volunteer", "admin"]} // Allow both roles
+            allowedRoles={["volunteer"]} 
           />
         ),
         loader: userDashboardLoader
@@ -80,15 +81,15 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute
             element={<AdminDashboard />}
-            allowedRoles={["volunteer", "admin"]} // Only allow "admin" role
+            allowedRoles={["admin", "super-admin"]}
           />
         ),
-        loader:adminLoader,
+        loader: adminLoader
       },
 
       {
         path: "/volunteer-management",
-        element: <VolunteerManagementPage />,
+        element: <VolunteerManagementPage />
       },
       {
         path: "/task-management",
@@ -99,7 +100,7 @@ const router = createBrowserRouter([
         element: <EventManagementPage />
       },
 
-      { path: "clockInOut", element: <ClockInOut />},
+      { path: "clockInOut", element: <ClockInOut /> },
       { path: "/records", element: <RecordsPage />, loader: RecordLoader },
       {
         path: "/detailChartsPage",
@@ -108,6 +109,11 @@ const router = createBrowserRouter([
     ]
   },
   { path: "/login", element: <Login />, action: loginAction },
+  {
+    path: "/adminLogin",
+    element: <AdminLoginPage />,
+    action: adminLoginAction
+  },
   { path: "/register", element: <Register />, action: registerAction },
   { path: "*", element: <Error /> } // Catch-all for undefined routes
 ]);

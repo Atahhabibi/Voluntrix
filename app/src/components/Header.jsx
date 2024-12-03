@@ -13,6 +13,9 @@ const Header = () => {
     navigate("/");
     dispatch(logoutUser());
     localStorage.removeItem('authToken'); 
+    localStorage.setItem('user',null); 
+    localStorage.setItem('adminUser',null); 
+
     toast.success("You have logged out successfully!");
 
   };

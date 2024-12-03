@@ -46,15 +46,6 @@ const userSlice = createSlice({
         ];
       }
     },
-    setNavLinksLogout: (state) => {
-      state.navLinks = [
-        { label: "Home", path: "/" },
-        { label: "About", path: "/about" },
-        { label: "Tasks", path: "/tasks" },
-        { label: "Events", path: "/events" },
-        { label: "Contact", path: "/contact" }
-      ];
-    },
     logoutUser: (state) => {
       state.navLinks = [
         { label: "Home", path: "/" },

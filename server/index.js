@@ -842,7 +842,7 @@ app.post("/api/v1/adminLogin", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: admin._id, role: admin.role },
+      { id: admin._id, role: admin.role,username:admin.username},
       process.env.JWT_SECRET,
       { expiresIn: "6h" }
     );

@@ -12,13 +12,17 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import useAppData from "../util/CustomHooks/useAppData";
 
 const TasksPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const tasks = useSelector((store) => store.tasks.tasks);
+  const {data,isLoading,isError}=useAppData(); 
+
+  const tasks = data?.tasks?.data || [];
+
 
   const [filter, setFilter] = useState({
     date: "",
@@ -72,6 +76,19 @@ const TasksPage = () => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+
+  if (isLoading) {
+    return <div className="text-center text-white">Loading events...</div>;
+  }
+
+  if (isError) {
+    return <div className="text-center text-white">Error fetching data...</div>;
+  }
+
+
+
+
 
   return (
     <div className="min-h-screen bg-gray-900 text-base-content p-6 md:p-12 flex justify-center">

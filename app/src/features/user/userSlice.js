@@ -1,10 +1,12 @@
 // userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
+import navLinkData from "../../util/navLinksData";
 
 const initialState = {
   user: null,
   tasks: [],
-  events: []
+  events: [],
+  links: navLinkData
 };
 
 const userSlice = createSlice({
@@ -24,10 +26,27 @@ const userSlice = createSlice({
     },
     logoutUser: (state) => {
       state.user = null;
+    },
+
+    setNavLinksLogout: () => {
+      let newLinks = navLinkData.filter(
+        (item) =>
+          item.path !== "/userDashboard" && item.path !== "/adminDashboard"
+      );
+      localStorage.setItem("nav-links", JSON.stringify(newLinks));
     }
+  },
+  setNavLinksLogin: () => {
+    localStorage.setItem("nav-links", JSON.stringify(navLinkData));
   }
 });
 
-export const { setUserData, logoutUser, addUserEvents, addUserTasks } =
-  userSlice.actions;
+export const {
+  setUserData,
+  logoutUser,
+  addUserEvents,
+  addUserTasks,
+  setNavLinksLogout,
+  setNavLinksLogin
+} = userSlice.actions;
 export default userSlice.reducer;

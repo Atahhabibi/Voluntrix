@@ -12,7 +12,6 @@ const navLinkData = [
   {
     label: "Home",
     path: "/",
-    roles: ["volunteer", "admin", "super-admin"] // Accessible by all roles
   },
   {
     label: "About",

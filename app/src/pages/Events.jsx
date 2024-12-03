@@ -7,13 +7,16 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import useAppData from "../util/CustomHooks/useAppData";
 
 const EventsPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const events = useSelector((store) => store.events.events);
+  const { data, isLoading, isError } = useAppData();
+
+  const events = data?.events?.data || [];
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,6 +42,14 @@ const EventsPage = () => {
   const handleNext = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
+
+  if (isLoading) {
+    return <div className="text-center text-white">Loading events...</div>;
+  }
+
+  if (isError) {
+    return <div className="text-center text-white">Error fetching data...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-base-content p-6 md:p-12">

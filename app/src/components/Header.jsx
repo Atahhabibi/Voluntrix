@@ -1,37 +1,39 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSelector, useDispatch } from "react-redux";
-import { logoutUser } from "../features/user/userSlice";
+import { logoutUser, setNavLinksLogout } from "../features/user/userSlice";
+import { parseJwt } from "../util/dataHandlingFunctions";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const token = localStorage.getItem("authToken");
+  const decode = parseJwt(token);
 
-  const user = useSelector((state) => state.user.user);
+
 
   const handleLogout = () => {
     navigate("/");
     dispatch(logoutUser());
-    localStorage.removeItem('authToken'); 
-    localStorage.setItem('user',null); 
-    localStorage.setItem('adminUser',null); 
-
+    dispatch(setNavLinksLogout()); 
+    localStorage.setItem("authToken",null);
+    localStorage.setItem("user", null);
+    localStorage.setItem("adminUser", null);
     toast.success("You have logged out successfully!");
-
   };
 
   return (
     <header className=" bg-neutral py-2 text-neutral-content ">
       <div className="align-element flex justify-center sm:justify-end ">
-        {/* USER */}
-
-        {user ? (
+ 
+        {decode ? (
           <div className="flex gap-x-2 sm:gap-x-8 items-center">
             <p className="text-xs sm:text-sm capitalize ">
-              Hello, {user?.username}
+              Hello, {decode?.username}
             </p>
             <button
-              className="btn btn-xs btn-outline btn-primary uppercase"
+              className="btn btn-xs btn-outline btn-primary uppercase mr-8"
               onClick={handleLogout}
             >
               logout

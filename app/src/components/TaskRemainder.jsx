@@ -5,8 +5,6 @@ import moment from "moment";
 const TaskReminder = ({ pendingTask }) => {
   const [message, setMessage] = useState("");
 
-  console.log(pendingTask);
-
   useEffect(() => {
     // Ensure the array is not empty and extract the first task
     if (!pendingTask || !pendingTask.length) {

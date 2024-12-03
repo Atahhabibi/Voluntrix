@@ -8,7 +8,7 @@ const PrivateRoute = ({ element, allowedRoles }) => {
   const decode = parseJwt(token);
 
   if (!decode) {
-    return <Navigate to="/login" replace />; // Redirect to login if not authenticated
+    return <Navigate to="/" replace />; // Redirect to login if not authenticated
   }
 
   // Check if the user's role is allowed to access the page

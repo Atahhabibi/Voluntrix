@@ -2,6 +2,9 @@ import { FormInput, SubmitBtn } from "../components";
 import { Form, Link, redirect, useNavigate } from "react-router-dom";
 import { customFetch } from "../util/customFetch";
 import { toast } from "react-toastify";
+import store from "../../store";
+import { setNavLinksLogin } from "../features/user/userSlice";
+import navLinkData from "../util/navLinksData";
 
 export const action = async ({ request }) => {
   try {
@@ -13,7 +16,7 @@ export const action = async ({ request }) => {
     localStorage.setItem("authToken", response.data.token); // Store token
     localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user data (e.g., role, name)
     toast.success("login succesfully");
-
+    localStorage.setItem("nav-links", JSON.stringify(navLinkData));
     return redirect("/userDashboard");
   } catch (error) {
     console.log(error?.response?.data?.message);
@@ -48,8 +51,11 @@ const Login = () => {
           <SubmitBtn text="login" />
         </div>
 
-        <Link to="/adminLogin" className="btn btn-secondary btn-block uppercase">
-           I am Admin 
+        <Link
+          to="/adminLogin"
+          className="btn btn-secondary btn-block uppercase"
+        >
+          I am Admin
         </Link>
 
         <p className="text-center">

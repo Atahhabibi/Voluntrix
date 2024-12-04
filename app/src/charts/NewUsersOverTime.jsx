@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
+import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(
   LineElement,
@@ -20,22 +21,17 @@ ChartJS.register(
 );
 
 const NewUsersOverTime = () => {
-  // Temporary Data
-  const tempUsers = [
-    { username: "User1", createdAt: "2024-11-20T10:00:00Z" },
-    { username: "User2", createdAt: "2024-11-20T12:00:00Z" },
-    { username: "User3", createdAt: "2024-11-21T09:00:00Z" },
-    { username: "User4", createdAt: "2024-11-22T08:00:00Z" },
-    { username: "User5", createdAt: "2024-11-23T14:00:00Z" },
-    { username: "User6", createdAt: "2024-11-23T16:00:00Z" }
-  ];
+  const { data: appData, isLoading, isError } = useAppData();
+  const users = appData?.users?.data || [];
 
   // Group Users by Date
-  const groupedData = tempUsers.reduce((acc, user) => {
+  const groupedData = users.reduce((acc, user) => {
     const date = new Date(user.createdAt).toLocaleDateString("en-US");
     acc[date] = (acc[date] || 0) + 1;
     return acc;
   }, {});
+
+  console.log(groupedData);
 
   // Generate Labels and Data Points
   const labels = Object.keys(groupedData); // Dates
@@ -60,7 +56,10 @@ const NewUsersOverTime = () => {
     plugins: {
       legend: {
         display: true,
-        position: "top"
+        position: "top",
+        labels: {
+          color: "#ffffff"
+        }
       },
       tooltip: {
         callbacks: {
@@ -78,7 +77,11 @@ const NewUsersOverTime = () => {
           font: {
             size: 14,
             weight: "bold"
-          }
+          },
+          color: "#ffffff"
+        },
+        ticks: {
+          color: "#ffffff"
         }
       },
       y: {
@@ -88,26 +91,34 @@ const NewUsersOverTime = () => {
           font: {
             size: 14,
             weight: "bold"
-          }
+          },
+          color: "#ffffff"
         },
         ticks: {
+          color: "#ffffff",
           stepSize: 1 // Adjust step size for better readability
         }
       }
     }
   };
 
-return (
-  <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-    <h3 className="text-lg font-semibold text-white mb-4">
-      New Users Over Time
-    </h3>
-    <div style={{ height: "300px" }}>
-      <Line data={data} options={options} />
-    </div>
-  </div>
-);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error loading data...</div>;
+  }
 
+  return (
+    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold text-white mb-4">
+        New Users Over Time
+      </h3>
+      <div style={{ height: "300px" }}>
+        <Line data={data} options={options} />
+      </div>
+    </div>
+  );
 };
 
 export default NewUsersOverTime;

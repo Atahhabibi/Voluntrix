@@ -852,7 +852,7 @@ app.post("/api/v1/adminLogin", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: admin._id, role: admin.role,username:admin.username},
+      { id: admin._id, role: admin.role, username: admin.username },
       process.env.JWT_SECRET,
       { expiresIn: "6h" }
     );
@@ -879,6 +879,18 @@ app.get("/api/v1/admin", authMiddleware, async (req, res) => {
     const admin = await Admin.findById({ _id: req.userId }).select("-password");
 
     res.status(200).json({ success: true, admin });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "internal server error" });
+  }
+});
+
+app.get("/api/v1/getAllAdmins", async (req, res) => {
+  try {
+    const allAdmins = await Admin.find({ role: { $ne: "super-admin" } }).select(
+      "-password"
+    );
+
+    res.status(200).json({ success: true, allAdmins });
   } catch (error) {
     res.status(500).json({ success: false, message: "internal server error" });
   }

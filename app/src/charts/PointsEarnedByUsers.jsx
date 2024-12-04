@@ -8,26 +8,25 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
+import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const PointsEarnedByUsers = () => {
-  // Temporary Data
-  const tempUsers = [
-    { username: "User1", points: 120 },
-    { username: "User2", points: 150 },
-    { username: "User3", points: 90 },
-    { username: "User4", points: 200 },
-    { username: "User5", points: 180 }
-  ];
+  const { data, isLoading, isError } = useAppData();
+  const users = data?.users?.data || [];
+
+  // Extract usernames and points for the chart
+  const usernames = users.map((user) => user.username);
+  const points = users.map((user) => (user.points === 0 ? 15 : user.points)); // Assign minimal value for zero points
 
   // Chart Data Configuration
   const chartData = {
-    labels: tempUsers.map((user) => user.username), // Usernames on x-axis
+    labels: usernames.map(() => ""), // Empty x-axis labels
     datasets: [
       {
         label: "Points Earned", // Dataset label
-        data: tempUsers.map((user) => user.points), // Points for each user
+        data: points, // Points for each user
         backgroundColor: "rgba(153, 102, 255, 0.6)", // Bar color
         hoverBackgroundColor: "rgba(153, 102, 255, 0.8)"
       }
@@ -46,11 +45,15 @@ const PointsEarnedByUsers = () => {
       },
       tooltip: {
         callbacks: {
-          title: (tooltipItems) => tooltipItems[0].label,
-          label: (tooltipItem) =>
-            `Points Earned: ${
-              chartData.datasets[0].data[tooltipItem.dataIndex]
-            }`
+          title: (tooltipItems) => {
+            const index = tooltipItems[0].dataIndex;
+            return usernames[index]; // Show username in tooltip
+          },
+          label: (tooltipItem) => {
+            const pointValue =
+              chartData.datasets[0].data[tooltipItem.dataIndex];
+            return `Points Earned: ${pointValue === 15? 0 : pointValue}`; // Show 0 in tooltip for minimal column
+          }
         }
       }
     },
@@ -58,7 +61,7 @@ const PointsEarnedByUsers = () => {
       x: {
         title: {
           display: true,
-          text: "Users",
+          text: "Users (Hover to View Details)",
           font: {
             size: 14,
             weight: "bold"
@@ -66,7 +69,7 @@ const PointsEarnedByUsers = () => {
           color: "#ffffff" // White x-axis title
         },
         ticks: {
-          color: "#ffffff" // White text for x-axis ticks
+          color: "#ffffff" // Empty ticks since labels are empty
         }
       },
       y: {
@@ -86,6 +89,13 @@ const PointsEarnedByUsers = () => {
       }
     }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error...</div>;
+  }
 
   return (
     <div className="bg-gray-800 p-4 rounded-lg shadow-md">

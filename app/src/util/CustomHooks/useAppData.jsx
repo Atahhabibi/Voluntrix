@@ -12,13 +12,15 @@ const useAppData = () => {
           TasksResponse,
           EventResponse,
           TimeRecordsResponse,
-          adminResponse
+          adminResponse,
+          allAdminResponse
         ] = await Promise.all([
           customFetch("/admin-volunteers"),
           customFetch("/admin-tasks"),
           customFetch("/admin-events"),
           customFetch("/admin-time-records"),
-          customFetch('/admin') 
+          customFetch('/admin'),
+          customFetch('/getAllAdmins')
         ]);
 
         return {
@@ -26,7 +28,8 @@ const useAppData = () => {
           events: EventResponse?.data || [],
           users: UsersResponse?.data || [],
           volunteerTimeRecords: TimeRecordsResponse?.data || [],
-          admin:adminResponse?.data ||{}
+          admin:adminResponse?.data ||{},
+          allAdmins:allAdminResponse?.data||[]
         };
       } catch (error) {
         console.error("Error fetching app data:", error);

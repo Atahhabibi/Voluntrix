@@ -8,28 +8,27 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
+import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const TaskPointsDistribution = () => {
-  // Temporary Data
-  const tempTasks = [
-    { name: "Clean Prayer Hall", points: 10 },
-    { name: "Setup Iftar", points: 20 },
-    { name: "Organize Library", points: 15 },
-    { name: "Distribute Zakat", points: 25 },
-    { name: "Setup Ramadan Program", points: 30 }
-  ];
+  // Provided tasks data
+const { data:appData, isLoading, isError } = useAppData();
+
+const tasks = appData?.tasks?.data || []; 
+  // Extract points for the y-axis
+  const taskPoints = tasks.map((task) => task.points);
 
   // Chart Data Configuration
   const data = {
-    labels: tempTasks.map((task) => task.name), // Task names on x-axis
+    labels: tasks.map(() => ""), // Empty x-axis labels
     datasets: [
       {
-        label: "Points Distribution", // Dataset label
-        data: tempTasks.map((task) => task.points), // Points on y-axis
-        backgroundColor: "rgba(255, 206, 86, 0.6)", // Bar color
-        hoverBackgroundColor: "rgba(255, 206, 86, 0.8)"
+        label: "Points Distribution",
+        data: taskPoints,
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        hoverBackgroundColor: "rgba(75, 192, 192, 0.8)"
       }
     ]
   };
@@ -41,12 +40,16 @@ const TaskPointsDistribution = () => {
         display: true,
         position: "top",
         labels: {
-          color: "#ffffff" // White text for the legend
+          color: "#ffffff"
         }
       },
       tooltip: {
         callbacks: {
-          title: (tooltipItems) => tooltipItems[0].label,
+          title: (tooltipItems) => {
+            // Display task name on hover
+            const index = tooltipItems[0].dataIndex;
+            return tasks[index].name;
+          },
           label: (tooltipItem) =>
             `Points: ${data.datasets[0].data[tooltipItem.dataIndex]}`
         }
@@ -56,15 +59,15 @@ const TaskPointsDistribution = () => {
       x: {
         title: {
           display: true,
-          text: "Tasks",
+          text: "Tasks (Hover to View Details)",
           font: {
             size: 14,
             weight: "bold"
           },
-          color: "#ffffff" // White x-axis label
+          color: "#ffffff"
         },
         ticks: {
-          color: "#ffffff" // White text for x-axis ticks
+          color: "#ffffff" // Hide ticks since labels are empty
         }
       },
       y: {
@@ -75,15 +78,21 @@ const TaskPointsDistribution = () => {
             size: 14,
             weight: "bold"
           },
-          color: "#ffffff" // White y-axis label
+          color: "#ffffff"
         },
         ticks: {
-          color: "#ffffff", // White text for y-axis ticks
-          stepSize: 5 // Adjust step size as needed
+          color: "#ffffff",
+          stepSize: 10
         }
       }
     }
   };
+  if (isLoading) {
+    return <div>Loading.....</div>;
+  }
+  if (isError) {
+    return <div>Error.....</div>;
+  }
 
   return (
     <div className="bg-gray-800 p-4 rounded-lg shadow-md">
@@ -91,6 +100,8 @@ const TaskPointsDistribution = () => {
         Task Points Distribution
       </h3>
       <div style={{ height: "300px" }}>
+        {" "}
+        {/* Increased height from 400px to 500px */}
         <Bar data={data} options={options} />
       </div>
     </div>

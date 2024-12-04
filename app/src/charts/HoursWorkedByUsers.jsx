@@ -8,26 +8,27 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
+import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const HoursWorkedByUsers = () => {
-  // Temporary Data
-  const tempUsers = [
-    { username: "User1", hoursWorked: 40 },
-    { username: "User2", hoursWorked: 35 },
-    { username: "User3", hoursWorked: 50 },
-    { username: "User4", hoursWorked: 25 },
-    { username: "User5", hoursWorked: 45 }
-  ];
+  const { data, isLoading, isError } = useAppData();
+  const users = data?.users?.data || [];
+
+  // Extract usernames and hours worked for the chart
+  const usernames = users.map((user) => user.username);
+  const hoursWorked = users.map(
+    (user) => (user.hoursWorked === 0 ? 2 : user.hoursWorked) // Assign minimal value for zero hours
+  );
 
   // Chart Data Configuration
   const chartData = {
-    labels: tempUsers.map((user) => user.username), // Usernames on x-axis
+    labels: users.map(() => ""), // Empty labels for x-axis
     datasets: [
       {
         label: "Hours Worked", // Dataset label
-        data: tempUsers.map((user) => user.hoursWorked), // Hours worked for each user
+        data: hoursWorked, // Hours worked for each user
         backgroundColor: "rgba(75, 192, 192, 0.6)", // Bar color
         hoverBackgroundColor: "rgba(75, 192, 192, 0.8)"
       }
@@ -39,13 +40,18 @@ const HoursWorkedByUsers = () => {
     plugins: {
       legend: {
         display: true,
-        position: "top"
+        position: "top",
+        labels: {
+          color: "#ffffff" // White text for the legend
+        }
       },
       tooltip: {
         callbacks: {
-          title: (tooltipItems) => tooltipItems[0].label,
-          label: (tooltipItem) =>
-            `Hours Worked: ${chartData.datasets[0].data[tooltipItem.dataIndex]}`
+          title: (tooltipItems) => usernames[tooltipItems[0].dataIndex], // Show username in tooltip
+          label: (tooltipItem) => {
+            const value = chartData.datasets[0].data[tooltipItem.dataIndex];
+            return `Hours Worked: ${value === 2 ? 0 : value}`; // Display 0 in tooltip for minimal column
+          }
         }
       }
     },
@@ -53,11 +59,15 @@ const HoursWorkedByUsers = () => {
       x: {
         title: {
           display: true,
-          text: "Users",
+          text: "Users (Hover to View Details)",
           font: {
             size: 14,
             weight: "bold"
-          }
+          },
+          color: "#ffffff" // White x-axis title
+        },
+        ticks: {
+          color: "#ffffff" // Hide ticks since labels are empty
         }
       },
       y: {
@@ -67,26 +77,34 @@ const HoursWorkedByUsers = () => {
           font: {
             size: 14,
             weight: "bold"
-          }
+          },
+          color: "#ffffff" // White y-axis title
         },
         ticks: {
-          stepSize: 5 // Adjust step size for readability
+          color: "#ffffff", // White text for y-axis ticks
+          stepSize: 5 // Adjust step size for better readability
         }
       }
     }
   };
 
-return (
-  <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-    <h3 className="text-lg font-semibold text-white mb-4">
-      Hours Worked by Users
-    </h3>
-    <div style={{ height: "300px" }}>
-      <Bar data={chartData} options={options} />
-    </div>
-  </div>
-);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error loading data...</div>;
+  }
 
+  return (
+    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold text-white mb-4">
+        Hours Worked by Users
+      </h3>
+      <div style={{ height: "300px" }}>
+        <Bar data={chartData} options={options} />
+      </div>
+    </div>
+  );
 };
 
 export default HoursWorkedByUsers;

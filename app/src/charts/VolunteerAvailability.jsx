@@ -8,27 +8,28 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
+import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const VolunteerAvailability = () => {
-  // Temporary Data
-  const tempTasks = [
-    { name: "Clean Prayer Hall", volunteers: 5 },
-    { name: "Setup Iftar", volunteers: 8 },
-    { name: "Organize Library", volunteers: 3 },
-    { name: "Distribute Zakat", volunteers: 10 },
-    { name: "Setup Ramadan Program", volunteers: 6 }
-  ];
+  const { data: appData, isLoading, isError } = useAppData();
+
+  // Extract tasks data
+  const tasks = appData?.tasks?.data || [];
+
+  // Prepare chart data
+  const volunteersNeeded = tasks.map((task) => task.volunteersNeeded); // Volunteers needed for each task
 
   // Chart Data Configuration
   const data = {
-    labels: tempTasks.map((task) => task.name),
+    labels: tasks.map(() => ""), // Empty x-axis labels
     datasets: [
       {
         label: "Volunteers Needed",
-        data: tempTasks.map((task) => task.volunteers),
-        backgroundColor: "rgba(255, 159, 64, 0.6)"
+        data: volunteersNeeded, // Number of volunteers needed
+        backgroundColor: "rgba(255, 159, 64, 0.6)",
+        hoverBackgroundColor: "rgba(255, 159, 64, 0.8)"
       }
     ]
   };
@@ -38,12 +39,16 @@ const VolunteerAvailability = () => {
     plugins: {
       legend: {
         display: true,
-        position: "top"
+        position: "top",
+        labels: {
+          color: "#ffffff" // White text for legend
+        }
       },
       tooltip: {
         callbacks: {
-          title: (tooltipItems) => tempTasks[tooltipItems[0].dataIndex].name,
-          label: (tooltipItem) => `Volunteers Needed: ${tooltipItem.raw}`
+          title: (tooltipItems) => tasks[tooltipItems[0].dataIndex].name, // Show task name in tooltip
+          label: (tooltipItem) =>
+            `Volunteers Needed: ${data.datasets[0].data[tooltipItem.dataIndex]}`
         }
       }
     },
@@ -51,11 +56,15 @@ const VolunteerAvailability = () => {
       x: {
         title: {
           display: true,
-          text: "Tasks",
+          text: "Tasks (Hover to View Details)",
           font: {
             size: 14,
             weight: "bold"
-          }
+          },
+          color: "#ffffff" // White x-axis title
+        },
+        ticks: {
+          color: "#ffffff" // Hide ticks since labels are empty
         }
       },
       y: {
@@ -65,26 +74,34 @@ const VolunteerAvailability = () => {
           font: {
             size: 14,
             weight: "bold"
-          }
+          },
+          color: "#ffffff" // White y-axis title
         },
         ticks: {
+          color: "#ffffff", // White text for y-axis ticks
           stepSize: 1
         }
       }
     }
   };
 
-return (
-  <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-    <h3 className="text-lg font-semibold text-white mb-4">
-      Volunteer Availability
-    </h3>
-    <div style={{ height: "300px" }}>
-      <Bar data={data} options={options} />
-    </div>
-  </div>
-);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error loading data...</div>;
+  }
 
+  return (
+    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold text-white mb-4">
+        Volunteer Availability
+      </h3>
+      <div style={{ height: "300px" }}>
+        <Bar data={data} options={options} />
+      </div>
+    </div>
+  );
 };
 
 export default VolunteerAvailability;

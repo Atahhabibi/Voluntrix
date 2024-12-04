@@ -13,6 +13,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { customFetch } from "../util/customFetch";
 import { getClosestPendingWithType } from "../util/dataHandlingFunctions";
 import { Link } from "react-router-dom";
+import getClosestTaskEventsOfToday from "../util/getClosestTaskEventsOfToday";
+import categorizeTasksAndEvents from "./../util/categorizeTasksAndEvents";
 
 const fetchTasksAndEvents = async () => {
   const response = await customFetch("/tasks-events");
@@ -94,7 +96,18 @@ const TaskTrackingPage = () => {
 
   const tasks = tasksEventsData?.tasks || [];
   const events = tasksEventsData?.events || [];
-  let closestPending = getClosestPendingWithType(tasks, events);
+
+  const { pendingEvents, pendingTasks } = categorizeTasksAndEvents(
+    tasks,
+    events
+  );
+
+  const closeTaskOrEventPending = getClosestTaskEventsOfToday(
+    pendingTasks,
+    pendingEvents
+  );
+
+  console.log(closeTaskOrEventPending);
 
   const recordsPerPage = 5;
   const totalRecords = timeRecords.length;
@@ -187,51 +200,54 @@ const TaskTrackingPage = () => {
           Clock In and Out
         </h1>
         <div className="w-full max-w-[25rem] h-54 grid m-auto bg-gray-800 rounded-lg shadow">
-          {closestPending.length === 0 ? (
+          {closeTaskOrEventPending === null ? (
             <p className="text-white  text-lg py-4 px-6 text-center">
               No tasks or events to clock in For today check your schedule.
             </p>
           ) : (
-            closestPending.map((item) => (
-              <div
-                key={item.item._id}
-                className="p-6 bg-gray-800 rounded-lg shadow hover:shadow-lg hover:bg-gray-700 transition"
-              >
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold text-white">
-                    {item.item.name}
-                  </h3>
-                  <span className="text-sm text-green-400 bg-green-900 px-2 py-1 rounded-full">
-                    {item.item.points || 0} Points
+            <div
+              key={closeTaskOrEventPending?.item?._id}
+              className="p-6 bg-gray-800 rounded-lg shadow hover:shadow-lg hover:bg-gray-700 transition"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold text-white">
+                  {closeTaskOrEventPending?.item?.name || "No Name"}
+                </h3>
+                <span className="text-sm text-green-400 bg-green-900 px-2 py-1 rounded-full">
+                  {closeTaskOrEventPending?.item?.points || 0} Points
+                </span>
+              </div>
+              <div className="text-gray-400 text-sm mb-4">
+                <div className="flex items-center gap-2">
+                  <FaCalendarAlt className="text-blue-400" />
+                  <span>
+                    {closeTaskOrEventPending?.item?.date?.split("T")[0] ||
+                      "No date provided"}
                   </span>
                 </div>
-                <div className="text-gray-400 text-sm mb-4">
-                  <div className="flex items-center gap-2">
-                    <FaCalendarAlt className="text-blue-400" />
-                    <span>{item.item.date || "No date provided"}</span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-2">
-                    <FaClock className="text-yellow-400" />
-                    <span>{item.item.time || "No time provided"}</span>
-                  </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <FaClock className="text-yellow-400" />
+                  <span>
+                    {closeTaskOrEventPending?.item?.time || "No time provided"}
+                  </span>
                 </div>
-                {trackedItem?.item._id === item.item._id ? (
-                  <button
-                    onClick={handleClockOut}
-                    className="mt-4 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
-                  >
-                    <FaStop className="inline mr-2" /> Clock Out
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleClockIn(item)}
-                    className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
-                  >
-                    <FaPlay className="inline mr-2" /> Clock In
-                  </button>
-                )}
               </div>
-            ))
+              {trackedItem?.item?._id === closeTaskOrEventPending?.item?._id ? (
+                <button
+                  onClick={handleClockOut}
+                  className="mt-4 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
+                >
+                  <FaStop className="inline mr-2" /> Clock Out
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleClockIn(closeTaskOrEventPending)}
+                  className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+                >
+                  <FaPlay className="inline mr-2" /> Clock In
+                </button>
+              )}
+            </div>
           )}
         </div>
 

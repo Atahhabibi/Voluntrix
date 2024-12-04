@@ -1,5 +1,19 @@
 const mongoose = require("mongoose");
 
+// Define a sub-schema for volunteersAssigned
+const volunteerSchema = new mongoose.Schema({
+  volunteerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ["not_sign_up", "signedUp", "completed"], // Removed typo in "signedUp."
+    default: "not_sign_up"
+  }
+});
+
 const taskSchema = new mongoose.Schema(
   {
     name: {
@@ -7,7 +21,7 @@ const taskSchema = new mongoose.Schema(
       required: true
     },
     date: {
-      type: String,
+      type: Date,
       required: true
     },
     time: {
@@ -18,7 +32,6 @@ const taskSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
-
     totalCompleted: {
       type: Number,
       required: true,
@@ -32,19 +45,9 @@ const taskSchema = new mongoose.Schema(
     volunteersNeeded: {
       type: Number,
       required: true,
-      default:1,
+      default: 1
     },
-    volunteersAssigned: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        status: {
-          type: String,
-          enum: ["not_sign_up", "signedUp.", "completed"],
-          default: "not_sign_up"
-        },
-        ref: "User"
-      }
-    ]
+    volunteersAssigned: [volunteerSchema] // Use the sub-schema here
   },
   { timestamps: true }
 );

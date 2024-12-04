@@ -8,15 +8,14 @@ import {
   FaBell,
   FaArrowRight
 } from "react-icons/fa";
-import { Link, useLoaderData } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import useUserData from "../util/CustomHooks/useUserData";
 import { BarChart, DonutChart, LineChart, PieChart } from "../charts";
 
 import useHandleImageUpload from "../util/handleImageUpload";
-import getClosestPending from "../util/getClosetPending";
 import TaskReminder from "../components/TaskRemainder";
-import useAppData from "../util/CustomHooks/useAppData";
+import categorizeTasksAndEvents from "../util/categorizeTasksAndEvents";
+import getClosestTaskEventsOfToday from "../util/getClosestTaskEventsOfToday";
 
 const UserDashboard = () => {
   const { handleImageUpload, uploading, profileImage } = useHandleImageUpload();
@@ -27,18 +26,25 @@ const UserDashboard = () => {
   const events = data?.events?.events || [];
   const user = data?.user.user || {};
   const timeRecordData = data?.timeRecords?.data || [];
+  const userName = user?.username || "User";
 
-  const closePendingItem = getClosestPending(tasks, events);
+  console.log(timeRecordData);
 
-  //piechart
-  const { pendingTaskLength, completedTaskLength } = tasks?.reduce(
-    (acc, item) => {
-      if (item.status === "pending") acc.pendingTaskLength++;
-      if (item.status === "completed") acc.completedTaskLength++;
-      return acc;
-    },
-    { pendingTaskLength: 0, completedTaskLength: 0 }
-  ) || { pendingTaskLength: 0, completedTaskLength: 0 };
+
+
+  const {
+    pendingEvents,
+    pendingTasks,
+    completedEvents,
+    completedTasks,
+    notSignedUpEvents,
+    notSignedUpTasks
+  } = categorizeTasksAndEvents(tasks,events);
+
+  const closeTaskOrEventPending = getClosestTaskEventsOfToday(
+    pendingTasks,
+    pendingEvents
+  );
 
   //line chart
 
@@ -49,45 +55,23 @@ const UserDashboard = () => {
     };
   });
 
-  //donut chart:
-
-  const completedEvents = events.filter(
-    (event) => event.status === "completed"
-  );
-
-  const userName = user?.username || "User";
-
-  // Points History
   const pointsHistory = timeRecordData?.map((record) => ({
     task: record.name,
     date: new Date(record.clockOut).toLocaleDateString(),
     points: record.pointsEarned
   }));
 
-  // Total Points
   const totalPoints = timeRecordData?.reduce(
     (sum, record) => sum + record.pointsEarned,
     0
   );
 
-  const notSignUpTask = tasks?.filter(
-    (item) => item.status === "not_signed_up"
-  );
-  const notAttendedEvents = events?.filter(
-    (item) => item.status === "not_attended"
-  );
-
   const notSingupNotAttendedEventTask = [
-    ...notAttendedEvents,
-    ...notSignUpTask
+    ...notSignedUpTasks,
+    ...notSignedUpEvents
   ];
 
-  const pendingTasks = tasks?.filter((item) => item.status === "pending");
-  const pendingEvents = events?.filter((item) => item.status === "pending");
-
   const pendingEventTasks = [...pendingEvents, ...pendingTasks];
-
-  const completedTasks = tasks?.filter((item) => item.status === "pending");
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -190,15 +174,15 @@ const UserDashboard = () => {
               </h2>
             </div>
             <p className="text-gray-400">
-              <TaskReminder pendingTask={closePendingItem} />
+              <TaskReminder pendingTask={closeTaskOrEventPending} />
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
           <DonutChart
-            completedTasks={completedTaskLength}
-            pendingTasks={pendingTaskLength}
+            completedTasks={completedTasks.length}
+            pendingTasks={pendingTasks.length}
           />
           <LineChart userPointsData={userPointsData} />
           <BarChart timeRecordData={timeRecordData} />

@@ -6,46 +6,62 @@ const TaskReminder = ({ pendingTask }) => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    // Ensure the array is not empty and extract the first task
-    if (!pendingTask || !pendingTask.length) {
+    if (!pendingTask || !pendingTask.item) {
+      console.warn("No valid pendingTask data provided:", pendingTask);
+      setMessage("No task or event scheduled.");
       return;
     }
 
-    const task = pendingTask[0]; // Get the first task from the array
+    const { type, item } = pendingTask;
 
-    if (!task.name || !task.date || !task.time) {
+    // Validate required fields
+    if (!item.name || !item.date || !item.time) {
+      console.warn("Missing required fields in task or event:", item);
+      setMessage("Invalid task or event data.");
       return;
     }
 
-    // Parse and validate date and time
+    // Parse date and time
+    const itemDate = item.date.split("T")[0];
     const eventDateTime = moment(
-      `${task.date} ${task.time}`,
-      "YYYY-MM-DD HH:mm",
-      true // Strict validation
+      `${itemDate} ${item.time}`,
+      "YYYY-MM-DD HH:mm"
     );
 
     if (!eventDateTime.isValid()) {
+      console.warn("Invalid date or time format:", item.date, item.time);
+      setMessage("Invalid date or time format.");
       return;
     }
 
-    const hasShown = localStorage.getItem("reminderShown");
-
-    // Format the date and time
-    const formattedDate = eventDateTime.format("dddd, MMMM Do YYYY");
-    const formattedTime = eventDateTime.format("h:mm A");
+    // Check if the event is in the future
+    const now = moment();
+    if (eventDateTime.isBefore(now)) {
+      console.warn(
+        "The task or event has already passed:",
+        eventDateTime.toString()
+      );
+      setMessage("This task or event has already passed.");
+      return;
+    }
 
     // Generate reminder message
-    const newMessage = `Reminder: You are scheduled for "${task.name}" on ${formattedDate} at ${formattedTime}`;
+    const formattedDate = eventDateTime.format("dddd, MMMM Do YYYY");
+    const formattedTime = eventDateTime.format("h:mm A");
+    const newMessage = `Reminder: You are scheduled for a "${type}" named "${item.name}" on ${formattedDate} at ${formattedTime}.`;
+
     setMessage(newMessage);
 
-    // Show toast notification if it hasn't been shown
-    if (hasShown !== "true") {
-      localStorage.setItem("reminderShown", "true");
+    // Show the reminder toast
+    const reminderKey = `reminderShown_${item._id}`;
+    const hasShown = localStorage.getItem(reminderKey);
+    if (!hasShown) {
+      localStorage.setItem(reminderKey, "true");
       toast.warn(newMessage);
     }
   }, [pendingTask]);
 
-  return <>{message ? <p>{message}</p> : <p>Loading your reminder...</p>}</>;
+  return <>{message ? <p>{message}</p> : <p>Loading reminder...</p>}</>;
 };
 
 export default TaskReminder;

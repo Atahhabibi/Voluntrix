@@ -388,10 +388,18 @@ app.post("/api/v1/tasks/:id/signup", authMiddleware, async (req, res) => {
     const task = await Task.findByIdAndUpdate(
       taskId,
       {
-        $push: { volunteersAssigned: userId },
-        $inc: { totalSignedUp: 1, volunteersNeeded: -1 }
+        $push: {
+          volunteersAssigned: {
+            volunteerId: userId,
+            status: "signedUp" // Default status or set dynamically as needed
+          }
+        },
+        $inc: {
+          totalSignedUp: 1,
+          volunteersNeeded: -1
+        }
       },
-      { new: true }
+      { new: true } // Return the updated task
     );
 
     if (!task) {
@@ -445,13 +453,18 @@ app.post("/api/v1/events/:id/signup", authMiddleware, async (req, res) => {
     const event = await Event.findByIdAndUpdate(
       eventId,
       {
-        $push: { volunteersAssigned: userId },
+        $push: {
+          volunteersAssigned: {
+            volunteerId: userId,
+            status: "signedUp" // Default or dynamically set
+          }
+        },
         $inc: {
           totalSignUp: 1,
           volunteersNeeded: -1
         }
       },
-      { new: true }
+      { new: true } // Return the updated event document
     );
 
     if (!event) {
@@ -544,24 +557,31 @@ app.post("/api/v1/time-records", authMiddleware, async (req, res) => {
     });
 
     if (itemType === "task") {
-      const task = await Task.findByIdAndUpdate(
-        id,
-        { status: "completed" },
-        { new: true }
+      const task = await Task.findOneAndUpdate(
+        { _id: id, "volunteersAssigned.0": { $exists: true } }, // Ensure the first volunteer exists
+        {
+          $set: { "volunteersAssigned.0.status": "completed" }, // Update the status of the first volunteer
+          $inc: { totalCompleted: 1, totalSignedUp: -1 } // Adjust counters
+        },
+        { new: true } // Return the updated document
       );
+
       if (!task) {
         return res
           .status(404)
           .json({ success: false, message: "Task not found" });
       }
     }
-
     if (itemType === "event") {
-      const event = await Event.findByIdAndUpdate(
-        id,
-        { status: "completed" },
-        { new: true }
+      const event = await Event.findOneAndUpdate(
+        { _id: id, "volunteersAssigned.0": { $exists: true } }, // Ensure the first volunteer exists
+        {
+          $set: { "volunteersAssigned.0.status": "completed" }, // Update the status of the first volunteer
+          $inc: { totalCompleted: 1 } // Increment the totalCompleted counter
+        },
+        { new: true } // Return the updated document
       );
+
       if (!event) {
         return res
           .status(404)
@@ -803,7 +823,7 @@ app.get("/api/v1/volunteer/:id", async (req, res) => {
       volunteer.events && Array.isArray(volunteer.events)
         ? await Event.find({ _id: { $in: volunteer.events } })
         : [];
-    const timeRecords = await TimeRecord.findOne({ userId: volunteer._id });
+    const timeRecords = await TimeRecord.find({ userId: volunteer._id });
 
     res.status(200).json({
       success: true,

@@ -1,6 +1,22 @@
-const mongoose = require("mongoose"); // Use require instead of import
+const mongoose = require("mongoose");
 
-// Define the schema
+
+// Define a sub-schema for volunteersAssigned
+const volunteerSchema = new mongoose.Schema({
+  volunteerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ["not_sign_up", "signedUp", "completed"], // Removed typo in "signedUp."
+    default: "not_sign_up"
+  }
+});
+
+
+
 const eventSchema = new mongoose.Schema(
   {
     name: {
@@ -8,7 +24,7 @@ const eventSchema = new mongoose.Schema(
       required: true
     },
     date: {
-      type:String,
+      type: Date,
       required: true
     },
     type: {
@@ -44,24 +60,13 @@ const eventSchema = new mongoose.Schema(
     volunteersNeeded: {
       type: Number,
       required: true,
-      default:1,
+      default: 1
     },
-    volunteersAssigned: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        status: {
-          type: String,
-          enum: ["not_sign_up", "signedUp.", "completed"],
-          default: "not_sign_up"
-        },
-        ref: "User"
-      }
-    ]
+    volunteersAssigned: [volunteerSchema]
+     
   },
   { timestamps: true }
 );
-
-
 
 const Event = mongoose.model("Event", eventSchema);
 

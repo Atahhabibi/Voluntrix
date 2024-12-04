@@ -10,14 +10,14 @@ import {
   FaArrowLeft,
   FaTrashAlt
 } from "react-icons/fa";
-import { useLoaderData, Link, useParams } from "react-router-dom";
-import useUserData from "../util/useUserData";
+import { Link, useParams } from "react-router-dom";
 import ProfileTableData from "../components/ProfileDataTable";
 import { BarChart, PieChart } from "../charts";
 import { customFetch } from "../util/customFetch";
-import useLoader from "../util/useUserData";
-import useUserDataCustom from "../util/CustomHooks/useUserData";
 import { useNavigate } from "react-router-dom";
+import useUserData from "../util/CustomHooks/useUserData";
+import categorizeTasksAndEvents from "../util/categorizeTasksAndEvents";
+import { useQueryClient } from "@tanstack/react-query";
 
 function convertSecondsToHours(seconds) {
   if (typeof seconds !== "number" || seconds < 0) {
@@ -29,33 +29,27 @@ function convertSecondsToHours(seconds) {
 
 const VolunteerProfilePage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useUserDataCustom();
+  const { data, isLoading, error } = useUserData();
 
   const tasks = data?.tasks || [];
   const events = data?.events || [];
   const volunteer = data?.volunteer || {};
-  const timeRecordData = [data?.timeRecords || {}];
+  const timeRecordData = data?.timeRecords || [];
 
-  // Assigned and completed tasks/events state
-  const [assignedTasks, setAssignedTasks] = useState([]);
-  const [assignedEvents, setAssignedEvents] = useState([]);
-  const [completedTasks, setCompletedTasks] = useState([]);
-  const [completedEvents, setCompletedEvents] = useState([]);
-
-  // Set state on component mount
-  useEffect(() => {
-    setCompletedTasks(tasks.filter((item) => item.status === "completed"));
-    setCompletedEvents(events.filter((item) => item.status === "completed"));
-    setAssignedTasks(tasks.filter((item) => item.status !== "completed"));
-    setAssignedEvents(events.filter((item) => item.status !== "completed"));
-  }, [tasks, events]);
+  const {
+    completedEvents,
+    completedTasks,
+    pendingEvents: assignedEvents,
+    pendingTasks: assignedTasks
+  } = categorizeTasksAndEvents(tasks, events);
 
   // Delete handlers
   const handleDeleteTask = async (taskId) => {
     try {
       await customFetch.delete(`/tasks/${taskId}`); // Adjust endpoint to match your backend
-      setAssignedTasks(assignedTasks.filter((task) => task._id !== taskId));
+      queryClient.invalidateQueries("UserData");
     } catch (error) {
       console.error("Error deleting task:", error);
     }
@@ -64,9 +58,7 @@ const VolunteerProfilePage = () => {
   const handleDeleteEvent = async (eventId) => {
     try {
       await customFetch.delete(`/events/${eventId}`); // Adjust endpoint to match your backend
-      setAssignedEvents(
-        assignedEvents.filter((event) => event._id !== eventId)
-      );
+      queryClient.invalidateQueries("UserData");
     } catch (error) {
       console.error("Error deleting event:", error);
     }

@@ -1,22 +1,19 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const UserParticipationOverview = () => {
-  const { data, isLoading, isError } = useAppData();
-
-  // Extract admin and volunteer data
-  const allAdmins = data?.allAdmins?.allAdmins || [];
-  const volunteers = data?.users?.data || [];
-
+const UserParticipationOverview = ({
+  volunteers,
+  allAdmins,
+  isLoading,
+  isError
+}) => {
+  
   const adminCount = allAdmins.filter(
     (admin) => admin.role !== "super-admin"
   ).length;
-
- 
 
   // Calculate volunteer count
   const volunteerCount = volunteers.length;

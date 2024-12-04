@@ -3,9 +3,6 @@ import {
   FaClock,
   FaStar,
   FaUserFriends,
-  FaTasks,
-  FaUsers,
-  FaCalendarAlt,
   FaBell,
   FaChartPie,
   FaTable
@@ -23,16 +20,24 @@ import {
   TaskOverviewTable,
   VolunteerTable
 } from "../components";
-import useUserData from "../util/useUserData";
-
-
-
-export const loader=()=>{
-return useUserData(); 
-}
+import useAppData from "../util/CustomHooks/useAppData";
 
 const AdminDashboard = () => {
   const adminName = "Sheikh Hamzah Khalid";
+
+  const { data, isError, isLoading } = useAppData();
+  const events = data?.events?.data || [];
+  const tasks = data?.tasks?.data || [];
+  const users = data?.users?.data || [];
+  const allAdmins = data?.allAdmins?.allAdmins || [];
+  const volunteers = data?.users?.data || [];
+
+  if (isLoading) {
+    return <div>Loading.....</div>;
+  }
+  if (isError) {
+    return <div>Error.....</div>;
+  }
 
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
@@ -185,10 +190,27 @@ const AdminDashboard = () => {
             Gain insights from the data visualization below.
           </p>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <EventAttendanceStatus />
-            <TaskPointsDistribution />
-            <PointsEarnedByUsers />
-            <UserParticipationOverview />
+            <EventAttendanceStatus
+              events={events}
+              isLoading={isLoading}
+              isError={isError}
+            />
+            <TaskPointsDistribution
+              tasks={tasks}
+              isLoading={isLoading}
+              isError={isError}
+            />
+            <PointsEarnedByUsers
+              users={users}
+              isLoading={isLoading}
+              isError={isError}
+            />
+            <UserParticipationOverview
+              allAdmins={allAdmins}
+              volunteers={volunteers}
+              isLoading={isLoading}
+              isError={isError}
+            />
           </div>
         </div>
 

@@ -19,7 +19,7 @@ const taskSchema = new mongoose.Schema(
       required: true
     },
 
-    totalAttended: {
+    totalCompleted: {
       type: Number,
       required: true,
       default: 0
@@ -32,7 +32,7 @@ const taskSchema = new mongoose.Schema(
     volunteersNeeded: {
       type: Number,
       required: true,
-      default: 0
+      default:1,
     },
     volunteersAssigned: [
       {

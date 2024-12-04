@@ -12,10 +12,21 @@ import {
   TimeSpentOnTasksAndEvents,
   TasksVsEventsParticipation,
   HoursWorkedByUsers,
-  TaskCompletionStatus
+  TaskCompletionStatus,
+  EventAttendanceStatus,
 } from "../charts";
+import useAppData from "../util/CustomHooks/useAppData";
+
 
 const DetailChartsPage = () => {
+
+  const { data, isError, isLoading } = useAppData();
+  const events = data?.events?.data || [];
+  const tasks = data?.tasks?.data || [];
+  const users = data?.users?.data || [];
+  const allAdmins = data?.allAdmins?.allAdmins || [];
+  const volunteers = data?.users?.data || [];
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -34,8 +45,6 @@ const DetailChartsPage = () => {
           </p>
         </div>
 
-     
-
         {/* Charts Section */}
         <div className="mb-10">
           <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
@@ -45,20 +54,50 @@ const DetailChartsPage = () => {
             Visualize key metrics and gain actionable insights.
           </p>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <TaskCompletionStatus />
-            <TaskPointsDistribution />
-            <PointsEarnedByUsers />
-            <UserParticipationOverview />
-            <NewUsersOverTime />
+            {/* <TaskCompletionStatus /> */}
             <WeeklyEngagement />
-            <VolunteerAvailability />
             <TimeSpentOnTasksAndEvents />
             <TasksVsEventsParticipation />
-            <HoursWorkedByUsers />
+
+            
+            <NewUsersOverTime
+              users={users}
+              isLoading={isLoading}
+              isError={isError}
+            />
+            <VolunteerAvailability
+              tasks={tasks}
+              isLoading={isLoading}
+              isError={isError}
+            />
+            <HoursWorkedByUsers
+              users={users}
+              isLoading={isLoading}
+              isError={isError}
+            />
+            <EventAttendanceStatus
+              events={events}
+              isLoading={isLoading}
+              isError={isError}
+            />
+            <TaskPointsDistribution
+              tasks={tasks}
+              isLoading={isLoading}
+              isError={isError}
+            />
+            <PointsEarnedByUsers
+              users={users}
+              isLoading={isLoading}
+              isError={isError}
+            />
+            <UserParticipationOverview
+              allAdmins={allAdmins}
+              volunteers={volunteers}
+              isLoading={isLoading}
+              isError={isError}
+            />
           </div>
         </div>
-
-   
 
         {/* Export Data Section */}
         <div className="flex justify-center mb-8">

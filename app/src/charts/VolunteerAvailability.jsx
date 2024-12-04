@@ -12,11 +12,7 @@ import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const VolunteerAvailability = () => {
-  const { data: appData, isLoading, isError } = useAppData();
-
-  // Extract tasks data
-  const tasks = appData?.tasks?.data || [];
+const VolunteerAvailability = ({tasks,isLoading,isError}) => {
 
   // Prepare chart data
   const volunteersNeeded = tasks.map((task) => task.volunteersNeeded); // Volunteers needed for each task

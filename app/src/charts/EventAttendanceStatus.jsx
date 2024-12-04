@@ -1,19 +1,10 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import useAppData from './../util/CustomHooks/useAppData';
-
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const EventAttendanceStatus = () => {
-
-
-const { data, isLoading, isError } = useAppData(); 
-
-const events = data?.events?.data || []; 
-
-
+const EventAttendanceStatus = ({ events, isError, isLoading }) => {
   const totals = events.reduce(
     (acc, event) => {
       acc.totalAttended += event.totalAttended;
@@ -59,12 +50,11 @@ const events = data?.events?.data || [];
     }
   };
 
-
-  if(isLoading){
-    return <div>Loading.....</div>
+  if (isLoading) {
+    return <div>Loading.....</div>;
   }
-  if(isError){
-    return <div>Error.....</div>
+  if (isError) {
+    return <div>Error.....</div>;
   }
 
   return (

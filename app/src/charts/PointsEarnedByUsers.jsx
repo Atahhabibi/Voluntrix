@@ -8,14 +8,10 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
-import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const PointsEarnedByUsers = () => {
-  const { data, isLoading, isError } = useAppData();
-  const users = data?.users?.data || [];
-
+const PointsEarnedByUsers = ({ users, isError, isLoading }) => {
   // Extract usernames and points for the chart
   const usernames = users.map((user) => user.username);
   const points = users.map((user) => (user.points === 0 ? 15 : user.points)); // Assign minimal value for zero points
@@ -52,7 +48,7 @@ const PointsEarnedByUsers = () => {
           label: (tooltipItem) => {
             const pointValue =
               chartData.datasets[0].data[tooltipItem.dataIndex];
-            return `Points Earned: ${pointValue === 15? 0 : pointValue}`; // Show 0 in tooltip for minimal column
+            return `Points Earned: ${pointValue === 15 ? 0 : pointValue}`; // Show 0 in tooltip for minimal column
           }
         }
       }

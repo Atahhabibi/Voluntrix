@@ -387,9 +387,14 @@ app.post("/api/v1/tasks/:id/signup", authMiddleware, async (req, res) => {
     // Update task status
     const task = await Task.findByIdAndUpdate(
       taskId,
-      { status: "pending" },
+      {
+        $push: { volunteersAssigned: userId },
+        $inc: { totalSignedUp: 1, volunteersNeeded: -1 }
+      },
       { new: true }
-    );
+    ).catch((err) => {
+      console.error("Error updating task:", err);
+    });
 
     if (!task) {
       return res.status(404).json({

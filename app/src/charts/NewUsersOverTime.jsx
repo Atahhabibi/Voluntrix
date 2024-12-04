@@ -20,10 +20,8 @@ ChartJS.register(
   Legend
 );
 
-const NewUsersOverTime = () => {
-  const { data: appData, isLoading, isError } = useAppData();
-  const users = appData?.users?.data || [];
-
+const NewUsersOverTime = ({users,isLoading,isError}) => {
+ 
   // Group Users by Date
   const groupedData = users.reduce((acc, user) => {
     const date = new Date(user.createdAt).toLocaleDateString("en-US");
@@ -31,7 +29,6 @@ const NewUsersOverTime = () => {
     return acc;
   }, {});
 
-  console.log(groupedData);
 
   // Generate Labels and Data Points
   const labels = Object.keys(groupedData); // Dates

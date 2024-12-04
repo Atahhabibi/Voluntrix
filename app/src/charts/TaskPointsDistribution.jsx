@@ -12,12 +12,9 @@ import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const TaskPointsDistribution = () => {
-  // Provided tasks data
-const { data:appData, isLoading, isError } = useAppData();
+const TaskPointsDistribution = ({tasks,isLoading,isError}) => {
 
-const tasks = appData?.tasks?.data || []; 
-  // Extract points for the y-axis
+
   const taskPoints = tasks.map((task) => task.points);
 
   // Chart Data Configuration

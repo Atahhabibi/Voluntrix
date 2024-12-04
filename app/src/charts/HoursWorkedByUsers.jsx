@@ -12,10 +12,8 @@ import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const HoursWorkedByUsers = () => {
-  const { data, isLoading, isError } = useAppData();
-  const users = data?.users?.data || [];
-
+const HoursWorkedByUsers = ({users,isLoading,isError}) => {
+ 
   // Extract usernames and hours worked for the chart
   const usernames = users.map((user) => user.username);
   const hoursWorked = users.map(

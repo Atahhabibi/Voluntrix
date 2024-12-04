@@ -4,7 +4,7 @@ const sampleTasks = [
     date: "2024-12-10",
     time: "09:00 AM",
     points: 50,
-    totalAttended: 0,
+    totalCompleted: 0, // Replaced totalAttended
     totalSignedUp: 0,
     volunteersNeeded: 20,
     volunteersAssigned: []
@@ -14,7 +14,7 @@ const sampleTasks = [
     date: "2024-12-15",
     time: "02:00 PM",
     points: 30,
-    totalAttended: 0,
+    totalCompleted: 0, // Replaced totalAttended
     totalSignedUp: 0,
     volunteersNeeded: 10,
     volunteersAssigned: []
@@ -24,7 +24,7 @@ const sampleTasks = [
     date: "2024-12-20",
     time: "10:00 AM",
     points: 40,
-    totalAttended: 0,
+    totalCompleted: 0, // Replaced totalAttended
     totalSignedUp: 0,
     volunteersNeeded: 18,
     volunteersAssigned: []
@@ -34,7 +34,7 @@ const sampleTasks = [
     date: "2024-12-22",
     time: "01:00 PM",
     points: 35,
-    totalAttended: 0,
+    totalCompleted: 0, // Replaced totalAttended
     totalSignedUp: 0,
     volunteersNeeded: 12,
     volunteersAssigned: []
@@ -44,7 +44,7 @@ const sampleTasks = [
     date: "2024-12-05",
     time: "11:00 AM",
     points: 60,
-    totalAttended: 0,
+    totalCompleted: 0, // Replaced totalAttended
     totalSignedUp: 0,
     volunteersNeeded: 25,
     volunteersAssigned: []
@@ -54,7 +54,7 @@ const sampleTasks = [
     date: "2024-12-18",
     time: "03:00 PM",
     points: 45,
-    totalAttended: 0,
+    totalCompleted: 0, // Replaced totalAttended
     totalSignedUp: 0,
     volunteersNeeded: 15,
     volunteersAssigned: []
@@ -64,7 +64,7 @@ const sampleTasks = [
     date: "2024-12-09",
     time: "08:00 AM",
     points: 70,
-    totalAttended: 0,
+    totalCompleted: 0, // Replaced totalAttended
     totalSignedUp: 0,
     volunteersNeeded: 30,
     volunteersAssigned: []
@@ -74,7 +74,7 @@ const sampleTasks = [
     date: "2024-12-14",
     time: "09:30 AM",
     points: 55,
-    totalAttended: 0,
+    totalCompleted: 0, // Replaced totalAttended
     totalSignedUp: 0,
     volunteersNeeded: 20,
     volunteersAssigned: []
@@ -84,7 +84,7 @@ const sampleTasks = [
     date: "2024-12-12",
     time: "04:00 PM",
     points: 25,
-    totalAttended: 0,
+    totalCompleted: 0, // Replaced totalAttended
     totalSignedUp: 0,
     volunteersNeeded: 10,
     volunteersAssigned: []
@@ -94,7 +94,7 @@ const sampleTasks = [
     date: "2024-12-25",
     time: "02:30 PM",
     points: 35,
-    totalAttended: 0,
+    totalCompleted: 0, // Replaced totalAttended
     totalSignedUp: 0,
     volunteersNeeded: 10,
     volunteersAssigned: []

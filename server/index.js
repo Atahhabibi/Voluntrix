@@ -647,19 +647,34 @@ app.post(
       // Cloudinary automatically stores the file and returns the URL
       const fileUrl = req.file.path; // This is the URL of the uploaded image
 
-      const user = await User.findOneAndUpdate(
-        { _id: req.userId },
-        { profileImage: req.file.path },
-        { new: true }
-      );
-
-      if (!user) {
-        return res
-          .status(404)
-          .json({ success: false, message: "User not found" });
+      if (req.role === "volunteer") {
+        const user = await User.findOneAndUpdate(
+          { _id: req.userId },
+          { profileImage: fileUrl },
+          { new: true }
+        );
+        if (!user) {
+          return res
+            .status(404)
+            .json({ success: false, message: "User not found" });
+        }
+        res.status(200).json({ success: true, user });
       }
 
-      res.status(200).json({ success: true, user });
+      if (req.role === "super-admin" || req.role === "admin") {
+        const user = await Admin.findOneAndUpdate(
+          { _id: req.userId },
+          { profileImage: fileUrl },
+          { new: true }
+        );
+        if (!user) {
+          return res
+            .status(404)
+            .json({ success: false, message: "User not found" });
+        }
+
+        res.status(200).json({ success: true, user });
+      }
     } catch (error) {
       console.error("File upload error:", error);
       res.status(500).json({ success: false, message: "Upload failed" });
@@ -924,6 +939,25 @@ app.get("/api/v1/getAllAdmins", async (req, res) => {
     res.status(500).json({ success: false, message: "internal server error" });
   }
 });
+
+app.get("/api/v1/taskEventForAll", async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    const events = await Event.find();
+
+    return res.status(200).json({
+      success: true,
+      data: { tasks, events }
+    });
+  } catch (error) {
+    console.error("Error fetching tasks and events:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again later."
+    });
+  }
+});
+
 
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");

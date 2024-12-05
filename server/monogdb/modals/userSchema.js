@@ -7,29 +7,29 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true, // ensures not two users can have the same username
-      trim: true // removes any leading/trailing spaces
+      trim: true // removes any leading/trailing spaces,
     },
 
     hoursWorked: {
       type: Number,
       required: true,
-      default: 0
+      default: 0,
+      min: [0, "Hours worked cannot be negative"]
     },
-  
+
     //Email for authentication (e.g login)
     email: {
       type: String,
       required: true,
       unique: true, // ensures not two users can have the same username
       lowercase: true, // Ensures no two users can have the same email
-      trim: true // removes any leading/trailing spaces
+      trim: true
     },
 
     //password=encrypted for security
     password: {
       type: String,
-      required: true,
-      minlength: 6 // Password must be at least 6 characters long
+      required: true
     },
 
     role: {
@@ -60,7 +60,8 @@ const userSchema = new mongoose.Schema(
 
     totalPoints: {
       type: Number,
-      default: 0
+      default: 0,
+      min: [0, " total points can not be negative"]
     },
 
     timeRecords: [
@@ -70,16 +71,6 @@ const userSchema = new mongoose.Schema(
       }
     ],
 
-    // Timestamp for when the user was created and last modified
-    createdAt: {
-      type: Date,
-      default: Date.now
-    },
-
-    updateAt: {
-      type: Date,
-      default: Date.now
-    }
   },
   {
     timestamps: true // Automatically adds createdAt and updatedAt fields

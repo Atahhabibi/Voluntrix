@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
+import { formatDate } from './../util/dataHandlingFunctions';
 
 const ITEMS_PER_PAGE = 3;
 
@@ -49,7 +50,7 @@ const ProfileTableData = ({ title, data = [], onDelete }) => {
                     {item.name || "Unnamed"}
                   </td>
                   <td className="px-4 py-2 text-center border border-gray-600">
-                    {item.date || "N/A"}
+                    {formatDate(item.date) || "N/A"}
                   </td>
                   <td className="px-4 py-2 text-center border border-gray-600">
                     {item.time || "N/A"}

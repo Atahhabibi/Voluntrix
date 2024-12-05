@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import useAppData from "../util/CustomHooks/useAppData";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
+import { formatDate } from "../util/dataHandlingFunctions";
 
 const TaskManagementPage = () => {
   const queryClient = useQueryClient();
@@ -146,7 +147,9 @@ const TaskManagementPage = () => {
         </div>
 
         {tasks.length === 0 ? (
-          <div className="text-center text-xl">No tasks available Create one </div>
+          <div className="text-center text-xl">
+            No tasks available Create one{" "}
+          </div>
         ) : (
           <div>
             {/* Filter Section */}
@@ -234,7 +237,7 @@ const TaskManagementPage = () => {
                       </h3>
                       <div className="text-gray-400 flex items-center mb-2">
                         <FaCalendarAlt className="mr-2 text-blue-400" />
-                        <p>Date: {task.date}</p>
+                        <p>Date: {formatDate(task.date)}</p>
                       </div>
                       <div className="text-gray-400 flex items-center mb-2">
                         <FaClock className="mr-2 text-yellow-400" />

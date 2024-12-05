@@ -13,6 +13,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useAppData from "../util/CustomHooks/useAppData";
+import { formatDate } from "../util/dataHandlingFunctions";
 
 const TasksPage = () => {
   useEffect(() => {
@@ -177,7 +178,6 @@ const TasksPage = () => {
           />
         </section>
 
-       
         {/* Task Cards for Selected Date */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 text-gray-200 flex items-center gap-2">
@@ -196,7 +196,7 @@ const TasksPage = () => {
                   </h3>
                   <p className="text-gray-300">
                     <FaCalendarAlt className="inline-block text-yellow-400 mr-2" />
-                    Date: {task.date}
+                    Date: {formatDate(task.date)}
                   </p>
                   <p className="text-gray-300">
                     <FaClock className="inline-block text-blue-400 mr-2" />

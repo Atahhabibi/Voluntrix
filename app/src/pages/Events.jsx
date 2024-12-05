@@ -8,6 +8,7 @@ import {
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useAppData from "../util/CustomHooks/useAppData";
+import { formatDate } from "../util/dataHandlingFunctions";
 
 const EventsPage = () => {
   useEffect(() => {
@@ -81,7 +82,7 @@ const EventsPage = () => {
                   <div className="text-sm text-gray-400 mb-2 flex items-center gap-2">
                     <FaCalendarAlt className="text-blue-400" />
                     <span>
-                      <strong>Date:</strong> {event.date}
+                      <strong>Date:</strong> {formatDate(event.date)}
                     </span>
                   </div>
                   <div className="text-sm text-gray-400 flex items-center gap-2">

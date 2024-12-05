@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import useUserData from "./useUserData";
+import moment from "moment";
 
 export const useUserDataQuery = () => {
   return useQuery({
@@ -166,6 +167,11 @@ export function calculatePointsAndHours(tasks, events, timeRecords) {
     totalVolunteerHours: totalVolunteerHours.toFixed(2) // Rounded to two decimals
   };
 }
+
+
+export const formatDate = (dateString, format = "MMMM Do, YYYY") => {
+  return moment(dateString).format(format);
+};
 
 
 

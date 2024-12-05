@@ -16,6 +16,7 @@ import useHandleImageUpload from "../util/handleImageUpload";
 import TaskReminder from "../components/TaskRemainder";
 import categorizeTasksAndEvents from "../util/categorizeTasksAndEvents";
 import getClosestTaskEventsOfToday from "../util/getClosestTaskEventsOfToday";
+import { formatDate } from "../util/dataHandlingFunctions";
 
 const UserDashboard = () => {
   const { handleImageUpload, uploading, profileImage } = useHandleImageUpload();
@@ -274,7 +275,7 @@ const UserDashboard = () => {
                       >
                         <div>
                           <p className="font-medium text-white">{item.name}</p>
-                          <p className="text-gray-400">Date: {item.date}</p>
+                          <p className="text-gray-400">Date: {formatDate(item.date)}</p>
                           <p className="text-gray-400">Points: {item.points}</p>
                         </div>
                         <Link
@@ -337,7 +338,9 @@ const UserDashboard = () => {
                       >
                         <div>
                           <p className="font-medium text-white">{item.name}</p>
-                          <p className="text-gray-400">Date: {item.date}</p>
+                          <p className="text-gray-400">
+                            Date: {formatDate(item.date)}
+                          </p>
                           <p className="text-gray-400">Points: {item.points}</p>
                         </div>
                         <Link

@@ -8,7 +8,8 @@ import {
   FaTag,
   FaMapMarkerAlt,
   FaArrowLeft,
-  FaRegCalendarCheck
+  FaRegCalendarCheck,
+  FaUsers
 } from "react-icons/fa";
 import EventCreationForm from "../components/EventCreationForm";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +19,7 @@ import { Link } from "react-router-dom";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import { FaTrophy } from "react-icons/fa6";
 import useAppData from "../util/CustomHooks/useAppData";
+import { formatDate } from "../util/dataHandlingFunctions";
 
 const EventManagementPage = () => {
   const [nameFilter, setNameFilter] = useState("");
@@ -124,7 +126,7 @@ const EventManagementPage = () => {
 
         {events.length === 0 ? (
           <div className="text-xl text-center">
-            There is not events available ,  Create one
+            There is not events available , Create one
           </div>
         ) : (
           <div>
@@ -216,7 +218,7 @@ const EventManagementPage = () => {
                     </div>
                     <div className="text-gray-400 flex items-center mb-2">
                       <FaCalendarAlt className="mr-2 text-yellow-400" />
-                      <p>Date: {event.date}</p>
+                      <p>Date: {formatDate(event.date)}</p>
                     </div>
                     <div className="text-gray-400 flex items-center mb-2">
                       <FaClock className="mr-2 text-green-400" />
@@ -229,6 +231,11 @@ const EventManagementPage = () => {
                     <div className="text-gray-400 flex items-center mb-2">
                       <FaTrophy className="mr-2 text-yellow-500" />
                       <p>Points: {event.points}</p>
+                    </div>
+
+                    <div className="text-gray-400 flex items-center mb-2">
+                      <FaUsers className="mr-2 text-green-400" />
+                      <p>Volunteers: {event.volunteersNeeded}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-3 mt-auto ">
                       <button

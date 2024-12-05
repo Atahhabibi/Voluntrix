@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { customFetch } from "../customFetch";
+import { customFetch, customFetchForAll } from "../customFetch";
 
 const useAppData = () => {
   return useQuery({
@@ -13,14 +13,16 @@ const useAppData = () => {
           EventResponse,
           TimeRecordsResponse,
           adminResponse,
-          allAdminResponse
+          allAdminResponse,
+          forAllResponse,
         ] = await Promise.all([
           customFetch("/admin-volunteers"),
           customFetch("/admin-tasks"),
           customFetch("/admin-events"),
           customFetch("/admin-time-records"),
-          customFetch('/admin'),
-          customFetch('/getAllAdmins')
+          customFetch("/admin"),
+          customFetch("/getAllAdmins"),
+  
         ]);
 
         return {
@@ -29,7 +31,7 @@ const useAppData = () => {
           users: UsersResponse?.data || [],
           volunteerTimeRecords: TimeRecordsResponse?.data || [],
           admin:adminResponse?.data ||{},
-          allAdmins:allAdminResponse?.data||[]
+          allAdmins:allAdminResponse?.data||[],
         };
       } catch (error) {
         console.error("Error fetching app data:", error);

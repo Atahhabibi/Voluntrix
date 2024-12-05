@@ -65,6 +65,8 @@ const EditProfilePage = () => {
     }
   };
 
+ 
+
   return (
     <div className="p-6 bg-gray-900 text-gray-200 min-h-screen">
       <div className="w-full max-w-4xl mx-auto">

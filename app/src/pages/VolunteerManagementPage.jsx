@@ -14,6 +14,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import useAppData from "../util/CustomHooks/useAppData";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
+import { PageError, PageLoading } from "../components";
 
 const VolunteerManagementPage = () => {
   const queryClient = useQueryClient();
@@ -94,18 +95,12 @@ const VolunteerManagementPage = () => {
   };
 
   if (isLoading) {
-    return <div className="p-6 bg-gray-900 text-gray-200">Loading...</div>;
+    return <PageLoading />;
   }
 
   if (error) {
-    return (
-      <div className="p-6 bg-gray-900 text-gray-200">
-        Error: {error.message}
-      </div>
-    );
+    return <PageError />;
   }
-
-
 
   const topVolunteers = [...volunteers]
     .sort((a, b) => b.totalPoints - a.totalPoints)
@@ -126,7 +121,9 @@ const VolunteerManagementPage = () => {
         </div>
 
         {volunteers.length === 0 ? (
-          <div className="text-center text-xl">There is no volunteer yet to show</div>
+          <div className="text-center text-xl">
+            There is no volunteer yet to show
+          </div>
         ) : (
           <div>
             {/* Leaderboard */}

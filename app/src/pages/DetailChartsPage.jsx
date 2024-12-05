@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { FaFileExport, FaBell, FaChartPie } from "react-icons/fa";
+import { PageLoading,PageError } from "../components";
 
 import {
   TaskPointsDistribution,
@@ -13,13 +14,11 @@ import {
   TasksVsEventsParticipation,
   HoursWorkedByUsers,
   TaskCompletionStatus,
-  EventAttendanceStatus,
+  EventAttendanceStatus
 } from "../charts";
 import useAppData from "../util/CustomHooks/useAppData";
 
-
 const DetailChartsPage = () => {
-
   const { data, isError, isLoading } = useAppData();
   const events = data?.events?.data || [];
   const tasks = data?.tasks?.data || [];
@@ -31,6 +30,13 @@ const DetailChartsPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  if (isLoading) {
+    return <PageLoading />;
+  }
+  if (isError) {
+    return <PageError />;
+  }
 
   return (
     <div className="bg-gray-900 min-h-screen text-gray-200 p-6">

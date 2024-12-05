@@ -14,6 +14,9 @@ import TaskTable from "./TaskFormTable";
 import EventFormTable from './EventFormTable';
 import AdminPagination from './AdminPagination';
 import DeleteConfirmationModal from './DeleteConfirmationModal/';
+import PageError from './PageError';
+import PageLoading from './PageLoading';
+
 
 export {
   FormInput,
@@ -31,5 +34,9 @@ export {
   TaskTable,
   EventFormTable,
   AdminPagination,
-  DeleteConfirmationModal
+  DeleteConfirmationModal,
+  PageError,
+  PageLoading
+
+
 };

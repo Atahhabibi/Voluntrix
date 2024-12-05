@@ -15,6 +15,8 @@ import { getClosestPendingWithType } from "../util/dataHandlingFunctions";
 import { Link } from "react-router-dom";
 import getClosestTaskEventsOfToday from "../util/getClosestTaskEventsOfToday";
 import categorizeTasksAndEvents from "./../util/categorizeTasksAndEvents";
+import PageLoading from "./PageLoading";
+import PageError from "./PageError";
 
 const fetchTasksAndEvents = async () => {
   const response = await customFetch("/tasks-events");
@@ -182,8 +184,8 @@ const TaskTrackingPage = () => {
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
 
-  if (taskEventLoading || timeRecordLoading) return <p>Loading...</p>;
-  if (taskEventError || timeRecordError) return <p>Error loading data.</p>;
+  if (taskEventLoading || timeRecordLoading) return <PageLoading/>
+  if (taskEventError || timeRecordError) return <PageError/>
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 py-6 px-4 sm:px-6 lg:px-8">

@@ -6,18 +6,27 @@ import {
   FaTrophy
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import useAppData from "../util/CustomHooks/useAppData";
 import { formatDate } from "../util/dataHandlingFunctions";
+import { PageError, PageLoading } from "../components";
+import { useQuery } from "@tanstack/react-query";
+import { customFetchForAll } from "../util/customFetch";
+import { fetchEventsTasksForAll } from "../util/dataHandlingFunctions";
 
 const EventsPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const { data, isLoading, isError } = useAppData();
+  const {
+    data,
+    isError,
+    isLoading
+  } = useQuery({
+    queryKey: ["taskEventForAll"],
+    queryFn: fetchEventsTasksForAll
+  });
 
-  const events = data?.events?.data || [];
+  const events = data?.data?.events || [];
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,11 +54,11 @@ const EventsPage = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center text-white">Loading events...</div>;
+    return <PageLoading />;
   }
 
   if (isError) {
-    return <div className="text-center text-white">Error fetching data...</div>;
+    return <PageError />;
   }
 
   return (
@@ -71,7 +80,7 @@ const EventsPage = () => {
           {currentEvents.length > 0 ? (
             currentEvents.map((event) => (
               <div
-                key={event.id}
+                key={event._id}
                 className="bg-gray-800 shadow-lg rounded-lg p-4 border border-gray-700 flex flex-col justify-between"
                 style={{ minHeight: "13rem" }} // Reduced height
               >

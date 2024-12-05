@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import useUserData from "./useUserData";
 import moment from "moment";
+import { customFetchForAll } from "./customFetch";
 
 export const useUserDataQuery = () => {
   return useQuery({
@@ -173,6 +174,19 @@ export const formatDate = (dateString, format = "MMMM Do, YYYY") => {
   return moment(dateString).format(format);
 };
 
+
+
+export const fetchEventsTasksForAll = async () => {
+  try {
+    const resp = await customFetchForAll("/taskEventForAll");
+
+    const tasksAndEventsForALL = resp.data;
+    return tasksAndEventsForALL;
+  } catch (error) {
+    console.error("Error loading tasks and events:", error.message);
+    return error; 
+  }
+};
 
 
 

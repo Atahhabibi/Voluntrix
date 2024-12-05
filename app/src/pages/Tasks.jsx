@@ -14,15 +14,24 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useAppData from "../util/CustomHooks/useAppData";
 import { formatDate } from "../util/dataHandlingFunctions";
+import { PageError, PageLoading } from "../components";
+import { fetchEventsTasksForAll } from "../util/dataHandlingFunctions";
+import { useQuery } from '@tanstack/react-query';
 
 const TasksPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const {data,isLoading,isError}=useAppData(); 
+  const { data, isError, isLoading } = useQuery({
+    queryKey: ["taskEventForAll"],
+    queryFn: fetchEventsTasksForAll
+  });
 
-  const tasks = data?.tasks?.data || [];
+  const tasks = data?.data?.tasks || [];
+
+
+
 
 
   const [filter, setFilter] = useState({
@@ -79,12 +88,17 @@ const TasksPage = () => {
   );
 
 
+
+
+
+
+
   if (isLoading) {
-    return <div className="text-center text-white">Loading events...</div>;
+    return <PageLoading/>
   }
 
   if (isError) {
-    return <div className="text-center text-white">Error fetching data...</div>;
+    return <PageError/>
   }
 
 

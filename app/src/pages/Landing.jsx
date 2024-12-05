@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -18,12 +18,32 @@ import {
   FaCalendarAlt
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { customFetchForAll } from "../util/customFetch";
+import { useQuery } from "@tanstack/react-query";
+import { formatDate } from "../util/dataHandlingFunctions";
+
+const fetchEventsTasks = async () => {
+  try {
+    const resp = await customFetchForAll("/taskEventForAll");
+
+    const tasksAndEventsForALL = resp.data;
+    return tasksAndEventsForALL;
+  } catch (error) {
+    console.error("Error loading tasks and events:", error.message);
+  }
+};
 
 const mosqueImages = [img1, img2, img3, img4, img5];
 
 const Landing = () => {
-  const navigate = useNavigate();
-  const tasks = useSelector((store) => store.tasks.tasks);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["taskEventForAll"],
+    queryFn: fetchEventsTasks
+  });
+
+  
+
+  const tasks = data?.data?.tasks || [];
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200">
@@ -131,10 +151,10 @@ const Landing = () => {
                   <span className="text-2xl mr-2">
                     <FaCalendarAlt />
                   </span>
-                  <h3 className="text-xl font-bold">{task.name}</h3>
+                  <h3 className="text-sm sm:text-lg font-bold">{task.name}</h3>
                 </div>
                 <p className="text-gray-300 mb-2">
-                  <strong>Date:</strong> {task.date}
+                  <strong>Date:</strong> {formatDate(task.date)}
                 </p>
                 <p className="text-gray-300">
                   <strong>Points:</strong>{" "}

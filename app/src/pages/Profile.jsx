@@ -15,9 +15,10 @@ import ProfileTableData from "../components/ProfileDataTable";
 import { BarChart, PieChart } from "../charts";
 import { customFetch } from "../util/customFetch";
 import { useNavigate } from "react-router-dom";
-import useUserData from "../util/CustomHooks/useUserData";
 import categorizeTasksAndEvents from "../util/categorizeTasksAndEvents";
 import { useQueryClient } from "@tanstack/react-query";
+import useUserData from "../util/customHooks/useUserData";
+import { PageError, PageLoading } from "../components";
 
 function convertSecondsToHours(seconds) {
   if (typeof seconds !== "number" || seconds < 0) {
@@ -65,11 +66,11 @@ const VolunteerProfilePage = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <PageLoading/>
   }
 
   if (error) {
-    return <div>Error loading data: {error.message}</div>;
+    return <PageError/>
   }
 
   return (

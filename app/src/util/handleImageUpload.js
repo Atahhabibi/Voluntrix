@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { customFetch } from "./customFetch";
 
-const useHandleImageUpload = () => {
+const useHandleImageUpload = (type) => {
   const [uploading, setUploading] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
 
@@ -17,10 +17,16 @@ const useHandleImageUpload = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await customFetch.get("/user");
+        const response = await customFetch(`/${type}`);
 
         if (response.data.success) {
-          setProfileImage(response.data.user.profileImage); // Set the profile image from the backend
+          if ((type === "user")) {
+            setProfileImage(response.data.user.profileImage); // Set the profile image from the backend
+          }
+
+          if ((type === "admin")) {
+            setProfileImage(response.data.admin.profileImage); // Set the profile image from the backend
+          }
         }
       } catch (error) {
         console.error("Failed to fetch profile data:", error);

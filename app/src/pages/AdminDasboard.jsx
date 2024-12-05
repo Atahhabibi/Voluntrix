@@ -16,15 +16,27 @@ import {
   TaskPointsDistribution,
   UserParticipationOverview
 } from "../charts";
-import { TopPerformingVolunteersTable } from "../components";
+import { PageError, PageLoading, TopPerformingVolunteersTable } from "../components";
 import useAppData from "../util/CustomHooks/useAppData";
 import { TaskCompletionOverview, UpcomingEventsTable } from "../tables";
 import { calculatePointsAndHours } from "../util/dataHandlingFunctions";
 import { getTopVolunteers } from "../util/dataHandlingFunctions";
+import useUserData from "../util/customHooks/useUserData";
+import useHandleImageUpload from "../util/handleImageUpload";
+import { customFetch } from "../util/customFetch";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchAdmin = async () => {
+  try {
+    const response = await customFetch("/admin");
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
 
 const AdminDashboard = () => {
-  const adminName = "Sheikh Hamzah Khalid";
-
   const { data, isError, isLoading } = useAppData();
   const events = data?.events?.data || [];
   const tasks = data?.tasks?.data || [];
@@ -33,16 +45,27 @@ const AdminDashboard = () => {
   const volunteers = data?.users?.data || [];
   const timeRecords = data?.volunteerTimeRecords?.data || [];
 
+  const { data: data2 } = useQuery({
+    queryKey: "admin",
+    queryFn: fetchAdmin
+  });
+
+  const admin = data2?.admin;
+
+  const adminName = admin?.username || "Sheikh Hamzah Khalid";
+
   const pointsAndHours = calculatePointsAndHours(tasks, events, timeRecords);
   const topVolunteer = getTopVolunteers(volunteers, 1);
   const volunteer = topVolunteer[0] || {};
 
+  const { handleImageUpload, uploading, profileImage } =
+    useHandleImageUpload("admin");
 
   if (isLoading) {
-    return <div>Loading.....</div>;
+    return <PageLoading/>
   }
   if (isError) {
-    return <div>Error.....</div>;
+    return <PageError/>
   }
 
   return (
@@ -52,14 +75,29 @@ const AdminDashboard = () => {
         <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700 max-w-[77rem] m-auto">
           <div className="card-body flex items-center flex-col">
             <div className="flex flex-col items-center">
-              <img
-                src={imamImg}
-                alt="Profile"
-                className="w-32 h-32 rounded-full mb-4 object-cover shadow-md"
-              />
+              {uploading && <p>uploading....</p>}
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  className="w-32 h-32 rounded-full mb-4 object-cover shadow-md"
+                />
+              ) : (
+                <img
+                  src={admin?.profileImage}
+                  alt="Profile"
+                  className="w-32 h-32 rounded-full mb-4 object-cover shadow-md"
+                />
+              )}
+
               <label className="btn btn-outline btn-primary flex items-center cursor-pointer">
                 Upload New Photo
-                <input type="file" accept="image/*" className="hidden" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
               </label>
             </div>
             <h2 className="card-title text-2xl font-bold text-white mb-1">

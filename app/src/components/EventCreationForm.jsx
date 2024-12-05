@@ -4,20 +4,15 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { customFetch } from "../util/customFetch";
 import { FaPlusCircle, FaEdit } from "react-icons/fa";
 import EventFormTable from "./EventFormTable"; // Import the table component
+import PageLoading from "./PageLoading";
+import PageError from "./PageError";
 
-const EventCreationForm = ({
-  eventToEdit = null,
-  onComplete,
-  clearEdit,
-  setShowModal,
-  confirmDelete,
-  showModal
-}) => {
+const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
   const formRef = useRef();
   const queryClient = useQueryClient();
 
   // React Query to fetch events
-  const { data: events = [], isLoading } = useQuery({
+  const { data: events = [], isLoading,isError } = useQuery({
     queryKey: ["events"],
     queryFn: async () => {
       const response = await customFetch.get("/events");
@@ -105,6 +100,13 @@ const EventCreationForm = ({
       toast.error("Failed to delete the event.");
     }
   };
+
+  if (isLoading) {
+    return <PageLoading />;
+  }
+  if (isError) {
+    return <PageError />;
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

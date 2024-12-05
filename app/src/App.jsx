@@ -19,7 +19,20 @@ import {
   RecordsPage,
   DetailChartsPage,
   AdminLoginPage,
-  DetailTablesPage
+  DetailTablesPage,
+  EventDetailsError,
+  AuthenticationError,
+  AdminDashboardError,
+  DetailTablesPageError,
+  DetailChartsPageError,
+  RecordsPageError,
+  LandingError,
+  VolunteerManagementPageError,
+  TaskManagementPageError,
+  UserDashboardError,
+  SignupForTaskError,
+  EventManagementError,
+  ClockInOutError
 } from "./pages";
 import About from "./pages/About";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -35,16 +48,15 @@ import { loader as EditProfileLoader } from "./pages/EditProfilePage";
 import { loader as signupTaskLoader } from "./pages/SignupForTaskPage";
 import { loader as RecordLoader } from "./pages/RecordPage";
 import { action as adminLoginAction } from "./pages/AdminLoginPage";
-
+import ProfileError from "./pages/ErrorPages/ProfileError";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout />,
-
-    errorElement: <Error />,
+    errorElement: <LandingError />,
     children: [
-      { index: true, element: <Landing /> },
+      { index: true, element: <Landing />, errorElement: <LandingError />},
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
       { path: "tasks", element: <Tasks /> },
@@ -52,7 +64,8 @@ const router = createBrowserRouter([
       {
         path: "events/:id",
         element: <EventDetailsPage />,
-        loader: EventDetailLoader
+        loader: EventDetailLoader,
+        errorElement: <EventDetailsError />
       },
       {
         path: "userDashboard",
@@ -61,18 +74,25 @@ const router = createBrowserRouter([
             element={<UserDashbaord />}
             allowedRoles={["volunteer"]}
           />
-        )
+        ),
+        errorElement: <UserDashboardError />
       },
       {
         path: "/tasks/:id",
         element: <SignupForTaskPage />,
-        loader: signupTaskLoader
+        loader: signupTaskLoader,
+        errorElement: <SignupForTaskError />
       },
-      { path: "/profile/:id", element: <Profile /> },
+      {
+        path: "/profile/:id",
+        element: <Profile />,
+        errorElement: <ProfileError />
+      },
       {
         path: "/editProfile/:id",
         element: <EditProfilePage />,
-        loader: EditProfileLoader
+        loader: EditProfileLoader,
+        errorElement: <ProfileError />
       },
       {
         path: "adminDashboard",
@@ -82,40 +102,68 @@ const router = createBrowserRouter([
             allowedRoles={["admin", "super-admin"]}
           />
         ),
+
+        errorElement: <AdminDashboardError />
       },
 
       {
         path: "/volunteer-management",
-        element: <VolunteerManagementPage />
+        element: <VolunteerManagementPage />,
+        errorElement: <VolunteerManagementPageError />
       },
       {
         path: "/task-management",
-        element: <TaskManagementPage />
+        element: <TaskManagementPage />,
+        errorElement: <TaskManagementPageError />
       },
       {
         path: "/event-management",
-        element: <EventManagementPage />
+        element: <EventManagementPage />,
+        errorElement: <EventManagementError />
       },
 
-      { path: "clockInOut", element: <ClockInOut /> },
-      { path: "/records", element: <RecordsPage />, loader: RecordLoader },
+      {
+        path: "clockInOut",
+        element: <ClockInOut />,
+        errorElement: <ClockInOutError />
+      },
+      {
+        path: "/records",
+        element: <RecordsPage />,
+        loader: RecordLoader,
+        errorElement: <RecordsPageError />
+      },
       {
         path: "/detailChartsPage",
-        element: <DetailChartsPage />
+        element: <DetailChartsPage />,
+        errorElement: <DetailChartsPageError />
       },
       {
         path: "/detailTablesPage",
-        element: <DetailTablesPage />
+        element: <DetailTablesPage />,
+        errorElement: <DetailTablesPageError />
       }
     ]
   },
-  { path: "/login", element: <Login />, action: loginAction },
+  {
+    path: "/login",
+    element: <Login />,
+    action: loginAction,
+    errorElement: <AuthenticationError />
+  },
   {
     path: "/adminLogin",
     element: <AdminLoginPage />,
-    action: adminLoginAction
+    action: adminLoginAction,
+    errorElement: <AuthenticationError />
   },
-  { path: "/register", element: <Register />, action: registerAction },
+  {
+    path: "/register",
+    element: <Register />,
+    action: registerAction,
+    errorElement: <AuthenticationError />
+  },
+
   { path: "*", element: <Error /> } // Catch-all for undefined routes
 ]);
 

@@ -26,3 +26,8 @@ customFetch.interceptors.response.use(
     return Promise.reject(error); // Reject the promise for other errors
   }
 );
+
+
+export const customFetchForAll = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1"
+});

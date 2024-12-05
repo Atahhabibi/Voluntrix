@@ -3,13 +3,14 @@ import {
   FaCalendarAlt,
   FaUsers,
   FaTasks,
-  FaTrophy,
   FaFileExport,
-  FaClock,
-  FaEnvelope,
-  FaStar
+  FaClock
 } from "react-icons/fa";
-import { TopPerformingVolunteersTable } from "../components";
+import {
+  PageError,
+  PageLoading,
+  TopPerformingVolunteersTable
+} from "../components";
 import useAppData from "../util/CustomHooks/useAppData";
 import {
   EventPerformanceTable,
@@ -25,8 +26,6 @@ import {
   VolunteerParticipationTable,
   VolunteerTasksTable
 } from "../tables";
-import { calculatePointsAndHours } from "../util/dataHandlingFunctions";
-import { getTopVolunteers } from "../util/dataHandlingFunctions";
 
 const DetailTablesPage = () => {
   const { data, isError, isLoading } = useAppData();
@@ -36,10 +35,12 @@ const DetailTablesPage = () => {
   const volunteers = data?.users?.data || [];
   const timeRecords = data?.volunteerTimeRecords?.data || [];
 
-  const topVolunteer = getTopVolunteers(volunteers, 1);
-  const volunteer = topVolunteer[0] || {};
-
-  const pointsAndHours = calculatePointsAndHours(tasks, events, timeRecords);
+  if (isLoading) {
+    return <PageLoading />;
+  }
+  if (isError) {
+    return <PageError />;
+  }
 
   return (
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">

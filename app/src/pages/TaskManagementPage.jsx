@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import useAppData from "../util/CustomHooks/useAppData";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import { formatDate } from "../util/dataHandlingFunctions";
+import { PageError, PageLoading } from "../components";
 
 const TaskManagementPage = () => {
   const queryClient = useQueryClient();
@@ -107,19 +108,11 @@ const TaskManagementPage = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="p-6 bg-gray-900 text-gray-200 min-h-screen flex items-center justify-center">
-        LOADING...
-      </div>
-    );
+    return <PageLoading />;
   }
 
   if (isError) {
-    return (
-      <div className="p-6 bg-gray-900 text-gray-200 min-h-screen flex items-center justify-center">
-        ERROR...
-      </div>
-    );
+    return <PageError />;
   }
 
   return (

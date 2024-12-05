@@ -20,6 +20,7 @@ import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import { FaTrophy } from "react-icons/fa6";
 import useAppData from "../util/CustomHooks/useAppData";
 import { formatDate } from "../util/dataHandlingFunctions";
+import { PageError, PageLoading } from "../components";
 
 const EventManagementPage = () => {
   const [nameFilter, setNameFilter] = useState("");
@@ -95,10 +96,10 @@ const EventManagementPage = () => {
   );
 
   if (isLoading) {
-    return <div className="text-center text-white">Loading events...</div>;
+    return <PageLoading/>
   }
   if (isError) {
-    return <div className="text-center text-white">Error....</div>;
+    return <PageError/>
   }
 
   return (

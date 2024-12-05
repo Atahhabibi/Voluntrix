@@ -9,7 +9,7 @@ import {
   FaArrowRight
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import useUserData from "../util/CustomHooks/useUserData";
+import useUserData from "../util/customHooks/useUserData";
 import { BarChart, DonutChart, LineChart, PieChart } from "../charts";
 
 import useHandleImageUpload from "../util/handleImageUpload";
@@ -17,9 +17,10 @@ import TaskReminder from "../components/TaskRemainder";
 import categorizeTasksAndEvents from "../util/categorizeTasksAndEvents";
 import getClosestTaskEventsOfToday from "../util/getClosestTaskEventsOfToday";
 import { formatDate } from "../util/dataHandlingFunctions";
+import { PageError, PageLoading } from "../components";
 
 const UserDashboard = () => {
-  const { handleImageUpload, uploading, profileImage } = useHandleImageUpload();
+  const { handleImageUpload, uploading, profileImage } = useHandleImageUpload("user");
 
   const { data, isLoading, error } = useUserData();
 
@@ -28,8 +29,6 @@ const UserDashboard = () => {
   const user = data?.user.user || {};
   const timeRecordData = data?.timeRecords?.data || [];
   const userName = user?.username || "User";
-
-  console.log(timeRecordData);
 
 
 
@@ -75,11 +74,11 @@ const UserDashboard = () => {
   const pendingEventTasks = [...pendingEvents, ...pendingTasks];
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    <PageLoading/>
   }
 
   if (error) {
-    return <div>Error loading data: {error.message}</div>;
+    return <PageError/>
   }
 
   return (

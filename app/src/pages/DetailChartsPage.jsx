@@ -26,6 +26,7 @@ const DetailChartsPage = () => {
   const users = data?.users?.data || [];
   const allAdmins = data?.allAdmins?.allAdmins || [];
   const volunteers = data?.users?.data || [];
+  const timeRecords = data?.volunteerTimeRecords?.data;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -55,11 +56,22 @@ const DetailChartsPage = () => {
           </p>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* <TaskCompletionStatus /> */}
-            <WeeklyEngagement />
-            <TimeSpentOnTasksAndEvents />
-            <TasksVsEventsParticipation />
+            <WeeklyEngagement
+              timeRecords={timeRecords}
+              isLoading={isLoading}
+              isError={isError}
+            />
+            <TimeSpentOnTasksAndEvents
+              timeRecords={timeRecords}
+              isLoading={isLoading}
+              isError={isError}
+            />
+            <TasksVsEventsParticipation
+              timeRecords={timeRecords}
+              isLoading={isLoading}
+              isError={isError}
+            />
 
-            
             <NewUsersOverTime
               users={users}
               isLoading={isLoading}

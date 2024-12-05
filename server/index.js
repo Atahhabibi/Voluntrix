@@ -577,7 +577,7 @@ app.post("/api/v1/time-records", authMiddleware, async (req, res) => {
         { _id: id, "volunteersAssigned.0": { $exists: true } }, // Ensure the first volunteer exists
         {
           $set: { "volunteersAssigned.0.status": "completed" }, // Update the status of the first volunteer
-          $inc: { totalCompleted: 1 } // Increment the totalCompleted counter
+          $inc: { totalAttended: 1 } // Increment the totalCompleted counter
         },
         { new: true } // Return the updated document
       );

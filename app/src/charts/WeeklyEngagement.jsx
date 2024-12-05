@@ -19,20 +19,12 @@ ChartJS.register(
   Legend
 );
 
-const WeeklyEngagement = () => {
-  // Temporary Data
-  const tempTimeRecords = [
-    { clockIn: "2024-11-20T08:00:00Z" }, // Wednesday
-    { clockIn: "2024-11-21T09:00:00Z" }, // Thursday
-    { clockIn: "2024-11-22T10:00:00Z" }, // Friday
-    { clockIn: "2024-11-23T11:00:00Z" }, // Saturday
-    { clockIn: "2024-11-20T12:00:00Z" }, // Wednesday
-    { clockIn: "2024-11-21T13:00:00Z" }, // Thursday
-    { clockIn: "2024-11-24T14:00:00Z" } // Sunday
-  ];
+const WeeklyEngagement = ({ timeRecords, isLoading, isError }) => {
 
-  // Group Data by Day of the Week
-  const groupedData = tempTimeRecords.reduce((acc, record) => {
+  const validTimeRecords = timeRecords || [];
+
+
+  const groupedData = validTimeRecords.reduce((acc, record) => {
     const day = new Date(record.clockIn).toLocaleDateString("en-US", {
       weekday: "long"
     });
@@ -40,7 +32,6 @@ const WeeklyEngagement = () => {
     return acc;
   }, {});
 
-  // Define Labels (Days of the Week)
   const labels = [
     "Monday",
     "Tuesday",
@@ -51,10 +42,10 @@ const WeeklyEngagement = () => {
     "Sunday"
   ];
 
-  // Map Data Points for Each Day
+  // Map data points for each day, filling missing days with 0
   const dataPoints = labels.map((day) => groupedData[day] || 0);
 
-  // Chart Data Configuration
+  // Chart data configuration
   const data = {
     labels,
     datasets: [
@@ -68,15 +59,24 @@ const WeeklyEngagement = () => {
     ]
   };
 
-return (
-  <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-    <h3 className="text-lg font-semibold text-white mb-4">Weekly Engagement</h3>
-    <div style={{ height: "300px" }}>
-      <Line data={data} />
-    </div>
-  </div>
-);
+  // Handle loading or error states
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error loading data...</div>;
+  }
 
+  return (
+    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold text-white mb-4">
+        Weekly Engagement
+      </h3>
+      <div style={{ height: "300px" }}>
+        <Line data={data} />
+      </div>
+    </div>
+  );
 };
 
 export default WeeklyEngagement;

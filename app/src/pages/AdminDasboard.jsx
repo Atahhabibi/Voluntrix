@@ -225,13 +225,25 @@ const AdminDashboard = () => {
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-6">
-            <VolunteerTable />
-            <TaskOverviewTable />
+            <VolunteerTable
+              users={users}
+              isError={isError}
+              isLoading={isLoading}
+            />
+            <TaskOverviewTable
+              tasks={tasks}
+              isError={isError}
+              isLoading={isLoading}
+            />
           </div>
         </div>
 
         <div className="px-6">
-          <EventOverviewTable />
+          <EventOverviewTable
+            events={events}
+            isError={isError}
+            isLoading={isLoading}
+          />
         </div>
 
         {/* Link to View More Features */}

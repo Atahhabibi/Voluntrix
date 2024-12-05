@@ -1,22 +1,14 @@
 import React, { useState } from "react";
 import Pagination from "./Pagination"; // Import reusable Pagination component
 
-const TopPerformingVolunteersTable = () => {
-  // Temporary sample data
-  const allTopVolunteers = [
-    { username: "VolunteerD", hoursWorked: 20, points: 200 },
-    { username: "VolunteerB", hoursWorked: 15, points: 150 },
-    { username: "VolunteerA", hoursWorked: 10, points: 100 },
-    { username: "VolunteerC", hoursWorked: 12, points: 120 },
-    { username: "VolunteerE", hoursWorked: 18, points: 180 }
-  ];
-
+const TopPerformingVolunteersTable = ({ users, isLoading, isError }) => {
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 3;
 
-  const totalPages = Math.ceil(allTopVolunteers.length / recordsPerPage);
-  const currentVolunteers = allTopVolunteers.slice(
+  // Calculate total pages and slice the data for the current page
+  const totalPages = Math.ceil(users.length / recordsPerPage);
+  const currentVolunteers = users.slice(
     (currentPage - 1) * recordsPerPage,
     currentPage * recordsPerPage
   );
@@ -30,10 +22,18 @@ const TopPerformingVolunteersTable = () => {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   };
 
+  // Handle loading or error states
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error loading data...</div>;
+  }
+
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-md ">
+    <div className="bg-gray-800 p-6 rounded-lg shadow-md">
       <h3 className="text-lg font-semibold text-white mb-4">
-        Top Performing Volunteers
+        Top Performing Volunteers by Rank
       </h3>
       <div className="overflow-y-auto max-h-64">
         <table className="table-auto w-full text-gray-400">

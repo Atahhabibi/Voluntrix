@@ -1,59 +1,21 @@
 import React, { useState } from "react";
 import Pagination from "./Pagination"; // Import the reusable Pagination component
 
-const EventOverviewTable = () => {
-  // Temporary sample data
-  const allEvents = [
-    {
-      name: "Community Iftar",
-      date: "2024-05-10",
-      type: "Religious",
-      location: "Main Hall",
-      status: "Completed"
-    },
-    {
-      name: "Charity Drive",
-      date: "2024-05-15",
-      type: "Community",
-      location: "Outdoor Grounds",
-      status: "Pending"
-    },
-    {
-      name: "Youth Quran Circle",
-      date: "2024-05-20",
-      type: "Educational",
-      location: "Library",
-      status: "Not Started"
-    },
-    {
-      name: "Eid Celebration",
-      date: "2024-05-25",
-      type: "Religious",
-      location: "Main Hall",
-      status: "Completed"
-    },
-    {
-      name: "Ramadan Workshop",
-      date: "2024-05-30",
-      type: "Educational",
-      location: "Classroom A",
-      status: "Pending"
-    },
-    {
-      name: "Volunteer Training",
-      date: "2024-06-05",
-      type: "Training",
-      location: "Conference Room",
-      status: "Not Started"
-    }
-  ];
+const EventOverviewTable = ({ events, isLoading, isError }) => {
+  // Handle loading or error states
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error loading events...</div>;
+  }
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 3;
 
-  const totalPages = Math.ceil(allEvents.length / recordsPerPage);
-  const currentEvents = allEvents.slice(
+  const totalPages = Math.ceil(events.length / recordsPerPage);
+  const currentEvents = events.slice(
     (currentPage - 1) * recordsPerPage,
     currentPage * recordsPerPage
   );
@@ -65,6 +27,18 @@ const EventOverviewTable = () => {
 
   const handleNext = () => {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  // Map status dynamically based on `volunteersAssigned`
+  const getStatus = (event) => {
+    if (event.volunteersAssigned.length === 0) {
+      return "Not Started";
+    }
+    const firstVolunteerStatus =
+      event.volunteersAssigned[0]?.status || "Not Started";
+    if (firstVolunteerStatus === "completed") return "Completed";
+    if (firstVolunteerStatus === "signedUp") return "Pending";
+    return "Not Started";
   };
 
   return (
@@ -85,16 +59,18 @@ const EventOverviewTable = () => {
             {currentEvents.length > 0 ? (
               currentEvents.map((event, index) => (
                 <tr
-                  key={index}
+                  key={event._id}
                   className={`${
                     index % 2 === 0 ? "bg-gray-600" : "bg-gray-700"
                   } hover:bg-gray-500 transition`}
                 >
                   <td className="px-4 py-2 text-center">{event.name}</td>
-                  <td className="px-4 py-2 text-center">{event.date}</td>
+                  <td className="px-4 py-2 text-center">
+                    {new Date(event.date).toLocaleDateString("en-US")}
+                  </td>
                   <td className="px-4 py-2 text-center">{event.type}</td>
                   <td className="px-4 py-2 text-center">{event.location}</td>
-                  <td className="px-4 py-2 text-center">{event.status}</td>
+                  <td className="px-4 py-2 text-center">{getStatus(event)}</td>
                 </tr>
               ))
             ) : (

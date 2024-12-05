@@ -1,23 +1,13 @@
 import React, { useState } from "react";
 import Pagination from "./Pagination";
 
-const VolunteerTable = () => {
-  // Temporary sample data
-  const allVolunteers = [
-    { username: "VolunteerA", hoursWorked: 10, points: 100 },
-    { username: "VolunteerB", hoursWorked: 15, points: 150 },
-    { username: "VolunteerC", hoursWorked: 8, points: 80 },
-    { username: "VolunteerD", hoursWorked: 20, points: 200 },
-    { username: "VolunteerE", hoursWorked: 12, points: 120 },
-    { username: "VolunteerF", hoursWorked: 7, points: 70 }
-  ];
-
+const VolunteerTable = ({ users:volunteers, isLoading, isError }) => {
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 3;
 
-  const totalPages = Math.ceil(allVolunteers.length / recordsPerPage);
-  const currentVolunteers = allVolunteers.slice(
+  const totalPages = Math.ceil(volunteers.length / recordsPerPage);
+  const currentVolunteers = volunteers.slice(
     (currentPage - 1) * recordsPerPage,
     currentPage * recordsPerPage
   );
@@ -31,8 +21,16 @@ const VolunteerTable = () => {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   };
 
+  // Handle loading or error states
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error loading data...</div>;
+  }
+
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-md ">
+    <div className="bg-gray-800 p-6 rounded-lg shadow-md">
       <h3 className="text-lg font-semibold text-white mb-4">
         Volunteer Overview
       </h3>

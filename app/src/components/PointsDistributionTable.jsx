@@ -1,16 +1,57 @@
 import React, { useState } from "react";
 import Pagination from "./Pagination";
 
-const PointsDistributionTable = () => {
-  // Temporary sample data
-  const allVolunteers = [
-    { username: "VolunteerA", points: 100, tasks: 5, events: 2 },
-    { username: "VolunteerB", points: 150, tasks: 8, events: 3 },
-    { username: "VolunteerC", points: 80, tasks: 4, events: 1 },
-    { username: "VolunteerD", points: 200, tasks: 10, events: 5 },
-    { username: "VolunteerE", points: 120, tasks: 6, events: 2 },
-    { username: "VolunteerF", points: 70, tasks: 3, events: 1 }
-  ];
+const PointsDistributionTable = ({
+  events,
+  users,
+  tasks,
+  isLoading,
+  isError
+}) => {
+  // Handle loading or error states
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error loading data...</div>;
+  }
+
+  // Calculate points distribution for each user
+  const calculatePointsDistribution = () => {
+    const userPoints = users.map((user) => {
+      const tasksCompleted = tasks.filter((task) =>
+        task.volunteersAssigned.some(
+          (volunteer) =>
+            volunteer.volunteerId === user._id &&
+            volunteer.status === "completed"
+        )
+      );
+
+      const eventsAttended = events.filter((event) =>
+        event.volunteersAssigned.some(
+          (volunteer) =>
+            volunteer.volunteerId === user._id &&
+            volunteer.status === "completed"
+        )
+      );
+
+      const totalPoints = [
+        ...tasksCompleted.map((task) => task.points),
+        ...eventsAttended.map((event) => event.points)
+      ].reduce((acc, points) => acc + points, 0);
+
+      return {
+        username: user.username,
+        points: totalPoints,
+        tasks: tasksCompleted.length,
+        events: eventsAttended.length
+      };
+    });
+
+    return userPoints;
+  };
+
+  const allVolunteers = calculatePointsDistribution();
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);

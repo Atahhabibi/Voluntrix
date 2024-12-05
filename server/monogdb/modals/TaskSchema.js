@@ -35,19 +35,30 @@ const taskSchema = new mongoose.Schema(
     totalCompleted: {
       type: Number,
       required: true,
-      default: 0
+      default: 0,
+      min: [0, "Total completed cannot be negative"]
     },
     totalSignedUp: {
       type: Number,
       required: true,
-      default: 0
+      default: 0,
+      min: [0, "Total signed up cannot be negative"]
     },
     volunteersNeeded: {
       type: Number,
       required: true,
-      default: 1
+      default: 1,
+      min: [1, "Volunteers needed must be at least 1"]
     },
-    volunteersAssigned: [volunteerSchema] // Use the sub-schema here
+    volunteersAssigned: {
+      type: [volunteerSchema],
+      validate: {
+        validator: function (v) {
+          return v.length <= this.volunteersNeeded;
+        },
+        message: "Volunteers assigned cannot exceed volunteers needed"
+      }
+    }
   },
   { timestamps: true }
 );

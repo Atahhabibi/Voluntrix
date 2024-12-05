@@ -123,6 +123,50 @@ export const parseJwt = (token) => {
 };
 
 
+export const getTopVolunteers = (volunteers, topN = 5) => {
+  // Filter out non-volunteers (e.g., admin users)
+  const onlyVolunteers = volunteers.filter(
+    (volunteer) => volunteer.role === "volunteer"
+  );
+
+  // Sort volunteers by totalPoints in descending order
+  const sortedVolunteers = onlyVolunteers.sort(
+    (a, b) => b.totalPoints - a.totalPoints
+  );
+
+  // Return the top N volunteers
+  return sortedVolunteers.slice(0, topN);
+};
+
+
+export function calculatePointsAndHours(tasks, events, timeRecords) {
+  // Sum points from tasks
+  const taskPoints = tasks.reduce(
+    (total, task) => total + (task.points || 0),
+    0
+  );
+
+  // Sum points from events
+  const eventPoints = events.reduce(
+    (total, event) => total + (event.points || 0),
+    0
+  );
+
+  // Calculate total points distributed
+  const totalPointsDistributed = taskPoints + eventPoints;
+
+  // Calculate total time spent in hours from timeRecords
+  const totalVolunteerHours =
+    timeRecords.reduce((total, record) => total + (record.timeSpent || 0), 0) /
+    3600; // Convert seconds to hours
+
+  // Return the results as an object
+  return {
+    totalPointsDistributed,
+    totalVolunteerHours: totalVolunteerHours.toFixed(2) // Rounded to two decimals
+  };
+}
+
 
 
 

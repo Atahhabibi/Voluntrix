@@ -5,7 +5,8 @@ import {
   FaUserFriends,
   FaBell,
   FaChartPie,
-  FaTable
+  FaTable,
+  FaTrophy
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import imamImg from "../images/imam.png";
@@ -15,12 +16,11 @@ import {
   TaskPointsDistribution,
   UserParticipationOverview
 } from "../charts";
-import {
-  EventOverviewTable,
-  TaskOverviewTable,
-  VolunteerTable
-} from "../components";
+import { TopPerformingVolunteersTable } from "../components";
 import useAppData from "../util/CustomHooks/useAppData";
+import { TaskCompletionOverview, UpcomingEventsTable } from "../tables";
+import { calculatePointsAndHours } from "../util/dataHandlingFunctions";
+import { getTopVolunteers } from "../util/dataHandlingFunctions";
 
 const AdminDashboard = () => {
   const adminName = "Sheikh Hamzah Khalid";
@@ -31,6 +31,12 @@ const AdminDashboard = () => {
   const users = data?.users?.data || [];
   const allAdmins = data?.allAdmins?.allAdmins || [];
   const volunteers = data?.users?.data || [];
+  const timeRecords = data?.volunteerTimeRecords?.data || [];
+
+  const pointsAndHours = calculatePointsAndHours(tasks, events, timeRecords);
+  const topVolunteer = getTopVolunteers(volunteers, 1);
+  const volunteer = topVolunteer[0] || {};
+
 
   if (isLoading) {
     return <div>Loading.....</div>;
@@ -68,23 +74,29 @@ const AdminDashboard = () => {
         {/* Overview Section */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6 max-w-[77rem] m-auto ">
           <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
-            <FaClock className="text-4xl text-blue-400 mr-4" />
+            <FaTrophy className="text-4xl text-yellow-300 mr-4" />
             <div>
-              <p className="text-3xl font-semibold text-white">200</p>
-              <p className="text-gray-400">Total Volunteer Hours</p>
+              <p className="text-xl font-semibold text-white">
+                {volunteer.username}
+              </p>
+              <p className="text-gray-400">Top volunteers</p>
             </div>
           </div>
           <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
             <FaStar className="text-4xl text-yellow-400 mr-4" />
             <div>
-              <p className="text-3xl font-semibold text-white">1200</p>
+              <p className="text-3xl font-semibold text-white">
+                {pointsAndHours.totalPointsDistributed}
+              </p>
               <p className="text-gray-400">Points Distributed</p>
             </div>
           </div>
           <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
             <FaUserFriends className="text-4xl text-green-400 mr-4" />
             <div>
-              <p className="text-3xl font-semibold text-white">3</p>
+              <p className="text-3xl font-semibold text-white">
+                {volunteers?.length}
+              </p>
               <p className="text-gray-400">Active Volunteers</p>
             </div>
           </div>
@@ -224,26 +236,27 @@ const AdminDashboard = () => {
             Review detailed insights on volunteers, tasks, and events below.
           </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-6">
-            <VolunteerTable
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 px-6">
+            <TopPerformingVolunteersTable
               users={users}
               isError={isError}
               isLoading={isLoading}
             />
-            <TaskOverviewTable
+
+            <TaskCompletionOverview
               tasks={tasks}
-              isError={isError}
               isLoading={isLoading}
+              isError={isError}
             />
           </div>
-        </div>
 
-        <div className="px-6">
-          <EventOverviewTable
-            events={events}
-            isError={isError}
-            isLoading={isLoading}
-          />
+          <div className=" px-6">
+            <UpcomingEventsTable
+              events={events}
+              isLoading={isLoading}
+              isError={isError}
+            />
+          </div>
         </div>
 
         {/* Link to View More Features */}

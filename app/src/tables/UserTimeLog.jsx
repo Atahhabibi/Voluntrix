@@ -1,15 +1,12 @@
 import React, { useState } from "react";
-import Pagination from "./Pagination"; // Import reusable Pagination component
+import TablesPagination from "./TablesPagination";
 
-const TopPerformingVolunteersTable = ({ users = [], isLoading, isError }) => {
+const UserTimeLog = ({ timeRecords = [], isLoading, isError }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 5; // Fixed number of rows
+  const recordsPerPage = 5;
 
-  // Sort users by points in descending order
-  const sortedUsers = [...users].sort((a, b) => b.totalPoints - a.totalPoints);
-
-  const totalPages = Math.ceil(sortedUsers.length / recordsPerPage);
-  const currentVolunteers = sortedUsers.slice(
+  const totalPages = Math.ceil(timeRecords.length / recordsPerPage);
+  const currentRecords = timeRecords.slice(
     (currentPage - 1) * recordsPerPage,
     currentPage * recordsPerPage
   );
@@ -23,44 +20,47 @@ const TopPerformingVolunteersTable = ({ users = [], isLoading, isError }) => {
   };
 
   if (isLoading) {
-    return <div className="text-center text-gray-400">Loading...</div>;
+    return (
+      <div className="text-center text-gray-400">Loading user time log...</div>
+    );
   }
-
   if (isError) {
     return (
-      <div className="text-center text-red-400">Error loading data...</div>
+      <div className="text-center text-red-400">
+        Error loading user time log...
+      </div>
     );
   }
 
-  // Add empty rows to maintain a fixed height
-  const rows = [...currentVolunteers];
+  // Add empty rows to ensure table always has 5 rows
+  const rows = [...currentRecords];
   while (rows.length < recordsPerPage) {
-    rows.push({ username: "", hoursWorked: "", points: "" });
+    rows.push({ name: "", clockIn: "", clockOut: "", pointsEarned: "" });
   }
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-md flex flex-col justify-between h-[450px] mb-8">
-      <h3 className="text-lg font-semibold text-white mb-4">
-        Top Performing Volunteers by Rank
-      </h3>
-      <div className="overflow-y-auto max-h-[300px]">
+    <div className="bg-gray-800 p-6 rounded-lg shadow-md flex flex-col justify-between h-[450px] mt-8 mb-8">
+      <h3 className="text-lg font-semibold text-white mb-4">User Time Log</h3>
+      <div className="overflow-y-auto max-h-[350px]">
         <table className="table-auto w-full text-gray-400 border-collapse border border-gray-700">
           <thead>
             <tr className="bg-gray-700 text-white">
-              <th className="px-4 py-2 border border-gray-700 h-10">Rank</th>
               <th className="px-4 py-2 border border-gray-700 h-10">
-                Username
+                Activity Name
               </th>
               <th className="px-4 py-2 border border-gray-700 h-10">
-                Hours Worked
+                Clock-In
               </th>
               <th className="px-4 py-2 border border-gray-700 h-10">
-                Total Points
+                Clock-Out
+              </th>
+              <th className="px-4 py-2 border border-gray-700 h-10">
+                Points Earned
               </th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((volunteer, index) => (
+            {rows.map((record, index) => (
               <tr
                 key={index}
                 className={`${
@@ -68,25 +68,27 @@ const TopPerformingVolunteersTable = ({ users = [], isLoading, isError }) => {
                 } hover:bg-gray-500 transition`}
               >
                 <td className="px-4 py-2 text-center border border-gray-700 h-10">
-                  {volunteer.username
-                    ? (currentPage - 1) * recordsPerPage + index + 1
+                  {record.name}
+                </td>
+                <td className="px-4 py-2 text-center border border-gray-700 h-10">
+                  {record.clockIn
+                    ? new Date(record.clockIn).toLocaleTimeString()
                     : ""}
                 </td>
                 <td className="px-4 py-2 text-center border border-gray-700 h-10">
-                  {volunteer.username || ""}
+                  {record.clockOut
+                    ? new Date(record.clockOut).toLocaleTimeString()
+                    : ""}
                 </td>
                 <td className="px-4 py-2 text-center border border-gray-700 h-10">
-                  {volunteer.hoursWorked || ""}
-                </td>
-                <td className="px-4 py-2 text-center border border-gray-700 h-10">
-                  {volunteer.points || ""}
+                  {record.pointsEarned}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <Pagination
+      <TablesPagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPrev={handlePrev}
@@ -96,4 +98,4 @@ const TopPerformingVolunteersTable = ({ users = [], isLoading, isError }) => {
   );
 };
 
-export default TopPerformingVolunteersTable;
+export default UserTimeLog;

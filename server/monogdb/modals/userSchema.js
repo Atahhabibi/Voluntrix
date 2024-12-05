@@ -15,12 +15,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: 0
     },
-    points: {
-      type: Number,
-      required: true,
-      default: 0
-    },
-
+  
     //Email for authentication (e.g login)
     email: {
       type: String,

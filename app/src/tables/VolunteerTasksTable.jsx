@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import Pagination from "./Pagination"; // Import reusable Pagination component
+import TablesPagination from "./TablesPagination";
 
-const TopPerformingVolunteersTable = ({ users = [], isLoading, isError }) => {
+const VolunteerTasksTable = ({ users, isLoading, isError }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 5; // Fixed number of rows
+  const recordsPerPage = 5;
 
-  // Sort users by points in descending order
-  const sortedUsers = [...users].sort((a, b) => b.totalPoints - a.totalPoints);
-
-  const totalPages = Math.ceil(sortedUsers.length / recordsPerPage);
-  const currentVolunteers = sortedUsers.slice(
+  const volunteersWithTasks = users.filter(
+    (user) => user.role === "volunteer" && user.tasks.length > 0
+  );
+  const totalPages = Math.ceil(volunteersWithTasks.length / recordsPerPage);
+  const currentVolunteers = volunteersWithTasks.slice(
     (currentPage - 1) * recordsPerPage,
     currentPage * recordsPerPage
   );
@@ -23,39 +23,41 @@ const TopPerformingVolunteersTable = ({ users = [], isLoading, isError }) => {
   };
 
   if (isLoading) {
-    return <div className="text-center text-gray-400">Loading...</div>;
+    return (
+      <div className="text-center text-gray-400">
+        Loading volunteers with tasks...
+      </div>
+    );
   }
 
   if (isError) {
     return (
-      <div className="text-center text-red-400">Error loading data...</div>
+      <div className="text-center text-red-400">
+        Error loading volunteers with tasks!
+      </div>
     );
   }
 
   // Add empty rows to maintain a fixed height
   const rows = [...currentVolunteers];
   while (rows.length < recordsPerPage) {
-    rows.push({ username: "", hoursWorked: "", points: "" });
+    rows.push({ username: "", tasks: [] });
   }
 
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-md flex flex-col justify-between h-[450px] mb-8">
       <h3 className="text-lg font-semibold text-white mb-4">
-        Top Performing Volunteers by Rank
+        Volunteers with Assigned Tasks
       </h3>
-      <div className="overflow-y-auto max-h-[300px]">
+      <div className="overflow-y-auto max-h-[350px]">
         <table className="table-auto w-full text-gray-400 border-collapse border border-gray-700">
           <thead>
             <tr className="bg-gray-700 text-white">
-              <th className="px-4 py-2 border border-gray-700 h-10">Rank</th>
               <th className="px-4 py-2 border border-gray-700 h-10">
                 Username
               </th>
               <th className="px-4 py-2 border border-gray-700 h-10">
-                Hours Worked
-              </th>
-              <th className="px-4 py-2 border border-gray-700 h-10">
-                Total Points
+                Tasks Assigned
               </th>
             </tr>
           </thead>
@@ -68,25 +70,17 @@ const TopPerformingVolunteersTable = ({ users = [], isLoading, isError }) => {
                 } hover:bg-gray-500 transition`}
               >
                 <td className="px-4 py-2 text-center border border-gray-700 h-10">
-                  {volunteer.username
-                    ? (currentPage - 1) * recordsPerPage + index + 1
-                    : ""}
+                  {volunteer.username}
                 </td>
                 <td className="px-4 py-2 text-center border border-gray-700 h-10">
-                  {volunteer.username || ""}
-                </td>
-                <td className="px-4 py-2 text-center border border-gray-700 h-10">
-                  {volunteer.hoursWorked || ""}
-                </td>
-                <td className="px-4 py-2 text-center border border-gray-700 h-10">
-                  {volunteer.points || ""}
+                  {volunteer.tasks.length !== 0 ? volunteer.tasks.length : ""}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <Pagination
+      <TablesPagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPrev={handlePrev}
@@ -96,4 +90,4 @@ const TopPerformingVolunteersTable = ({ users = [], isLoading, isError }) => {
   );
 };
 
-export default TopPerformingVolunteersTable;
+export default VolunteerTasksTable;

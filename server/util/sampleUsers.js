@@ -2,7 +2,6 @@ const sampleUsers = [
   {
     username: "john_doe",
     hoursWorked: 15,
-    points: 150,
     email: "john.doe@example.com",
     password: "password123",
     role: "volunteer",
@@ -15,7 +14,6 @@ const sampleUsers = [
   {
     username: "jane_smith",
     hoursWorked: 20,
-    points: 200,
     email: "jane.smith@example.com",
     password: "password123",
     role: "volunteer",
@@ -28,7 +26,6 @@ const sampleUsers = [
   {
     username: "admin_user",
     hoursWorked: 0,
-    points: 0,
     email: "admin@example.com",
     password: "admin123",
     role: "admin",
@@ -41,7 +38,6 @@ const sampleUsers = [
   {
     username: "emma_watson",
     hoursWorked: 10,
-    points: 100,
     email: "emma.watson@example.com",
     password: "password123",
     role: "volunteer",
@@ -54,7 +50,6 @@ const sampleUsers = [
   {
     username: "charlie_brown",
     hoursWorked: 12,
-    points: 120,
     email: "charlie.brown@example.com",
     password: "password123",
     role: "volunteer",
@@ -67,7 +62,6 @@ const sampleUsers = [
   {
     username: "lucy_gray",
     hoursWorked: 18,
-    points: 180,
     email: "lucy.gray@example.com",
     password: "password123",
     role: "volunteer",
@@ -80,7 +74,6 @@ const sampleUsers = [
   {
     username: "michael_scott",
     hoursWorked: 25,
-    points: 250,
     email: "michael.scott@example.com",
     password: "password123",
     role: "volunteer",
@@ -93,7 +86,6 @@ const sampleUsers = [
   {
     username: "pam_beesly",
     hoursWorked: 22,
-    points: 220,
     email: "pam.beesly@example.com",
     password: "password123",
     role: "volunteer",
@@ -106,7 +98,6 @@ const sampleUsers = [
   {
     username: "jim_halpert",
     hoursWorked: 30,
-    points: 300,
     email: "jim.halpert@example.com",
     password: "password123",
     role: "volunteer",
@@ -119,7 +110,6 @@ const sampleUsers = [
   {
     username: "dwight_schrute",
     hoursWorked: 40,
-    points: 400,
     email: "dwight.schrute@example.com",
     password: "password123",
     role: "volunteer",

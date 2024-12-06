@@ -9,7 +9,6 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
-import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(
   LineElement,
@@ -20,15 +19,13 @@ ChartJS.register(
   Legend
 );
 
-const NewUsersOverTime = ({users,isLoading,isError}) => {
- 
+const NewUsersOverTime = ({ users, isLoading, isError }) => {
   // Group Users by Date
   const groupedData = users.reduce((acc, user) => {
     const date = new Date(user.createdAt).toLocaleDateString("en-US");
     acc[date] = (acc[date] || 0) + 1;
     return acc;
   }, {});
-
 
   // Generate Labels and Data Points
   const labels = Object.keys(groupedData); // Dates
@@ -50,6 +47,7 @@ const NewUsersOverTime = ({users,isLoading,isError}) => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Allow container height control
     plugins: {
       legend: {
         display: true,
@@ -107,11 +105,14 @@ const NewUsersOverTime = ({users,isLoading,isError}) => {
   }
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+    <div
+      className="bg-gray-800 p-4 rounded-lg shadow-md"
+      style={{ maxHeight: "400px" }}
+    >
       <h3 className="text-lg font-semibold text-white mb-4">
         New Users Over Time
       </h3>
-      <div style={{ height: "300px" }}>
+      <div className="relative h-[200px] sm:h-[150px] md:h-[200px] lg:h-[300px]">
         <Line data={data} options={options} />
       </div>
     </div>

@@ -1,7 +1,6 @@
-import React from "react";
-import { useEffect } from "react";
-import { FaFileExport, FaBell, FaChartPie } from "react-icons/fa";
-import { PageLoading,PageError } from "../components";
+import React, { useEffect } from "react";
+import { FaFileExport, FaChartPie } from "react-icons/fa";
+import { PageLoading, PageError } from "../components";
 
 import {
   TaskPointsDistribution,
@@ -13,7 +12,6 @@ import {
   TimeSpentOnTasksAndEvents,
   TasksVsEventsParticipation,
   HoursWorkedByUsers,
-  TaskCompletionStatus,
   EventAttendanceStatus
 } from "../charts";
 import useAppData from "../util/CustomHooks/useAppData";
@@ -39,29 +37,28 @@ const DetailChartsPage = () => {
   }
 
   return (
-    <div className="bg-gray-900 min-h-screen text-gray-200 p-6">
-      <div className="max-w-screen-xl mx-auto mt-8">
+    <div className="bg-gray-900 min-h-screen text-gray-200 p-4 sm:p-6">
+      <div className="max-w-screen-xl mx-auto">
         {/* Page Title and Subtitle */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-white">
+        <div className="mb-6 text-center">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
             Admin Insights and Tools
           </h1>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-400 text-sm sm:text-base lg:text-lg">
             Dive deeper into charts, data, and administrative features to manage
             your team effectively.
           </p>
         </div>
 
         {/* Charts Section */}
-        <div className="mb-10">
-          <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+        <div className="mb-8">
+          <h3 className="text-lg sm:text-xl font-semibold text-white mb-4 flex items-center justify-center">
             <FaChartPie className="text-blue-400 mr-2" /> Key Performance Charts
           </h3>
-          <p className="text-gray-400 mb-6">
+          <p className="text-gray-400 text-sm sm:text-base mb-4 text-center">
             Visualize key metrics and gain actionable insights.
           </p>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {/* <TaskCompletionStatus /> */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
             <WeeklyEngagement
               timeRecords={timeRecords}
               isLoading={isLoading}
@@ -72,14 +69,13 @@ const DetailChartsPage = () => {
               isLoading={isLoading}
               isError={isError}
             />
-            <TasksVsEventsParticipation
-              timeRecords={timeRecords}
+            <NewUsersOverTime
+              users={users}
               isLoading={isLoading}
               isError={isError}
             />
-
-            <NewUsersOverTime
-              users={users}
+            <TasksVsEventsParticipation
+              timeRecords={timeRecords}
               isLoading={isLoading}
               isError={isError}
             />
@@ -88,6 +84,11 @@ const DetailChartsPage = () => {
               isLoading={isLoading}
               isError={isError}
             />
+              <PointsEarnedByUsers
+                users={users}
+                isLoading={isLoading}
+                isError={isError}
+              />
             <HoursWorkedByUsers
               users={users}
               isLoading={isLoading}
@@ -103,11 +104,6 @@ const DetailChartsPage = () => {
               isLoading={isLoading}
               isError={isError}
             />
-            <PointsEarnedByUsers
-              users={users}
-              isLoading={isLoading}
-              isError={isError}
-            />
             <UserParticipationOverview
               allAdmins={allAdmins}
               volunteers={volunteers}
@@ -118,15 +114,15 @@ const DetailChartsPage = () => {
         </div>
 
         {/* Export Data Section */}
-        <div className="flex justify-center mb-8">
-          <button className="btn btn-secondary text-white px-6 py-3 rounded-lg shadow-md hover:bg-gray-700">
+        <div className="flex justify-center mb-6">
+          <button className="btn btn-secondary text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-md hover:bg-gray-700">
             <FaFileExport className="mr-2" /> Export Data
           </button>
         </div>
 
         {/* Footer Section */}
         <div className="flex justify-center">
-          <p className="text-gray-400 text-center">
+          <p className="text-gray-400 text-center text-sm sm:text-base">
             Data updated in real-time for accurate tracking and reporting.
           </p>
         </div>

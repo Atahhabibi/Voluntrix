@@ -97,11 +97,17 @@ const TimeSpentOnTasksAndEvents = ({ timeRecords, isLoading, isError }) => {
   }
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+    <div
+      className="bg-gray-800 p-4 rounded-lg shadow-md"
+      style={{
+        maxHeight: window.innerWidth >= 1024 ? "400px" : "250px", // Adjust max height based on screen width
+        height: "100%" // Ensure it takes the full height of the container
+      }}
+    >
       <h3 className="text-lg font-semibold text-white mb-4">
         Time Spent on Tasks and Events
       </h3>
-      <div style={{ height: "300px" }}>
+      <div className="relative h-[200px] sm:h-[250px] md:h-[300px] lg:h-[400px]">
         <Line data={data} options={options} />
       </div>
     </div>

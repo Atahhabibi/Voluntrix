@@ -14,12 +14,15 @@ const multer = require("multer");
 const { storage } = require("./util/cloudinaryConfig");
 const Admin = require("./monogdb/modals/AdminSchema");
 const jwt = require("jsonwebtoken");
+const morgan = require("morgan");
+
 
 const upload = multer({ storage });
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(morgan("tiny")); // or "tiny", "combined", etc.
 
 const PORT = process.env.PORT || 5000; // Get PORT from .env or default to 5000
 
@@ -198,6 +201,8 @@ app.get("/api/v1/events", authMiddleware, async (req, res) => {
 
     // Find the user by ID and populate the events
     const user = await User.findById(userId).populate("events");
+
+   
 
     if (!user) {
       return res

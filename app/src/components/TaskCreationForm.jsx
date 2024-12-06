@@ -95,24 +95,28 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask,tasks,setTaskToEdit }) => 
       <form
         onSubmit={handleSubmit}
         ref={formRef}
-        className="card bg-gray-800 p-8 shadow-md border border-gray-700 space-y-6"
+        className="card bg-gray-800 p-6 sm:p-8 shadow-md border border-gray-700 space-y-4 sm:space-y-6"
       >
-        <h2 className="text-2xl text-white font-semibold text-center flex items-center justify-center gap-2">
+        <h2 className="text-lg sm:text-2xl text-white font-semibold text-center flex items-center justify-center gap-1 sm:gap-2">
           {taskToEdit ? (
             <>
-              <FaEdit className="text-yellow-400" />
+              <FaEdit className="text-yellow-400 text-xl sm:text-2xl" />
               Edit Task
             </>
           ) : (
             <>
-              <FaPlus className="text-green-400" />
+              <FaPlus className="text-green-400 text-xl sm:text-2xl" />
               Create Task
             </>
           )}
         </h2>
+
         <input type="hidden" name="id" />
+
         <div>
-          <label className="text-white block mb-2">Task Title</label>
+          <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+            Task Title
+          </label>
           <input
             type="text"
             className="input input-bordered w-full"
@@ -120,9 +124,12 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask,tasks,setTaskToEdit }) => 
             required
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div>
-            <label className="text-white block mb-2">Date</label>
+            <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+              Date
+            </label>
             <input
               type="date"
               className="input input-bordered w-full"
@@ -131,7 +138,9 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask,tasks,setTaskToEdit }) => 
             />
           </div>
           <div>
-            <label className="text-white block mb-2">Time</label>
+            <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+              Time
+            </label>
             <input
               type="time"
               name="time"
@@ -140,7 +149,9 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask,tasks,setTaskToEdit }) => 
             />
           </div>
           <div>
-            <label className="text-white block mb-2">Volunteers Needed</label>
+            <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+              Volunteers Needed
+            </label>
             <input
               type="number"
               name="volunteers"
@@ -149,7 +160,9 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask,tasks,setTaskToEdit }) => 
             />
           </div>
           <div>
-            <label className="text-white block mb-2">Points</label>
+            <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+              Points
+            </label>
             <input
               type="number"
               name="points"
@@ -158,6 +171,7 @@ const TaskCreationForm = ({ taskToEdit, clearEditTask,tasks,setTaskToEdit }) => 
             />
           </div>
         </div>
+
         <div className="w-full">
           <button type="submit" className="btn btn-primary w-full">
             {createMutation.isLoading

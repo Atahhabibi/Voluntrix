@@ -7,18 +7,10 @@ import EventFormTable from "./EventFormTable"; // Import the table component
 import PageLoading from "./PageLoading";
 import PageError from "./PageError";
 
-const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
+const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit,events,isLoading,isError }) => {
   const formRef = useRef();
   const queryClient = useQueryClient();
 
-  // React Query to fetch events
-  const { data: events = [], isLoading,isError } = useQuery({
-    queryKey: ["events"],
-    queryFn: async () => {
-      const response = await customFetch.get("/events");
-      return response.data.events;
-    }
-  });
 
   // React Query mutations for creating and updating events
   const createMutation = useMutation({
@@ -26,7 +18,7 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
       await customFetch.post("/events", newEvent);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["events"]); // Refetch events
+      queryClient.invalidateQueries(["AppData"]); // Refetch events
       formRef.current.reset(); // Reset form
       toast.success("Event created successfully!");
       onComplete?.(); // Optional callback
@@ -94,7 +86,7 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
   const handleDelete = async (event) => {
     try {
       await customFetch.delete(`/events/${event._id}`);
-      queryClient.invalidateQueries(["events"]);
+      queryClient.invalidateQueries(["AppData"]);
       toast.success("Event deleted successfully!");
     } catch (error) {
       toast.error("Failed to delete the event.");
@@ -110,31 +102,35 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* Form Section */}
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="bg-gray-800 p-8 shadow-md border border-gray-700 rounded-lg w-full"
+        className="bg-gray-800 p-6 sm:p-8 shadow-md border border-gray-700 rounded-lg w-full"
       >
         <div className="text-center mb-6">
           {eventToEdit ? (
             <div className="flex flex-col items-center">
-              <FaEdit className="text-blue-500 text-4xl mb-2" />
-              <h2 className="text-2xl text-white font-semibold">Edit Event</h2>
+              <FaEdit className="text-blue-500 text-3xl sm:text-4xl mb-2 hidden sm:block" />
+              <h2 className="text-lg sm:text-2xl text-white font-semibold">
+                Edit Event
+              </h2>
             </div>
           ) : (
             <div className="flex flex-col items-center">
-              <FaPlusCircle className="text-green-500 text-4xl mb-2" />
-              <h2 className="text-2xl text-white font-semibold">
+              <FaPlusCircle className="text-green-500 text-3xl sm:text-4xl mb-2 hidden sm:block" />
+              <h2 className="text-lg sm:text-2xl text-white font-semibold">
                 Create Event
               </h2>
             </div>
           )}
         </div>
+
         <input type="hidden" name="id" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
           <div className="col-span-2">
-            <label className="text-white block mb-2">Event Name</label>
+            <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+              Event Name
+            </label>
             <input
               type="text"
               name="name"
@@ -142,8 +138,10 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
               required
             />
           </div>
-          <div>
-            <label className="text-white block mb-2">Date</label>
+          <div className="col-span-2 sm:col-span-1">
+            <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+              Date
+            </label>
             <input
               type="date"
               name="date"
@@ -151,8 +149,10 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
               required
             />
           </div>
-          <div>
-            <label className="text-white block mb-2">Type</label>
+          <div className="col-span-2 sm:col-span-1">
+            <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+              Type
+            </label>
             <input
               type="text"
               name="type"
@@ -160,8 +160,10 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
               required
             />
           </div>
-          <div>
-            <label className="text-white block mb-2">Time</label>
+          <div className="col-span-2 lg:col-span-1">
+            <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+              Time
+            </label>
             <input
               type="time"
               name="time"
@@ -170,7 +172,9 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
             />
           </div>
           <div>
-            <label className="text-white block mb-2">Points</label>
+            <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+              Points
+            </label>
             <input
               type="number"
               name="points"
@@ -179,7 +183,9 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
             />
           </div>
           <div>
-            <label className="text-white block mb-2">Volunteers Needed</label>
+            <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+              Volunteers Needed
+            </label>
             <input
               type="number"
               name="volunteersNeeded"
@@ -188,7 +194,9 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
             />
           </div>
           <div className="col-span-2">
-            <label className="text-white block mb-2">Location</label>
+            <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+              Location
+            </label>
             <input
               type="text"
               name="location"
@@ -197,8 +205,10 @@ const EventCreationForm = ({ eventToEdit = null, onComplete, clearEdit }) => {
             />
           </div>
         </div>
-        <div className="mb-6">
-          <label className="text-white block mb-2">Description</label>
+        <div className="mb-4 sm:mb-6">
+          <label className="text-white text-sm sm:text-base block mb-1 sm:mb-2">
+            Description
+          </label>
           <textarea
             name="description"
             className="textarea textarea-bordered w-full"

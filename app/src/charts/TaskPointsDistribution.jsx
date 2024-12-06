@@ -91,18 +91,24 @@ const TaskPointsDistribution = ({tasks,isLoading,isError}) => {
     return <div>Error.....</div>;
   }
 
-  return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold text-white mb-4">
-        Task Points Distribution
-      </h3>
-      <div style={{ height: "300px" }}>
-        {" "}
-        {/* Increased height from 400px to 500px */}
-        <Bar data={data} options={options} />
-      </div>
+return (
+  <div
+    className="bg-gray-800 p-4 rounded-lg shadow-md"
+    style={{
+      maxHeight: window.innerWidth >= 1024 ? "400px" : "250px", // Adjust max height based on screen width
+      height: "100%" // Ensure it takes the full height of the container
+    }}
+  >
+    <h3 className="text-lg font-semibold text-white mb-4">
+      Task Points Distribution
+    </h3>
+    <div className="relative h-[200px] sm:h-[150px] md:h-[200px] lg:h-[300px]">
+      {/* Responsive height for chart container */}
+      <Bar data={data} options={options} />
     </div>
-  );
+  </div>
+);
+
 };
 
 export default TaskPointsDistribution;

@@ -93,16 +93,18 @@ const PointsEarnedByUsers = ({ users, isError, isLoading }) => {
     return <div>Error...</div>;
   }
 
-  return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold text-white mb-4">
-        Points Earned by Users
-      </h3>
-      <div style={{ height: "300px" }}>
-        <Bar data={chartData} options={options} />
-      </div>
+return (
+  <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+    <h3 className="text-lg font-semibold text-white mb-4">
+      Points Earned by Users
+    </h3>
+    <div className="relative h-[200px] sm:h-[150px] md:h-[200px] lg:h-[300px]">
+      {/* Responsive height for chart container */}
+      <Bar data={chartData} options={options} />
     </div>
-  );
+  </div>
+);
+
 };
 
 export default PointsEarnedByUsers;

@@ -8,12 +8,10 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
-import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const VolunteerAvailability = ({tasks,isLoading,isError}) => {
-
+const VolunteerAvailability = ({ tasks, isLoading, isError }) => {
   // Prepare chart data
   const volunteersNeeded = tasks.map((task) => task.volunteersNeeded); // Volunteers needed for each task
 
@@ -32,6 +30,7 @@ const VolunteerAvailability = ({tasks,isLoading,isError}) => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Allow dynamic height
     plugins: {
       legend: {
         display: true,
@@ -42,7 +41,8 @@ const VolunteerAvailability = ({tasks,isLoading,isError}) => {
       },
       tooltip: {
         callbacks: {
-          title: (tooltipItems) => tasks[tooltipItems[0].dataIndex].name, // Show task name in tooltip
+          title: (tooltipItems) =>
+            tasks[tooltipItems[0].dataIndex]?.name || "Unknown Task", // Show task name in tooltip
           label: (tooltipItem) =>
             `Volunteers Needed: ${data.datasets[0].data[tooltipItem.dataIndex]}`
         }
@@ -89,11 +89,14 @@ const VolunteerAvailability = ({tasks,isLoading,isError}) => {
   }
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+    <div
+      className="bg-gray-800 p-4 rounded-lg shadow-md "
+      style={{ maxHeight: "400px" }}
+    >
       <h3 className="text-lg font-semibold text-white mb-4">
         Volunteer Availability
       </h3>
-      <div style={{ height: "300px" }}>
+      <div className="relative h-[200px] sm:h-[150px] md:h-[200px] lg:h-[300px]">
         <Bar data={data} options={options} />
       </div>
     </div>

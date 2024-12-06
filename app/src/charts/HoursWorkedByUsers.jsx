@@ -8,12 +8,10 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
-import useAppData from "../util/CustomHooks/useAppData";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const HoursWorkedByUsers = ({users,isLoading,isError}) => {
- 
+const HoursWorkedByUsers = ({ users, isLoading, isError }) => {
   // Extract usernames and hours worked for the chart
   const usernames = users.map((user) => user.username);
   const hoursWorked = users.map(
@@ -35,6 +33,7 @@ const HoursWorkedByUsers = ({users,isLoading,isError}) => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Allow height to adjust based on container
     plugins: {
       legend: {
         display: true,
@@ -98,7 +97,7 @@ const HoursWorkedByUsers = ({users,isLoading,isError}) => {
       <h3 className="text-lg font-semibold text-white mb-4">
         Hours Worked by Users
       </h3>
-      <div style={{ height: "300px" }}>
+      <div className="relative h-[200px] sm:h-[150px] md:h-[200px] lg:h-[300px]">
         <Bar data={chartData} options={options} />
       </div>
     </div>

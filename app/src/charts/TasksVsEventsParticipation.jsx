@@ -39,11 +39,11 @@ const TasksVsEventsParticipation = () => {
 
   const options = {
     responsive: true,
-    aspectRatio: 2, // Width-to-height ratio
+    maintainAspectRatio: false, // Allow container height to control the chart
     plugins: {
       legend: {
         display: true,
-        position: "left"
+        position: "top"
       },
       tooltip: {
         callbacks: {
@@ -57,17 +57,19 @@ const TasksVsEventsParticipation = () => {
     }
   };
 
-return (
-  <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-    <h3 className="text-lg font-semibold text-white mb-4">
-      Tasks vs Events Participation
-    </h3>
-    <div style={{ height: "300px" }}>
-      <Pie data={data} options={options} />
+  return (
+    <div
+      className="bg-gray-800 p-4 rounded-lg shadow-md"
+      style={{ maxHeight: "400px" }}
+    >
+      <h3 className="text-lg font-semibold text-white mb-4">
+        Tasks vs Events Participation
+      </h3>
+      <div className="relative h-[200px] sm:h-[150px] md:h-[200px] lg:h-[300px]">
+        <Pie data={data} options={options} />
+      </div>
     </div>
-  </div>
-);
-
+  );
 };
 
 export default TasksVsEventsParticipation;

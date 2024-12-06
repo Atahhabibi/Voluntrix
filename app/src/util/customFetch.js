@@ -5,7 +5,8 @@ import axios from "axios";
 //   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1"
 // });
 export const customFetch = axios.create({
-  baseURL: "https://mosque-f2mw.onrender.com/api/v1"
+  baseURL:
+    "https://mosque-f2mw.onrender.com/api/v1" || "http://localhost:5000/api/v1"
 });
 
 // Request Interceptor to Add Token Dynamically
@@ -25,7 +26,11 @@ customFetch.interceptors.response.use(
   }
 );
 
+const token = localStorage.getItem("authToken"); // Fetch token dynamically
+
 export const customFetchForAll = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_BASE_URL || "https://mosque-f2mw.onrender.com/api/v1"
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1",
+  headers:{
+   Authorization:`Bearer ${token}`
+  }
 });

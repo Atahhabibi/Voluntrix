@@ -14,7 +14,6 @@ const useAppData = () => {
           TimeRecordsResponse,
           adminResponse,
           allAdminResponse,
-          forAllResponse,
         ] = await Promise.all([
           customFetch("/admin-volunteers"),
           customFetch("/admin-tasks"),

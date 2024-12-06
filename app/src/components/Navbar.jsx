@@ -2,19 +2,21 @@ import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateNavLinks } from "../features/user/userSlice";
+import { parseJwt } from "../util/dataHandlingFunctions";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const { navLinks } = useSelector((state) => state.user); // Get links from Redux store
 
+  const token=localStorage.getItem('authToken'); 
+  const decode=parseJwt(token); 
+  const role=decode?.role; 
+  
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     dispatch(updateNavLinks(token)); // Dynamically update links based on token
   }, [dispatch]);
 
-  const handleTheme = () => {
-    // Theme toggle logic
-  };
 
   const handleLinkClick = () => {
     const sidebarToggle = document.getElementById("sidebar-toggle");
@@ -30,12 +32,33 @@ const Navbar = () => {
         <nav className="bg-base-100 navbar align-element w-full mx-auto max-w-[1220px]">
           <div className="navbar-start">
             {/* Brand Logo */}
-            <NavLink
-              to="/"
-              className="hidden lg:flex btn btn-primary text-3xl items-center capitalize"
-            >
-              V
-            </NavLink>
+
+            {(role === "super-admin" || role==="admin") && (
+              <NavLink
+                to="/adminDashboard"
+                className="hidden lg:flex btn btn-primary text-3xl items-center capitalize"
+              >
+                V
+              </NavLink>
+            )}
+
+            {role === "volunteer" && (
+              <NavLink
+                to="/userDashboard"
+                className="hidden lg:flex btn btn-primary text-3xl items-center capitalize"
+              >
+                V
+              </NavLink>
+            )}
+
+            {!role && (
+              <NavLink
+                to="/"
+                className="hidden lg:flex btn btn-primary text-3xl items-center capitalize"
+              >
+                V
+              </NavLink>
+            )}
 
             {/* Sidebar Toggle Button for Mobile */}
             <label htmlFor="sidebar-toggle" className="btn btn-ghost lg:hidden">
@@ -71,11 +94,6 @@ const Navbar = () => {
 
           {/* Right Navbar Items */}
           <div className="navbar-end">
-            <label className="swap swap-rotate">
-              <input type="checkbox" onChange={handleTheme} />
-              <span className="swap-on text-xl">🌙</span>
-              <span className="swap-off text-xl">☀️</span>
-            </label>
 
             <div className="indicator ml-4">
               <NavLink

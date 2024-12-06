@@ -66,8 +66,6 @@ export const getClosestPendingWithType = (tasks, events) => {
   return [closest];
 };
 
-
-
 export const fetchTasksAndEvents = async () => {
   try {
     // Fetch user data
@@ -86,7 +84,7 @@ export const fetchTasksAndEvents = async () => {
     if (user.tasks?.length > 0 || user.events?.length > 0) {
       const detailResponse = await customFetch.post("/tasks/IdList", {
         taskids: user.tasks,
-        eventIds: user.events,
+        eventIds: user.events
       });
 
       const tasks = detailResponse.data?.data?.tasks || [];
@@ -96,7 +94,7 @@ export const fetchTasksAndEvents = async () => {
         user,
         tasks,
         events,
-        timeRecordData,
+        timeRecordData
       };
     }
 
@@ -105,14 +103,13 @@ export const fetchTasksAndEvents = async () => {
       user,
       tasks: [],
       events: [],
-      timeRecordData,
+      timeRecordData
     };
   } catch (error) {
     console.error("Error fetching tasks and events:", error);
     throw new Error(error.message || "Failed to fetch tasks and events.");
   }
 };
-
 
 export const parseJwt = (token) => {
   if (!token) return null;
@@ -123,7 +120,6 @@ export const parseJwt = (token) => {
     return null;
   }
 };
-
 
 export const getTopVolunteers = (volunteers, topN = 5) => {
   // Filter out non-volunteers (e.g., admin users)
@@ -139,7 +135,6 @@ export const getTopVolunteers = (volunteers, topN = 5) => {
   // Return the top N volunteers
   return sortedVolunteers.slice(0, topN);
 };
-
 
 export function calculatePointsAndHours(tasks, events, timeRecords) {
   // Sum points from tasks
@@ -169,12 +164,9 @@ export function calculatePointsAndHours(tasks, events, timeRecords) {
   };
 }
 
-
 export const formatDate = (dateString, format = "MMMM Do, YYYY") => {
   return moment(dateString).format(format);
 };
-
-
 
 export const fetchEventsTasksForAll = async () => {
   try {
@@ -184,10 +176,15 @@ export const fetchEventsTasksForAll = async () => {
     return tasksAndEventsForALL;
   } catch (error) {
     console.error("Error loading tasks and events:", error.message);
-    return error; 
+    return error;
   }
 };
 
-
-
-
+export const getToken = () => {
+  const token = localStorage.getItem("authToken");
+  if (token) {
+    return token;
+  } else {
+    return null;
+  }
+};

@@ -207,7 +207,7 @@ const EventManagementPage = () => {
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 min-h-[800px] p-8">
                 {currentEvents.map((event) => (
                   <div
-                    key={event.id}
+                    key={event._id}
                     className="p-6 rounded-lg shadow-xl bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:shadow-2xl transition-shadow duration-300 flex flex-col min-h-[400px] max-h-[400px] border max-w-[400px]"
                   >
                     <h3 className="text-lg font-bold text-white mb-7 text-center">

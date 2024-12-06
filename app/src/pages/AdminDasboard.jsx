@@ -46,7 +46,7 @@ const AdminDashboard = () => {
   const timeRecords = data?.volunteerTimeRecords?.data || [];
 
   const { data: data2 } = useQuery({
-    queryKey: "admin",
+    queryKey: ['admin'],
     queryFn: fetchAdmin
   });
 

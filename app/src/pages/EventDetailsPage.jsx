@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { FaCalendarAlt, FaMapMarkerAlt, FaInfoCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { customFetch } from "./../util/customFetch";
 import { useMutation } from "@tanstack/react-query";
+import { formatDate } from "../util/dataHandlingFunctions";
 
 export const loader = async ({ params }) => {
   try {
@@ -17,6 +18,10 @@ export const loader = async ({ params }) => {
 };
 
 const EventDetailsPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const event = useLoaderData();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,11 +47,11 @@ const EventDetailsPage = () => {
       navigate("/events");
     },
     onError: (error) => {
-        const errorMsg =
-          error?.response?.data?.message ||
-          "An error occurred. Please try again.";
-        toast.error(errorMsg);
-        return errorMsg; 
+      const errorMsg =
+        error?.response?.data?.message ||
+        "An error occurred. Please try again.";
+      toast.error(errorMsg);
+      return errorMsg;
     }
   });
 
@@ -54,7 +59,6 @@ const EventDetailsPage = () => {
     setIsSubmitting(true);
     EventSignUpMuation.mutate();
   };
-
 
   return (
     <div className="p-6 bg-gray-900 text-gray-200 min-h-screen flex flex-col items-center">
@@ -74,7 +78,7 @@ const EventDetailsPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-400">
               <div className="flex items-center">
                 <FaCalendarAlt className="text-blue-400 text-xl mr-3" />
-                <span>Date: {event.date}</span>
+                <span>Date: {formatDate(event.date)}</span>
               </div>
               <div className="flex items-center">
                 <FaMapMarkerAlt className="text-green-400 text-xl mr-3" />

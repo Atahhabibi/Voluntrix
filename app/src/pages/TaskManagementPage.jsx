@@ -6,20 +6,19 @@ import {
   FaClock,
   FaUsers,
   FaStar,
-  FaArrowLeft,
   FaTasks
 } from "react-icons/fa";
 import TaskCreationForm from "../components/TaskCreationForm";
 import { customFetch } from "../util/customFetch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
 import useAppData from "../util/CustomHooks/useAppData";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import { formatDate } from "../util/dataHandlingFunctions";
 import { PageError, PageLoading } from "../components";
 
 const TaskManagementPage = () => {
+
   const queryClient = useQueryClient();
   const { data, isLoading, isError } = useAppData();
 
@@ -52,9 +51,9 @@ const TaskManagementPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, [taskToEdit]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [taskToEdit]);
 
   const filteredTasks = tasks.filter((task) => {
     return (

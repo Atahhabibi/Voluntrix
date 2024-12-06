@@ -5,6 +5,10 @@ import moment from "moment";
 const TaskReminder = ({ pendingTask }) => {
   const [message, setMessage] = useState("");
 
+  if (!pendingTask) {
+    return;
+  }
+
   useEffect(() => {
     if (!pendingTask || !pendingTask.item) {
       console.warn("No valid pendingTask data provided:", pendingTask);
@@ -61,7 +65,7 @@ const TaskReminder = ({ pendingTask }) => {
     }
   }, [pendingTask]);
 
-  return <>{message ? <p>{message}</p> : <p>Loading reminder...</p>}</>;
+  return <>{message ? <>{message}</> : <>Loading reminder...</>}</>;
 };
 
 export default TaskReminder;

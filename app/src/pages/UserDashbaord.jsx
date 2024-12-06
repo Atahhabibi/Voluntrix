@@ -18,9 +18,32 @@ import categorizeTasksAndEvents from "../util/categorizeTasksAndEvents";
 import getClosestTaskEventsOfToday from "../util/getClosestTaskEventsOfToday";
 import { formatDate } from "../util/dataHandlingFunctions";
 import { PageError, PageLoading } from "../components";
+import { customFetchForAll } from "../util/customFetch";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchEventsTasks = async () => {
+  try {
+    const resp = await customFetchForAll("/taskEventForAll");
+
+    const tasksAndEventsForALL = resp.data;
+    return tasksAndEventsForALL;
+  } catch (error) {
+    console.error("Error loading tasks and events:", error.message);
+  }
+};
 
 const UserDashboard = () => {
-  const { handleImageUpload, uploading, profileImage } = useHandleImageUpload("user");
+  const { handleImageUpload, uploading, profileImage } =
+    useHandleImageUpload("user");
+
+  const { data: data2 } = useQuery({
+    queryKey: ["taskEventForAll"],
+    queryFn: fetchEventsTasks
+  });
+
+  const tasksForAll = data2?.data?.tasks || [];
+  const eventsForAll = data2?.data?.events || [];
+
 
   const { data, isLoading, error } = useUserData();
 
@@ -30,20 +53,17 @@ const UserDashboard = () => {
   const timeRecordData = data?.timeRecords?.data || [];
   const userName = user?.username || "User";
 
-
-
-  const {
-    pendingEvents,
-    pendingTasks,
-    completedEvents,
-    completedTasks,
-    notSignedUpEvents,
-    notSignedUpTasks
-  } = categorizeTasksAndEvents(tasks,events);
+  const { pendingEvents, pendingTasks, completedEvents, completedTasks } =
+    categorizeTasksAndEvents(tasks, events);
 
   const closeTaskOrEventPending = getClosestTaskEventsOfToday(
     pendingTasks,
     pendingEvents
+  );
+
+  const { notSignedUpEvents, notSignedUpTasks } = categorizeTasksAndEvents(
+    tasksForAll,
+    eventsForAll
   );
 
   //line chart
@@ -74,11 +94,11 @@ const UserDashboard = () => {
   const pendingEventTasks = [...pendingEvents, ...pendingTasks];
 
   if (isLoading) {
-    <PageLoading/>
+    <PageLoading />;
   }
 
   if (error) {
-    return <PageError/>
+    return <PageError />;
   }
 
   return (
@@ -274,7 +294,9 @@ const UserDashboard = () => {
                       >
                         <div>
                           <p className="font-medium text-white">{item.name}</p>
-                          <p className="text-gray-400">Date: {formatDate(item.date)}</p>
+                          <p className="text-gray-400">
+                            Date: {formatDate(item.date)}
+                          </p>
                           <p className="text-gray-400">Points: {item.points}</p>
                         </div>
                         <Link

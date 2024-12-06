@@ -133,20 +133,33 @@ app.post("/api/v1/tasks", async (req, res) => {
   }
 });
 
-app.get("/api/v1/tasks", async (req, res) => {
+app.get("/api/v1/tasks", authMiddleware, async (req, res) => {
   try {
-    const tasks = await Task.find();
-    res
-      .status(200)
-      .json({ success: true, message: "Tasks fetched succesfully", tasks });
+    const userId = req.userId;
+
+    // Find the user by ID and populate the tasks field
+    const user = await User.findById(userId).populate("tasks");
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Tasks fetched successfully",
+      tasks: user.tasks
+    });
   } catch (error) {
-    console.log("Error in fetching tasks");
+    console.error("Error in fetching tasks:", error);
     res.status(500).json({
       success: false,
       error: "Internal server error. Unable to fetch tasks."
     });
   }
 });
+
 
 app.post("/api/v1/events", validateEvent, async (req, res) => {
   try {
@@ -179,11 +192,29 @@ app.post("/api/v1/events", validateEvent, async (req, res) => {
   }
 });
 
-app.get("/api/v1/events", async (req, res) => {
-  const events = await Event.find();
+app.get("/api/v1/events", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.userId;
 
-  res.status(200).json({ success: true, events });
+    // Find the user by ID and populate the events
+    const user = await User.findById(userId).populate("events");
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({ success: true, events: user.events });
+  } catch (error) {
+    console.error("Error fetching user events:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch events. Please try again later."
+    });
+  }
 });
+
 
 app.get("/api/v1/events/:id", async (req, res) => {
   try {
@@ -957,7 +988,6 @@ app.get("/api/v1/taskEventForAll", async (req, res) => {
     });
   }
 });
-
 
 app.get("/", (req, res) => {
   res.status(200).send("<h1>HOME PAGE</h1>");

@@ -22,6 +22,7 @@ import { customFetchForAll } from "../util/customFetch";
 import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "../util/dataHandlingFunctions";
 
+
 const fetchEventsTasks = async () => {
   try {
     const resp = await customFetchForAll("/taskEventForAll");
@@ -40,6 +41,8 @@ const Landing = () => {
     queryKey: ["taskEventForAll"],
     queryFn: fetchEventsTasks
   });
+
+  const navigate=useNavigate(); 
 
   
 

@@ -56,14 +56,19 @@ const router = createBrowserRouter([
     element: <HomeLayout />,
     errorElement: <LandingError />,
     children: [
-      { index: true, element: <Landing />, errorElement: <LandingError />},
+      { index: true, element: <Landing />, errorElement: <LandingError /> },
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
       { path: "tasks", element: <Tasks /> },
       { path: "events", element: <Events /> },
       {
         path: "events/:id",
-        element: <EventDetailsPage />,
+        element: (
+          <PrivateRoute
+            element={<EventDetailsPage />}
+            allowedRoles={["volunteer"]}
+          />
+        ),
         loader: EventDetailLoader,
         errorElement: <EventDetailsError />
       },
@@ -79,23 +84,38 @@ const router = createBrowserRouter([
       },
       {
         path: "/tasks/:id",
-        element: <SignupForTaskPage />,
+        element: (
+          <PrivateRoute
+            element={<SignupForTaskPage />}
+            allowedRoles={["volunteer"]}
+          />
+        ),
         loader: signupTaskLoader,
         errorElement: <SignupForTaskError />
       },
       {
         path: "/profile/:id",
-        element: <Profile />,
+        element: (
+          <PrivateRoute
+            element={<Profile />}
+            allowedRoles={["admin", "super-admin", "volunteer"]}
+          />
+        ),
         errorElement: <ProfileError />
       },
       {
         path: "/editProfile/:id",
-        element: <EditProfilePage />,
+        element: (
+          <PrivateRoute
+            element={<EditProfilePage />}
+            allowedRoles={["admin", "super-admin", "volunteer"]}
+          />
+        ),
         loader: EditProfileLoader,
         errorElement: <ProfileError />
       },
       {
-        path: "adminDashboard",
+        path: "/adminDashboard",
         element: (
           <PrivateRoute
             element={<AdminDashboard />}
@@ -108,39 +128,71 @@ const router = createBrowserRouter([
 
       {
         path: "/volunteer-management",
-        element: <VolunteerManagementPage />,
+        element: (
+          <PrivateRoute
+            element={<VolunteerManagementPage />}
+            allowedRoles={["admin", "super-admin"]}
+          />
+        ),
         errorElement: <VolunteerManagementPageError />
       },
       {
         path: "/task-management",
-        element: <TaskManagementPage />,
+        element: (
+          <PrivateRoute
+            element={<TaskManagementPage />}
+            allowedRoles={["admin", "super-admin"]}
+          />
+        ),
         errorElement: <TaskManagementPageError />
       },
       {
         path: "/event-management",
-        element: <EventManagementPage />,
+        element: (
+          <PrivateRoute
+            element={<EventManagementPage />}
+            allowedRoles={["admin", "super-admin"]}
+          />
+        ),
         errorElement: <EventManagementError />
       },
 
       {
-        path: "clockInOut",
-        element: <ClockInOut />,
+        path: "/clockInOut",
+        element: (
+          <PrivateRoute element={<ClockInOut />} allowedRoles={["volunteer"]} />
+        ),
         errorElement: <ClockInOutError />
       },
       {
         path: "/records",
-        element: <RecordsPage />,
+        element: (
+          <PrivateRoute
+            element={<RecordsPage />}
+            allowedRoles={["volunteer"]}
+          />
+        ),
         loader: RecordLoader,
         errorElement: <RecordsPageError />
       },
       {
         path: "/detailChartsPage",
-        element: <DetailChartsPage />,
+        element: (
+          <PrivateRoute
+            element={<DetailChartsPage />}
+            allowedRoles={["admin", "super-admin"]}
+          />
+        ),
         errorElement: <DetailChartsPageError />
       },
       {
         path: "/detailTablesPage",
-        element: <DetailTablesPage />,
+        element: (
+          <PrivateRoute
+            element={ <DetailTablesPage />}
+            allowedRoles={["admin", "super-admin"]}
+          />
+        ),
         errorElement: <DetailTablesPageError />
       }
     ]

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link, redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { FaCalendarAlt, FaClock, FaUsers, FaStar } from "react-icons/fa";
 import {  toast } from "react-toastify";
 import { customFetch } from "../util/customFetch";
 import { useMutation } from "@tanstack/react-query";
+import { formatDate } from "../util/dataHandlingFunctions";
 
 export const loader = async ({ params }) => {
   try {
@@ -16,6 +17,10 @@ export const loader = async ({ params }) => {
 };
 
 const SignupForTaskPage = () => {
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+
   const task = useLoaderData(); // Task details loaded from the backend
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,7 +78,7 @@ const SignupForTaskPage = () => {
               {/* Task Details */}
               <div className="flex items-center">
                 <FaCalendarAlt className="text-blue-400 text-xl mr-3" />
-                <span>Date: {task.date}</span>
+                <span>Date: {formatDate(task.date)}</span>
               </div>
               <div className="flex items-center">
                 <FaClock className="text-yellow-400 text-xl mr-3" />

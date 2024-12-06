@@ -16,6 +16,7 @@ import AdminPagination from './AdminPagination';
 import DeleteConfirmationModal from './DeleteConfirmationModal/';
 import PageError from './PageError';
 import PageLoading from './PageLoading';
+import ThemeToggle from './ThemeToggle';
 
 
 export {
@@ -36,7 +37,8 @@ export {
   AdminPagination,
   DeleteConfirmationModal,
   PageError,
-  PageLoading
+  PageLoading,
+  ThemeToggle
 
 
 };

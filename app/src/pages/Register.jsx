@@ -41,19 +41,19 @@ const Register = () => {
           <label className="text-lg font-medium flex items-center gap-2">
             <FaUser /> Username
           </label>
-          <FormInput type="text" name="username" defaultValue="atah jan" />
+          <FormInput type="text" name="username"  />
         </div>
         <div>
           <label className="text-lg font-medium flex items-center gap-2">
             <FaEnvelope /> Email
           </label>
-          <FormInput type="email" name="email" defaultValue="atah@gamil.com" />
+          <FormInput type="email" name="email"  />
         </div>
         <div>
           <label className="text-lg font-medium flex items-center gap-2">
             <FaLock /> Password
           </label>
-          <FormInput type="password" name="password" defaultValue="secret" />
+          <FormInput type="password" name="password"  />
         </div>
 
         <div className="mt-4">

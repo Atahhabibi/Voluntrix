@@ -46,7 +46,6 @@ const Login = () => {
           <FormInput
             type="email"
             name="email"
-            defaultValue="atah_habibi@gmail.com"
           />
         </div>
         <div>
@@ -56,7 +55,6 @@ const Login = () => {
           <FormInput
             type="password"
             name="password"
-            defaultValue="atah_habibi@gmail.com"
           />
         </div>
 

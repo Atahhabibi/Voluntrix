@@ -18,6 +18,8 @@ export const action = async ({ request }) => {
     // Send login request to the backend
     const response = await customFetch.post("/adminLogin", data);
 
+    console.log(data);
+
     // Store token and user data in localStorage
     const token = response.data.token;
     localStorage.setItem("authToken", token); // Store token
@@ -52,7 +54,6 @@ const AdminLoginPage = () => {
           <FormInput
             type="email"
             name="email"
-            defaultValue="atahhabibi@gmail.com"
           />
         </div>
         <div>
@@ -62,7 +63,6 @@ const AdminLoginPage = () => {
           <FormInput
             type="password"
             name="password"
-            defaultValue="atah123"
           />
         </div>
 

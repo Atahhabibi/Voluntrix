@@ -95,14 +95,15 @@ const Navbar = () => {
           {/* Right Navbar Items */}
           <div className="navbar-end">
             <div className="indicator ml-4">
-              {role === "admin" || role==='super-admin' && (
-                <NavLink
-                  to="/register"
-                  className="btn btn-secondary capitalize btn-sm"
-                >
-                  want to be volunteer
-                </NavLink>
-              )}
+              {role === "admin" ||
+                (role === "super-admin" && (
+                  <NavLink
+                    to="/register"
+                    className="btn btn-secondary capitalize btn-sm"
+                  >
+                    want to be volunteer
+                  </NavLink>
+                ))}
 
               {role === "volunteer" && (
                 <NavLink
@@ -110,6 +111,15 @@ const Navbar = () => {
                   className="btn btn-secondary capitalize btn-sm"
                 >
                   I am admin too
+                </NavLink>
+              )}
+
+              {!role && (
+                <NavLink
+                  to="/adminLogin"
+                  className="btn btn-secondary capitalize btn-sm"
+                >
+                  I am admin
                 </NavLink>
               )}
             </div>

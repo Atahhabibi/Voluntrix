@@ -72,7 +72,7 @@ const AdminDashboard = () => {
     <div className="flex justify-center p-6 bg-gray-900 min-h-screen text-gray-200">
       <div className="w-full max-w-screen-xl">
         {/* Welcome Section */}
-        <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700 max-w-screen-lg mx-auto">
+        <div className="card w-full bg-gray-800 shadow-xl mb-6 border border-gray-700 max-w-screen-xl mx-auto">
           <div className="card-body flex flex-col items-center text-center">
             <div className="flex flex-col items-center">
               {uploading && (
@@ -112,7 +112,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Overview Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 max-w-screen-lg mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 max-w-screen-xl mx-auto">
           {/* Top Volunteer */}
           <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md border border-gray-700">
             <FaTrophy className="text-3xl sm:text-4xl text-yellow-300 mr-4" />
@@ -154,7 +154,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Announcements Section */}
-        <div className="mb-6 bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md max-w-screen-lg mx-auto">
+        <div className="mb-6 bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md max-w-screen-xl mx-auto">
           <div className="overflow-x-auto">
             <table className="table-auto w-full text-left text-gray-200 border-collapse text-sm sm:text-base">
               <thead className="bg-gray-900 text-white text-xs sm:text-sm">
@@ -233,7 +233,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Recent Activity Section */}
-        <div className="mb-10 bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md max-w-screen-lg mx-auto">
+        <div className="mb-10 bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md max-w-screen-xl mx-auto">
           <h3 className="text-lg sm:text-xl font-semibold text-white mb-4 flex items-center">
             <FaBell className="text-blue-400 mr-2" /> Recent Activity
           </h3>
@@ -245,14 +245,14 @@ const AdminDashboard = () => {
         </div>
 
         {/* Charts Section */}
-        <div className="mb-10 p-4 sm:p-6 max-w-screen-lg mx-auto">
+        <div className="mb-10 p-4 sm:p-6 max-w-screen-xlmx-auto">
           <h3 className="text-lg sm:text-xl font-bold text-white flex items-center mb-4">
             <FaChartPie className="text-yellow-400 mr-2" /> Key Charts Overview
           </h3>
           <p className="text-sm sm:text-base text-gray-400 mb-4">
             Gain insights from the data visualization below.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-screen-xl">
             <EventAttendanceStatus
               events={events}
               isLoading={isLoading}
@@ -278,16 +278,16 @@ const AdminDashboard = () => {
         </div>
 
         {/* Tables Section */}
-        <div className=" p-6 max-w-screen-lg mx-auto ">
-          <h3 className="text-xl font-bold text-white flex items-center mb-4 px-6">
+        <div className=" p-6 ">
+          <h3 className="text-xl font-bold text-white flex items-center mb-4 px-6 max-w-screen-xl mx-auto">
             <FaTable className="text-blue-400 mr-2 " /> Volunteer and Task
             Management Tables
           </h3>
-          <p className="text-gray-400 mb-4 px-6">
+          <p className="text-gray-400 mb-4 px-6 max-w-screen-lg mx-auto">
             Review detailed insights on volunteers, tasks, and events below.
           </p>
 
-          <div className="grid grid-cols-1 2xl:grid-cols-2 gap-6 px-6">
+          <div className="grid grid-cols-1 2xl:grid-cols-1 gap-6 px-6 max-w-screen-xl mx-auto">
             <TopPerformingVolunteersTable
               users={users}
               isError={isError}
@@ -301,7 +301,7 @@ const AdminDashboard = () => {
             />
           </div>
 
-          <div className=" px-6">
+          <div className=" px-6 max-w-screen-xl mx-auto">
             <UpcomingEventsTable
               events={events}
               isLoading={isLoading}

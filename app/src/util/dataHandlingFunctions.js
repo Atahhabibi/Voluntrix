@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import useUserData from "./useUserData";
 import moment from "moment";
 import { customFetchForAll } from "./customFetch";
+import axios from "axios";
 
 export const useUserDataQuery = () => {
   return useQuery({
@@ -170,15 +171,25 @@ export const formatDate = (dateString, format = "MMMM Do, YYYY") => {
 
 export const fetchEventsTasksForAll = async () => {
   try {
-    const resp = await customFetchForAll("/taskEventForAll");
+    const resp = await axios.get(
+      "http://localhost:5000/api/v1/taskEventForAll"
+    );
 
-    const tasksAndEventsForALL = resp.data;
-    return tasksAndEventsForALL;
+    // Validate response structure
+    if (!resp || !resp.data) {
+      throw new Error("Invalid response from server");
+    }
+
+    const tasksAndEventsForAll = resp.data;
+    return tasksAndEventsForAll;
   } catch (error) {
     console.error("Error loading tasks and events:", error.message);
-    return error;
+
+    // Rethrow error for `useQuery` to handle it
+    throw error;
   }
 };
+
 
 export const getToken = () => {
   const token = localStorage.getItem("authToken");

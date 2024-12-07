@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   FaCalendarAlt,
   FaMapMarkerAlt,
@@ -9,15 +9,38 @@ import { Link } from "react-router-dom";
 import { formatDate, getToken } from "../util/dataHandlingFunctions";
 import { PageError, PageLoading } from "../components";
 import { useQuery } from "@tanstack/react-query";
-import { fetchEventsTasksForAll } from "../util/dataHandlingFunctions";
+import axios from "axios";
+
+const fetchEventsTasksForAll = async () => {
+  try {
+    const resp = await axios.get(
+      "http://localhost:5000/api/v1/taskEventForAll"
+    );
+
+    // Validate response structure
+    if (!resp || !resp.data) {
+      throw new Error("Invalid response from server");
+    }
+
+    const tasksAndEventsForAll = resp.data;
+    return tasksAndEventsForAll;
+  } catch (error) {
+    console.error("Error loading tasks and events:", error.message);
+
+    // Rethrow error for `useQuery` to handle it
+    throw error;
+  }
+};
 
 const EventsPage = () => {
   const token = getToken();
 
+  // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  // Fetch events and tasks from API
   const { data, isError, isLoading } = useQuery({
     queryKey: ["taskEventForAll"],
     queryFn: fetchEventsTasksForAll
@@ -25,37 +48,43 @@ const EventsPage = () => {
 
   const events = data?.data?.events || [];
 
+  // Filter state
   const [filter, setFilter] = useState({
     name: "",
     date: "",
     minPoints: 0
   });
 
-  const [filteredEvents, setFilteredEvents] = useState([]);
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  useEffect(() => {
-    const applyFilters = () => {
-      const filtered = events.filter((event) => {
-        return (
-          (!filter.name ||
-            event.name.toLowerCase().includes(filter.name.toLowerCase())) &&
-          (!filter.date || event.date === filter.date) &&
-          (!filter.minPoints || event.points >= filter.minPoints)
-        );
-      });
-      setFilteredEvents(filtered);
-    };
-
-    applyFilters();
+  // Memoized filtered events
+  const filteredEvents = useMemo(() => {
+    return events.filter((event) => {
+      return (
+        (!filter.name ||
+          event.name.toLowerCase().includes(filter.name.toLowerCase())) &&
+        (!filter.date || event.date === filter.date) &&
+        (!filter.minPoints || event.points >= filter.minPoints)
+      );
+    });
   }, [filter, events]);
 
+  // Pagination logic
   const totalPages = Math.ceil(filteredEvents.length / itemsPerPage);
-  const currentEvents = filteredEvents.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+
+  const currentEvents = useMemo(() => {
+    return filteredEvents.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+  }, [filteredEvents, currentPage]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -147,7 +176,7 @@ const EventsPage = () => {
               <div
                 key={event._id}
                 className="bg-gray-800 shadow-lg rounded-lg p-4 border border-gray-700 flex flex-col"
-                style={{ height: "16rem" }} // Fixed height for cards
+                style={{ height: "16rem" }}
               >
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold mb-2 text-blue-100 flex items-center gap-2">
@@ -188,13 +217,12 @@ const EventsPage = () => {
             ))
           ) : (
             <div className="text-center text-gray-400 col-span-full">
-              <p>
-                No events are available at the moment. Please check back later!
-              </p>
+              <p>No events match your filters. Please try again!</p>
             </div>
           )}
         </section>
       </div>
+
       {/* Pagination Section */}
       <div className="flex justify-center items-center space-x-4 mt-8">
         <button

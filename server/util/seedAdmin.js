@@ -30,7 +30,7 @@ const seedAdmin = async () => {
     });
 
     if (!existingSuperAdmin) {
-      const hashedPassword = bcrypt.hash(superAdminPassword, 10);
+      const hashedPassword =await  bcrypt.hash(superAdminPassword, 10);
       const superAdmin = new Admin({
         username: superAdminUsername,
         email: superAdminEmail,

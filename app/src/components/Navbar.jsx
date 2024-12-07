@@ -33,7 +33,7 @@ const Navbar = () => {
           <div className="navbar-start">
             {/* Brand Logo */}
 
-            {(role === "super-admin" || role==="admin") && (
+            {(role === "super-admin" || role === "admin") && (
               <NavLink
                 to="/adminDashboard"
                 className="hidden lg:flex btn btn-primary text-3xl items-center capitalize"
@@ -94,14 +94,24 @@ const Navbar = () => {
 
           {/* Right Navbar Items */}
           <div className="navbar-end">
-
             <div className="indicator ml-4">
-              <NavLink
-                to="/adminLogin"
-                className="btn btn-secondary capitalize btn-sm"
-              >
-                I am Admin
-              </NavLink>
+              {role === "admin" || role==='super-admin' && (
+                <NavLink
+                  to="/register"
+                  className="btn btn-secondary capitalize btn-sm"
+                >
+                  want to be volunteer
+                </NavLink>
+              )}
+
+              {role === "volunteer" && (
+                <NavLink
+                  to="/adminLogin"
+                  className="btn btn-secondary capitalize btn-sm"
+                >
+                  I am admin too
+                </NavLink>
+              )}
             </div>
           </div>
         </nav>

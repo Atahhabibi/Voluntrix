@@ -1,4 +1,4 @@
-const connectDB = require("./monogdb/connect");
+
 const sampleEvents = require("./util/sampleEvents");
 const sampleTasks = require("./util/sampleTasks");
 const mongoose = require("mongoose");

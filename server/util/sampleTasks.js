@@ -1,104 +1,155 @@
 const sampleTasks = [
   {
-    name: "Community Park Cleanup",
-    date: "2024-12-10",
+    name: "Set Up Prayer Mats",
+    date: "2023-12-15T09:00:00Z",
     time: "09:00 AM",
-    points: 50,
-    totalCompleted: 0, // Replaced totalAttended
+    points: 5,
+    totalCompleted: 0,
     totalSignedUp: 0,
-    volunteersNeeded: 20,
+    volunteersNeeded: 5,
     volunteersAssigned: []
   },
   {
-    name: "Library Book Arrangement",
-    date: "2024-12-15",
-    time: "02:00 PM",
-    points: 30,
-    totalCompleted: 0, // Replaced totalAttended
+    name: "Clean Wudu Area",
+    date: "2023-12-16T10:00:00Z",
+    time: "10:00 AM",
+    points: 7,
+    totalCompleted: 0,
+    totalSignedUp: 0,
+    volunteersNeeded: 3,
+    volunteersAssigned: []
+  },
+  {
+    name: "Organize Quran Books",
+    date: "2023-12-17T11:00:00Z",
+    time: "11:00 AM",
+    points: 4,
+    totalCompleted: 0,
+    totalSignedUp: 0,
+    volunteersNeeded: 2,
+    volunteersAssigned: []
+  },
+  {
+    name: "Setup Iftar Tables",
+    date: "2023-12-18T16:00:00Z",
+    time: "04:00 PM",
+    points: 6,
+    totalCompleted: 0,
+    totalSignedUp: 0,
+    volunteersNeeded: 8,
+    volunteersAssigned: []
+  },
+  {
+    name: "Distribute Iftar Meals",
+    date: "2023-12-19T18:00:00Z",
+    time: "06:00 PM",
+    points: 10,
+    totalCompleted: 0,
     totalSignedUp: 0,
     volunteersNeeded: 10,
     volunteersAssigned: []
   },
   {
-    name: "Food Drive Distribution",
-    date: "2024-12-20",
-    time: "10:00 AM",
-    points: 40,
-    totalCompleted: 0, // Replaced totalAttended
+    name: "Setup Sound System",
+    date: "2023-12-20T14:00:00Z",
+    time: "02:00 PM",
+    points: 8,
+    totalCompleted: 0,
     totalSignedUp: 0,
-    volunteersNeeded: 18,
+    volunteersNeeded: 4,
     volunteersAssigned: []
   },
   {
-    name: "School Supplies Packing",
-    date: "2024-12-22",
-    time: "01:00 PM",
-    points: 35,
-    totalCompleted: 0, // Replaced totalAttended
+    name: "Clean Prayer Hall",
+    date: "2023-12-21T08:00:00Z",
+    time: "08:00 AM",
+    points: 6,
+    totalCompleted: 0,
+    totalSignedUp: 0,
+    volunteersNeeded: 6,
+    volunteersAssigned: []
+  },
+  {
+    name: "Distribute Charity Boxes",
+    date: "2023-12-22T12:00:00Z",
+    time: "12:00 PM",
+    points: 5,
+    totalCompleted: 0,
+    totalSignedUp: 0,
+    volunteersNeeded: 7,
+    volunteersAssigned: []
+  },
+  {
+    name: "Help with Jummah Parking",
+    date: "2023-12-23T12:30:00Z",
+    time: "12:30 PM",
+    points: 8,
+    totalCompleted: 0,
+    totalSignedUp: 0,
+    volunteersNeeded: 10,
+    volunteersAssigned: []
+  },
+  {
+    name: "Assist with Taraweeh Setup",
+    date: "2023-12-24T18:30:00Z",
+    time: "06:30 PM",
+    points: 7,
+    totalCompleted: 0,
+    totalSignedUp: 0,
+    volunteersNeeded: 8,
+    volunteersAssigned: []
+  },
+  {
+    name: "Prepare Eid Prayer Area",
+    date: "2023-12-25T07:00:00Z",
+    time: "07:00 AM",
+    points: 10,
+    totalCompleted: 0,
     totalSignedUp: 0,
     volunteersNeeded: 12,
     volunteersAssigned: []
   },
   {
-    name: "Blood Donation Camp Assistance",
-    date: "2024-12-05",
-    time: "11:00 AM",
-    points: 60,
-    totalCompleted: 0, // Replaced totalAttended
-    totalSignedUp: 0,
-    volunteersNeeded: 25,
-    volunteersAssigned: []
-  },
-  {
-    name: "Animal Shelter Cleanup",
-    date: "2024-12-18",
+    name: "Organize Fundraising Materials",
+    date: "2023-12-26T15:00:00Z",
     time: "03:00 PM",
-    points: 45,
-    totalCompleted: 0, // Replaced totalAttended
+    points: 6,
+    totalCompleted: 0,
     totalSignedUp: 0,
-    volunteersNeeded: 15,
+    volunteersNeeded: 5,
     volunteersAssigned: []
   },
   {
-    name: "Community Health Camp Assistance",
-    date: "2024-12-09",
-    time: "08:00 AM",
-    points: 70,
-    totalCompleted: 0, // Replaced totalAttended
+    name: "Distribute Zakat Forms",
+    date: "2023-12-27T13:00:00Z",
+    time: "01:00 PM",
+    points: 4,
+    totalCompleted: 0,
     totalSignedUp: 0,
-    volunteersNeeded: 30,
+    volunteersNeeded: 3,
     volunteersAssigned: []
   },
   {
-    name: "Tree Plantation Drive",
-    date: "2024-12-14",
-    time: "09:30 AM",
-    points: 55,
-    totalCompleted: 0, // Replaced totalAttended
+    name: "Help with Kids Quran Class",
+    date: "2023-12-28T17:00:00Z",
+    time: "05:00 PM",
+    points: 8,
+    totalCompleted: 0,
     totalSignedUp: 0,
-    volunteersNeeded: 20,
+    volunteersNeeded: 6,
     volunteersAssigned: []
   },
   {
-    name: "Traffic Management at Local Event",
-    date: "2024-12-12",
-    time: "04:00 PM",
-    points: 25,
-    totalCompleted: 0, // Replaced totalAttended
+    name: "Manage Registration Desk",
+    date: "2023-12-29T08:30:00Z",
+    time: "08:30 AM",
+    points: 7,
+    totalCompleted: 0,
     totalSignedUp: 0,
-    volunteersNeeded: 10,
-    volunteersAssigned: []
-  },
-  {
-    name: "Recycling Awareness Campaign",
-    date: "2024-12-25",
-    time: "02:30 PM",
-    points: 35,
-    totalCompleted: 0, // Replaced totalAttended
-    totalSignedUp: 0,
-    volunteersNeeded: 10,
+    volunteersNeeded: 4,
     volunteersAssigned: []
   }
 ];
+
 
 module.exports = sampleTasks;

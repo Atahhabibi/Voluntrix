@@ -278,7 +278,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Tables Section */}
-        <div className="mb-10 p-6'">
+        <div className=" p-6 max-w-screen-lg mx-auto ">
           <h3 className="text-xl font-bold text-white flex items-center mb-4 px-6">
             <FaTable className="text-blue-400 mr-2 " /> Volunteer and Task
             Management Tables
@@ -287,7 +287,7 @@ const AdminDashboard = () => {
             Review detailed insights on volunteers, tasks, and events below.
           </p>
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 px-6">
+          <div className="grid grid-cols-1 2xl:grid-cols-2 gap-6 px-6">
             <TopPerformingVolunteersTable
               users={users}
               isError={isError}

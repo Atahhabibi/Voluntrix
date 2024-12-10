@@ -12,9 +12,10 @@ import {
   TimeSpentOnTasksAndEvents,
   TasksVsEventsParticipation,
   HoursWorkedByUsers,
-  EventAttendanceStatus
+  EventAttendanceStatus,
 } from "../charts";
 import useAppData from "../util/CustomHooks/useAppData";
+import { exportDataAsCSV, tempData } from "../util/dataHandlingFunctions";
 
 const DetailChartsPage = () => {
   const { data, isError, isLoading } = useAppData();
@@ -84,11 +85,11 @@ const DetailChartsPage = () => {
               isLoading={isLoading}
               isError={isError}
             />
-              <PointsEarnedByUsers
-                users={users}
-                isLoading={isLoading}
-                isError={isError}
-              />
+            <PointsEarnedByUsers
+              users={users}
+              isLoading={isLoading}
+              isError={isError}
+            />
             <HoursWorkedByUsers
               users={users}
               isLoading={isLoading}
@@ -112,10 +113,12 @@ const DetailChartsPage = () => {
             />
           </div>
         </div>
-
         {/* Export Data Section */}
         <div className="flex justify-center mb-6">
-          <button className="btn btn-secondary text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-md hover:bg-gray-700">
+          <button
+            className="btn btn-secondary text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-md hover:bg-gray-700"
+            onClick={() => exportDataAsCSV(tempData)}
+          >
             <FaFileExport className="mr-2" /> Export Data
           </button>
         </div>

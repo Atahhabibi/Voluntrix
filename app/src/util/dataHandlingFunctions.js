@@ -199,3 +199,32 @@ export const getToken = () => {
     return null;
   }
 };
+
+
+export const tempData = [
+  { user: "John", hoursWorked: 120, points: 10, role: "Volunteer" },
+  { user: "Jane", hoursWorked: 150, points: 15, role: "Admin" },
+  { user: "Alice", hoursWorked: 90, points: 8, role: "Volunteer" },
+  { user: "Bob", hoursWorked: 200, points: 20, role: "Admin" },
+];
+
+// Function to export data as CSV
+export const exportDataAsCSV = (data, filename = "exported_data.csv") => {
+  const headers = Object.keys(data[0]);
+  const rows = data.map((row) =>
+    headers.map((header) => JSON.stringify(row[header], null, 2)).join(",")
+  );
+  const csvContent = [headers.join(","), ...rows].join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+// Uncomment the line below to test the function with tempData
+// exportDataAsCSV(tempData);

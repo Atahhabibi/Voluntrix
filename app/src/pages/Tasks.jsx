@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   FaCalendarAlt,
-  FaFilter,
   FaClock,
   FaUserFriends,
   FaCheck,
@@ -21,14 +20,14 @@ import {
 
 const TasksPage = () => {
   const token = getToken();
-    useEffect(() => {
-      window.scrollTo(0, 0);
-    }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const { data, isError, isLoading } = useQuery({
     queryKey: ["taskEventForAll"],
-    queryFn: fetchEventsTasksForAll
+    queryFn: fetchEventsTasksForAll,
   });
 
   const tasks = data?.data?.tasks || [];
@@ -36,16 +35,16 @@ const TasksPage = () => {
   const [filter, setFilter] = useState({
     name: "",
     date: "",
-    minPoints: 0
+    minPoints: 0,
   });
-  const [filteredTasks, setFilteredTasks] = useState([]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // Apply filters to tasks
-  const applyFilters = () => {
-    if (!tasks) return;
-    const filtered = tasks.filter((task) => {
+  // UseMemo to filter tasks
+  const filteredTasks = useMemo(() => {
+    if (!tasks) return [];
+    return tasks.filter((task) => {
       return (
         (!filter.name ||
           task.name.toLowerCase().includes(filter.name.toLowerCase())) &&
@@ -53,18 +52,18 @@ const TasksPage = () => {
         (!filter.minPoints || task.points >= filter.minPoints)
       );
     });
-    setFilteredTasks(filtered);
-  };
-
-  useEffect(() => {
-    applyFilters();
-  }, [filter, tasks]);
+  }, [tasks, filter]);
 
   const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+  const currentTasks = useMemo(() => {
+    return filteredTasks.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+  }, [filteredTasks, currentPage, itemsPerPage]);
+
+  const handlePageChange = (page) => setCurrentPage(page);
 
   const handlePrevious = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -74,17 +73,12 @@ const TasksPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-  const calendarEvents = (filteredTasks || []).map((task) => ({
+  const calendarEvents = filteredTasks.map((task) => ({
     title: task.name,
     date: task.date,
     description: `${task.time}`,
-    extendedProps: { type: task.type, volunteersNeeded: task.volunteersNeeded }
+    extendedProps: { type: task.type, volunteersNeeded: task.volunteersNeeded },
   }));
-
-  const currentTasks = filteredTasks.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   if (isLoading) {
     return <PageLoading />;
